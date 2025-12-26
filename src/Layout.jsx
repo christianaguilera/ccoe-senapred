@@ -20,6 +20,7 @@ export default function Layout({ children, currentPageName }) {
   const navigation = [
     { name: 'Dashboard', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
     { name: 'Incidentes', href: createPageUrl('Incidents'), icon: AlertTriangle, page: 'Incidents' },
+    { name: 'Estructura ICS', href: createPageUrl('ICSStructure'), icon: Users, page: 'ICSStructure' },
     { name: 'Recursos', href: createPageUrl('Resources'), icon: Package, page: 'Resources' },
   ];
 
