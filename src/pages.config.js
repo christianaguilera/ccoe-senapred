@@ -17,7 +17,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "IncidentDetail",
+    mainPage: "Dashboard",
     Pages: PAGES,
     Layout: __Layout,
 };
