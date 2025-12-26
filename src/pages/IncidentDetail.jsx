@@ -46,6 +46,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import IncidentForm from '../components/incidents/IncidentForm';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
+import IncidentMap from '../components/maps/IncidentMap';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -230,6 +231,16 @@ export default function IncidentDetail() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Map Card */}
+          {incident.coordinates?.lat && incident.coordinates?.lng && (
+            <IncidentMap
+              incidents={[incident]}
+              selectedIncident={incident}
+              height="400px"
+              showRadius={true}
+            />
+          )}
+
           {/* Info Card */}
           <Card className="p-6">
             <div className="flex items-start gap-4 mb-6">

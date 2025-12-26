@@ -9,7 +9,8 @@ import {
   Menu, 
   X,
   Shield,
-  Bell
+  Bell,
+  MapPin
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ export default function Layout({ children, currentPageName }) {
   const navigation = [
     { name: 'Dashboard', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
     { name: 'Incidentes', href: createPageUrl('Incidents'), icon: AlertTriangle, page: 'Incidents' },
+    { name: 'Mapa', href: createPageUrl('IncidentMap'), icon: MapPin, page: 'IncidentMap' },
     { name: 'Estructura ICS', href: createPageUrl('ICSStructure'), icon: Users, page: 'ICSStructure' },
     { name: 'Recursos', href: createPageUrl('Resources'), icon: Package, page: 'Resources' },
   ];

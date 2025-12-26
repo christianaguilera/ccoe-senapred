@@ -16,7 +16,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from 'lucide-react';
+import LocationPicker from '../maps/LocationPicker';
 
 export default function IncidentForm({ open, onClose, onSubmit, incident, isLoading }) {
   const [formData, setFormData] = useState({
@@ -26,6 +28,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
     severity: 'medium',
     status: 'active',
     location: '',
+    coordinates: { lat: 19.4326, lng: -99.1332 },
     description: '',
     incident_commander: '',
     start_time: new Date().toISOString().slice(0, 16),
@@ -40,6 +43,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
         severity: incident.severity || 'medium',
         status: incident.status || 'active',
         location: incident.location || '',
+        coordinates: incident.coordinates || { lat: 19.4326, lng: -99.1332 },
         description: incident.description || '',
         incident_commander: incident.incident_commander || '',
         start_time: incident.start_time ? incident.start_time.slice(0, 16) : new Date().toISOString().slice(0, 16),
@@ -52,6 +56,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
         severity: 'medium',
         status: 'active',
         location: '',
+        coordinates: { lat: 19.4326, lng: -99.1332 },
         description: '',
         incident_commander: '',
         start_time: new Date().toISOString().slice(0, 16),
@@ -66,14 +71,21 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">
             {incident ? 'Editar Incidente' : 'Nuevo Incidente'}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 pt-4">
+        <Tabs defaultValue="info" className="pt-4">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="info">Información</TabsTrigger>
+            <TabsTrigger value="location">Ubicación</TabsTrigger>
+          </TabsList>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <TabsContent value="info" className="space-y-5 mt-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="incident_number">Número de Incidente</Label>
@@ -164,16 +176,16 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">Ubicación *</Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              placeholder="Dirección o ubicación del incidente"
-              required
-            />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Dirección *</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="Dirección o ubicación del incidente"
+                  required
+                />
+              </div>
 
           <div className="space-y-2">
             <Label htmlFor="incident_commander">Comandante del Incidente</Label>
@@ -185,27 +197,37 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Detalles adicionales del incidente..."
-              rows={3}
-            />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Detalles adicionales del incidente..."
+                  rows={3}
+                />
+              </div>
+            </TabsContent>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isLoading} className="bg-orange-500 hover:bg-orange-600">
-              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {incident ? 'Guardar Cambios' : 'Crear Incidente'}
-            </Button>
-          </div>
-        </form>
+            <TabsContent value="location" className="space-y-5 mt-5">
+              <LocationPicker
+                coordinates={formData.coordinates}
+                onCoordinatesChange={(coords) => setFormData({ ...formData, coordinates: coords })}
+                address={formData.location}
+              />
+            </TabsContent>
+
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isLoading} className="bg-orange-500 hover:bg-orange-600">
+                {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {incident ? 'Guardar Cambios' : 'Crear Incidente'}
+              </Button>
+            </div>
+          </form>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
