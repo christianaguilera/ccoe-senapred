@@ -97,7 +97,7 @@ export default function IncidentDetail() {
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
-  const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1 });
+  const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
 
   const queryClient = useQueryClient();
 
@@ -218,7 +218,7 @@ export default function IncidentDetail() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['institutions', incidentId] });
-      setNewInstitution({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1 });
+      setNewInstitution({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
       setShowInstitutions(false);
     }
   });
@@ -715,15 +715,23 @@ export default function IncidentDetail() {
                     onChange={(e) => setNewInstitution({ ...newInstitution, units_deployed: parseInt(e.target.value) || 1 })}
                     min="1" />
                 </div>
-                <div className="flex items-end">
-                  <Button
-                    className="w-full bg-indigo-600 hover:bg-indigo-700"
-                    onClick={() => createInstitutionMutation.mutate(newInstitution)}
-                    disabled={!newInstitution.nombre || createInstitutionMutation.isPending}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Agregar Institución
-                  </Button>
-                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Detalle de Recursos</label>
+                <Textarea
+                  value={newInstitution.detalle_recursos}
+                  onChange={(e) => setNewInstitution({ ...newInstitution, detalle_recursos: e.target.value })}
+                  placeholder="Ej: 3 carros bombas, 15 bomberos, 2 autobombas, equipos SCBA"
+                  rows={2} />
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                  onClick={() => createInstitutionMutation.mutate(newInstitution)}
+                  disabled={!newInstitution.nombre || createInstitutionMutation.isPending}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Agregar Institución
+                </Button>
               </div>
             </Card>
 
@@ -763,6 +771,12 @@ export default function IncidentDetail() {
                               </div>
                             )}
                           </div>
+                          {institution.detalle_recursos && (
+                            <div className="mt-2 p-2 bg-slate-50 rounded border border-slate-200">
+                              <p className="text-xs font-medium text-slate-700 mb-1">Recursos:</p>
+                              <p className="text-xs text-slate-600">{institution.detalle_recursos}</p>
+                            </div>
+                          )}
                           {institution.arrival_time && (
                             <p className="text-xs text-slate-400 mt-2">
                               Llegada: {format(new Date(institution.arrival_time), "dd/MM/yyyy HH:mm", { locale: es })}
