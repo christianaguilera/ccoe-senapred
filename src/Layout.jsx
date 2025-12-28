@@ -22,7 +22,7 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
-    { name: 'Panel de Mando', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
+    { name: 'Dashboard', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
     { name: 'Incidentes', href: createPageUrl('Incidents'), icon: AlertTriangle, page: 'Incidents' },
     { name: 'Mapa', href: createPageUrl('IncidentMap'), icon: MapPin, page: 'IncidentMap' },
     { name: 'Estructura ICS', href: createPageUrl('ICSStructure'), icon: Users, page: 'ICSStructure' },
@@ -56,7 +56,7 @@ export default function Layout({ children, currentPageName }) {
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">Panel de Mando Integrado</h1>
+              <h1 className="text-lg font-bold text-white tracking-tight">ICS Command</h1>
               <p className="text-xs text-slate-400">Sistema de Incidentes</p>
             </div>
             <Button 
