@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import StatsCard from '../components/dashboard/StatsCard';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
 import IncidentCard from '../components/incidents/IncidentCard';
+import SenapredAlertsPanel from '../components/dashboard/SenapredAlertsPanel';
 
 export default function Dashboard() {
   const { data: incidents = [], isLoading: loadingIncidents } = useQuery({
@@ -200,26 +201,32 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Activity Timeline */}
+        {/* Right Sidebar */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-slate-900">Actividad Reciente</h2>
-          {loadingActivities ? (
-            <Card className="p-6">
-              <div className="space-y-4">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="flex gap-4">
-                    <Skeleton className="w-3 h-3 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-4 w-full" />
+          {/* SENAPRED Alerts */}
+          <SenapredAlertsPanel />
+
+          {/* Activity Timeline */}
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Actividad Reciente</h2>
+            {loadingActivities ? (
+              <Card className="p-6">
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="flex gap-4">
+                      <Skeleton className="w-3 h-3 rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-full" />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          ) : (
-            <ActivityTimeline activities={activities} incidents={incidents} />
-          )}
+                  ))}
+                </div>
+              </Card>
+            ) : (
+              <ActivityTimeline activities={activities} incidents={incidents} />
+            )}
+          </div>
         </div>
       </div>
     </div>
