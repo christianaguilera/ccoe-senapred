@@ -97,7 +97,7 @@ export default function IncidentDetail() {
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
-  const [newInstitution, setNewInstitution] = useState({ tipo: '', contact_person: '', phone: '', units_deployed: 1 });
+  const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1 });
 
   const queryClient = useQueryClient();
 
@@ -218,7 +218,7 @@ export default function IncidentDetail() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['institutions', incidentId] });
-      setNewInstitution({ tipo: '', contact_person: '', phone: '', units_deployed: 1 });
+      setNewInstitution({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1 });
       setShowInstitutions(false);
     }
   });
@@ -666,11 +666,26 @@ export default function IncidentDetail() {
               <h4 className="font-semibold mb-4">Agregar Institución</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Tipo de Institución</label>
-                  <Input
-                    value={newInstitution.tipo}
-                    onChange={(e) => setNewInstitution({ ...newInstitution, tipo: e.target.value })}
-                    placeholder="Ej: Bomberos, Carabineros, SENAPRED, etc." />
+                  <label className="text-sm font-medium">Nombre Institución</label>
+                  <Select
+                    value={newInstitution.nombre}
+                    onValueChange={(value) => setNewInstitution({ ...newInstitution, nombre: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Bomberos">Bomberos</SelectItem>
+                      <SelectItem value="Carabineros">Carabineros</SelectItem>
+                      <SelectItem value="Ambulancia/SAMU">Ambulancia/SAMU</SelectItem>
+                      <SelectItem value="Ejército">Ejército</SelectItem>
+                      <SelectItem value="SENAPRED">SENAPRED</SelectItem>
+                      <SelectItem value="Cruz Roja">Cruz Roja</SelectItem>
+                      <SelectItem value="Municipalidad">Municipalidad</SelectItem>
+                      <SelectItem value="PDI">PDI</SelectItem>
+                      <SelectItem value="Defensa Civil">Defensa Civil</SelectItem>
+                      <SelectItem value="Otro">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Persona de Contacto</label>
@@ -698,7 +713,7 @@ export default function IncidentDetail() {
                   <Button
                     className="w-full bg-indigo-600 hover:bg-indigo-700"
                     onClick={() => createInstitutionMutation.mutate(newInstitution)}
-                    disabled={!newInstitution.tipo || createInstitutionMutation.isPending}>
+                    disabled={!newInstitution.nombre || createInstitutionMutation.isPending}>
                     <Plus className="w-4 h-4 mr-2" />
                     Agregar Institución
                   </Button>
@@ -721,7 +736,7 @@ export default function IncidentDetail() {
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <p className="font-semibold text-slate-900">{institution.tipo}</p>
+                            <p className="font-semibold text-slate-900">{institution.nombre}</p>
                             {institution.units_deployed > 0 && (
                               <Badge variant="secondary">
                                 {institution.units_deployed} unidad(es)
