@@ -200,7 +200,11 @@ export default function Incidents() {
       ) : (
         <div className="grid gap-4">
           {filteredIncidents.map((incident) => (
-            <IncidentCard key={incident.id} incident={incident} />
+            <IncidentCard 
+              key={incident.id} 
+              incident={incident}
+              onDelete={(id) => deleteMutation.mutate(id)}
+            />
           ))}
         </div>
       )}

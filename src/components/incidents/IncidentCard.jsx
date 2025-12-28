@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../../utils';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   MapPin, 
   Clock, 
@@ -14,7 +15,8 @@ import {
   Anchor,
   Cloud,
   Users,
-  HelpCircle
+  HelpCircle,
+  Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -44,11 +46,19 @@ const statusConfig = {
   monitoring: { label: 'Monitoreo', color: 'bg-blue-500' }
 };
 
-export default function IncidentCard({ incident }) {
+export default function IncidentCard({ incident, onDelete }) {
   const type = typeConfig[incident.type] || typeConfig.other;
   const severity = severityConfig[incident.severity] || severityConfig.medium;
   const status = statusConfig[incident.status] || statusConfig.active;
   const TypeIcon = type.icon;
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDelete && window.confirm(`¿Estás seguro de eliminar el incidente "${incident.name}"?`)) {
+      onDelete(incident.id);
+    }
+  };
 
   return (
     <Link to={createPageUrl(`IncidentDetail?id=${incident.id}`)}>
@@ -96,8 +106,18 @@ export default function IncidentCard({ incident }) {
             </div>
           </div>
 
-          {/* Arrow */}
-          <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-orange-500 group-hover:translate-x-1 transition-all" />
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleDelete}
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500 hover:bg-red-50"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-orange-500 group-hover:translate-x-1 transition-all" />
+          </div>
         </div>
       </Card>
     </Link>
