@@ -97,7 +97,7 @@ export default function IncidentDetail() {
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
-  const [newInstitution, setNewInstitution] = useState({ name: '', type: 'bomberos', contact_person: '', phone: '', units_deployed: 1 });
+  const [newInstitution, setNewInstitution] = useState({ tipo: '', contact_person: '', phone: '', units_deployed: 1 });
 
   const queryClient = useQueryClient();
 
@@ -218,7 +218,7 @@ export default function IncidentDetail() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['institutions', incidentId] });
-      setNewInstitution({ name: '', type: 'bomberos', contact_person: '', phone: '', units_deployed: 1 });
+      setNewInstitution({ tipo: '', contact_person: '', phone: '', units_deployed: 1 });
       setShowInstitutions(false);
     }
   });
@@ -666,31 +666,11 @@ export default function IncidentDetail() {
               <h4 className="font-semibold mb-4">Agregar Institución</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Nombre de la Institución</label>
+                  <label className="text-sm font-medium">Tipo de Institución</label>
                   <Input
-                    value={newInstitution.name}
-                    onChange={(e) => setNewInstitution({ ...newInstitution, name: e.target.value })}
-                    placeholder="Ej: Bomberos de Santiago" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Tipo</label>
-                  <Select
-                    value={newInstitution.type}
-                    onValueChange={(value) => setNewInstitution({ ...newInstitution, type: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="bomberos">Bomberos</SelectItem>
-                      <SelectItem value="carabineros">Carabineros</SelectItem>
-                      <SelectItem value="ambulancia">Ambulancia/SAMU</SelectItem>
-                      <SelectItem value="ejercito">Ejército</SelectItem>
-                      <SelectItem value="senapred">SENAPRED</SelectItem>
-                      <SelectItem value="cruz_roja">Cruz Roja</SelectItem>
-                      <SelectItem value="municipalidad">Municipalidad</SelectItem>
-                      <SelectItem value="otro">Otro</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    value={newInstitution.tipo}
+                    onChange={(e) => setNewInstitution({ ...newInstitution, tipo: e.target.value })}
+                    placeholder="Ej: Bomberos, Carabineros, SENAPRED, etc." />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Persona de Contacto</label>
@@ -718,7 +698,7 @@ export default function IncidentDetail() {
                   <Button
                     className="w-full bg-indigo-600 hover:bg-indigo-700"
                     onClick={() => createInstitutionMutation.mutate(newInstitution)}
-                    disabled={!newInstitution.name || createInstitutionMutation.isPending}>
+                    disabled={!newInstitution.tipo || createInstitutionMutation.isPending}>
                     <Plus className="w-4 h-4 mr-2" />
                     Agregar Institución
                   </Button>
@@ -741,16 +721,13 @@ export default function IncidentDetail() {
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="capitalize">
-                              {institution.type.replace('_', ' ')}
-                            </Badge>
+                            <p className="font-semibold text-slate-900">{institution.tipo}</p>
                             {institution.units_deployed > 0 && (
                               <Badge variant="secondary">
                                 {institution.units_deployed} unidad(es)
                               </Badge>
                             )}
                           </div>
-                          <p className="font-semibold text-slate-900">{institution.name}</p>
                           <div className="grid grid-cols-2 gap-2 mt-2 text-sm text-slate-600">
                             {institution.contact_person && (
                               <div className="flex items-center gap-1">
