@@ -59,6 +59,7 @@ import FormSCI206 from '../components/reports/FormSCI206';
 import FormSCI207 from '../components/reports/FormSCI207';
 import FormSCI211 from '../components/reports/FormSCI211';
 import FormSCI214 from '../components/reports/FormSCI214';
+import FormSCI215A from '../components/reports/FormSCI215A';
 import GeneralIncidentReport from '../components/reports/GeneralIncidentReport';
 
 const typeConfig = {
@@ -112,6 +113,7 @@ export default function IncidentDetail() {
   const [showSCI207, setShowSCI207] = useState(false);
   const [showSCI211, setShowSCI211] = useState(false);
   const [showSCI214, setShowSCI214] = useState(false);
+  const [showSCI215A, setShowSCI215A] = useState(false);
   const [showGeneralReport, setShowGeneralReport] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
@@ -121,7 +123,7 @@ export default function IncidentDetail() {
   // Check if any modal/dialog is open
   const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 || 
     showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 || 
-    showSCI207 || showSCI211 || showSCI214 || showGeneralReport || showInstitutions;
+    showSCI207 || showSCI211 || showSCI214 || showSCI215A || showGeneralReport || showInstitutions;
 
   const queryClient = useQueryClient();
 
@@ -598,6 +600,12 @@ export default function IncidentDetail() {
               <FileText className="w-4 h-4 mr-2" />
               SCI-214-Registro de Actividades
             </Button>
+            <Button
+              className="w-full bg-amber-600 hover:bg-amber-700"
+              onClick={() => setShowSCI215A(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              SCI-215A-Análisis de Seguridad
+            </Button>
             </div>
         </div>
       </div>
@@ -792,6 +800,12 @@ export default function IncidentDetail() {
       <FormSCI214
         open={showSCI214}
         onClose={() => setShowSCI214(false)}
+        incident={incident} />
+
+      {/* Formulario SCI-215A */}
+      <FormSCI215A
+        open={showSCI215A}
+        onClose={() => setShowSCI215A(false)}
         incident={incident} />
 
       {/* Reporte General */}
