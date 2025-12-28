@@ -56,7 +56,7 @@ export default function Layout({ children, currentPageName }) {
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">ICS Command</h1>
+              <h1 className="text-lg font-bold text-white tracking-tight">Panel de Mando Integrado</h1>
               <p className="text-xs text-slate-400">Sistema de Incidentes</p>
             </div>
             <Button 
