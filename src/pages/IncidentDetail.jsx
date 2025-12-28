@@ -114,6 +114,11 @@ export default function IncidentDetail() {
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
   const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
 
+  // Check if any modal/dialog is open
+  const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 || 
+    showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 || 
+    showSCI207 || showSCI211 || showInstitutions;
+
   const queryClient = useQueryClient();
 
   const { data: incident, isLoading } = useQuery({
@@ -333,14 +338,13 @@ export default function IncidentDetail() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {!showEditForm && !showSCI201 && !showSCI202 && !showSCI203 && !showSCI204 && !showSCI205 && !showSCI206 && !showSCI207 && !showSCI211 && !showInstitutions && !showStaffForm && !showLogForm && incident.coordinates?.lat && incident.coordinates?.lng &&
-          <IncidentMap
-            incidents={[incident]}
-            selectedIncident={incident}
-            height="400px"
-            showRadius={true} />
-
-          }
+          {!isAnyModalOpen && incident.coordinates?.lat && incident.coordinates?.lng && (
+            <IncidentMap
+              incidents={[incident]}
+              selectedIncident={incident}
+              height="400px"
+              showRadius={true} />
+          )}
 
           {/* Info Card */}
           <Card className="p-6">
