@@ -15,17 +15,21 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-function LocationMarker({ position, setPosition }) {
+function LocationMarker({ position, setPosition, onReverseGeocode }) {
   useMapEvents({
     click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng]);
+      const newPos = [e.latlng.lat, e.latlng.lng];
+      setPosition(newPos);
+      if (onReverseGeocode) {
+        onReverseGeocode(newPos);
+      }
     },
   });
 
   return position ? <Marker position={position} /> : null;
 }
 
-export default function LocationPicker({ coordinates, onCoordinatesChange, address }) {
+export default function LocationPicker({ coordinates, onCoordinatesChange, address, onAddressChange }) {
   const [position, setPosition] = useState(
     coordinates?.lat && coordinates?.lng 
       ? [coordinates.lat, coordinates.lng] 
@@ -33,12 +37,19 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
   );
   const [searchAddress, setSearchAddress] = useState(address || '');
   const [isSearching, setIsSearching] = useState(false);
+  const [isReverseGeocoding, setIsReverseGeocoding] = useState(false);
 
   useEffect(() => {
     if (coordinates?.lat && coordinates?.lng) {
       setPosition([coordinates.lat, coordinates.lng]);
     }
   }, [coordinates]);
+
+  useEffect(() => {
+    if (address && address !== searchAddress) {
+      setSearchAddress(address);
+    }
+  }, [address]);
 
   const handlePositionChange = (newPosition) => {
     setPosition(newPosition);
@@ -50,6 +61,28 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
     }
   };
 
+  const reverseGeocode = async (pos) => {
+    setIsReverseGeocoding(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos[0]}&lon=${pos[1]}&accept-language=es`
+      );
+      const data = await response.json();
+      
+      if (data && data.display_name) {
+        const address = data.display_name;
+        setSearchAddress(address);
+        if (onAddressChange) {
+          onAddressChange(address);
+        }
+      }
+    } catch (error) {
+      console.error('Error en geocodificación inversa:', error);
+    } finally {
+      setIsReverseGeocoding(false);
+    }
+  };
+
   const handleSearch = async () => {
     if (!searchAddress.trim()) return;
     
@@ -57,14 +90,18 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
     try {
       // Using Nominatim (OpenStreetMap) geocoding service
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress)}&limit=1`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress)}&limit=1&accept-language=es`
       );
       const data = await response.json();
       
       if (data && data.length > 0) {
-        const { lat, lon } = data[0];
+        const { lat, lon, display_name } = data[0];
         const newPosition = [parseFloat(lat), parseFloat(lon)];
         handlePositionChange(newPosition);
+        setSearchAddress(display_name);
+        if (onAddressChange) {
+          onAddressChange(display_name);
+        }
       } else {
         alert('No se encontró la ubicación. Intenta con una dirección más específica.');
       }
@@ -86,11 +123,22 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               value={searchAddress}
-              onChange={(e) => setSearchAddress(e.target.value)}
+              onChange={(e) => {
+                setSearchAddress(e.target.value);
+                if (onAddressChange) {
+                  onAddressChange(e.target.value);
+                }
+              }}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="Ingresa una dirección..."
               className="pl-10"
+              disabled={isReverseGeocoding}
             />
+            {isReverseGeocoding && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+              </div>
+            )}
           </div>
           <Button 
             type="button"
@@ -149,7 +197,11 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <LocationMarker position={position} setPosition={handlePositionChange} />
+          <LocationMarker 
+            position={position} 
+            setPosition={handlePositionChange}
+            onReverseGeocode={reverseGeocode}
+          />
         </MapContainer>
       </div>
 

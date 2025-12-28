@@ -214,6 +214,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
                 coordinates={formData.coordinates}
                 onCoordinatesChange={(coords) => setFormData({ ...formData, coordinates: coords })}
                 address={formData.location}
+                onAddressChange={(addr) => setFormData({ ...formData, location: addr })}
               />
             </TabsContent>
 
