@@ -21,8 +21,8 @@ import {
   Heart,
   Anchor,
   Cloud,
-  HelpCircle
-} from 'lucide-react';
+  HelpCircle } from
+'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -34,14 +34,14 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SelectValue } from
+"@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  DialogTitle } from
+"@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import IncidentForm from '../components/incidents/IncidentForm';
@@ -101,25 +101,25 @@ export default function IncidentDetail() {
       const incidents = await base44.entities.Incident.filter({ id: incidentId });
       return incidents[0];
     },
-    enabled: !!incidentId,
+    enabled: !!incidentId
   });
 
   const { data: staff = [] } = useQuery({
     queryKey: ['staff', incidentId],
     queryFn: () => base44.entities.CommandStaff.filter({ incident_id: incidentId }),
-    enabled: !!incidentId,
+    enabled: !!incidentId
   });
 
   const { data: activities = [] } = useQuery({
     queryKey: ['activities', incidentId],
     queryFn: () => base44.entities.ActivityLog.filter({ incident_id: incidentId }, '-created_date', 20),
-    enabled: !!incidentId,
+    enabled: !!incidentId
   });
 
   const { data: resources = [] } = useQuery({
     queryKey: ['resources', incidentId],
     queryFn: () => base44.entities.Resource.filter({ incident_id: incidentId }),
-    enabled: !!incidentId,
+    enabled: !!incidentId
   });
 
   const updateMutation = useMutation({
@@ -127,7 +127,7 @@ export default function IncidentDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['incident', incidentId] });
       setShowEditForm(false);
-    },
+    }
   });
 
   const createLogMutation = useMutation({
@@ -140,26 +140,26 @@ export default function IncidentDetail() {
       queryClient.invalidateQueries({ queryKey: ['activities', incidentId] });
       setNewLog({ action: '', category: 'general', priority: 'info' });
       setShowLogForm(false);
-    },
+    }
   });
 
   const createStaffMutation = useMutation({
     mutationFn: (data) => base44.entities.CommandStaff.create({
       ...data,
-      incident_id: incidentId,
+      incident_id: incidentId
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff', incidentId] });
       setNewStaff({ role: '', name: '', contact: '', radio_channel: '' });
       setShowStaffForm(false);
-    },
+    }
   });
 
   const deleteStaffMutation = useMutation({
     mutationFn: (id) => base44.entities.CommandStaff.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff', incidentId] });
-    },
+    }
   });
 
   if (isLoading) {
@@ -173,8 +173,8 @@ export default function IncidentDetail() {
           </div>
           <Skeleton className="h-96 rounded-2xl" />
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   if (!incident) {
@@ -189,8 +189,8 @@ export default function IncidentDetail() {
             Volver a Incidentes
           </Button>
         </Link>
-      </Card>
-    );
+      </Card>);
+
   }
 
   const type = typeConfig[incident.type] || typeConfig.other;
@@ -219,10 +219,10 @@ export default function IncidentDetail() {
             <h1 className="text-2xl font-bold text-slate-900">{incident.name}</h1>
           </div>
         </div>
-        <Button 
+        <Button
           variant="outline"
-          onClick={() => setShowEditForm(true)}
-        >
+          onClick={() => setShowEditForm(true)}>
+
           <Edit2 className="w-4 h-4 mr-2" />
           Editar
         </Button>
@@ -230,16 +230,16 @@ export default function IncidentDetail() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="bg-gray-200 lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {incident.coordinates?.lat && incident.coordinates?.lng && (
-            <IncidentMap
-              incidents={[incident]}
-              selectedIncident={incident}
-              height="400px"
-              showRadius={true}
-            />
-          )}
+          {incident.coordinates?.lat && incident.coordinates?.lng &&
+          <IncidentMap
+            incidents={[incident]}
+            selectedIncident={incident}
+            height="400px"
+            showRadius={true} />
+
+          }
 
           {/* Info Card */}
           <Card className="p-6">
@@ -269,9 +269,9 @@ export default function IncidentDetail() {
                 <div>
                   <p className="text-xs text-slate-400">Inicio</p>
                   <p className="font-medium">
-                    {incident.start_time 
-                      ? format(new Date(incident.start_time), "dd MMM yyyy, HH:mm", { locale: es })
-                      : 'No especificado'}
+                    {incident.start_time ?
+                    format(new Date(incident.start_time), "dd MMM yyyy, HH:mm", { locale: es }) :
+                    'No especificado'}
                   </p>
                 </div>
               </div>
@@ -308,44 +308,44 @@ export default function IncidentDetail() {
                 </Button>
               </div>
               
-              {staff.length === 0 ? (
-                <Card className="p-8 text-center">
+              {staff.length === 0 ?
+              <Card className="p-8 text-center">
                   <Users className="w-10 h-10 text-slate-300 mx-auto mb-3" />
                   <p className="text-slate-500">No hay personal asignado</p>
-                </Card>
-              ) : (
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {staff.map((member) => (
-                    <Card key={member.id} className="p-4 group">
+                </Card> :
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                  {staff.map((member) =>
+                <Card key={member.id} className="p-4 group">
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="text-xs text-orange-600 font-medium mb-1">
                             {roleLabels[member.role] || member.role}
                           </p>
                           <p className="font-semibold text-slate-900">{member.name}</p>
-                          {member.contact && (
-                            <p className="text-sm text-slate-500 mt-1">{member.contact}</p>
-                          )}
-                          {member.radio_channel && (
-                            <p className="text-xs text-slate-400 mt-1">
+                          {member.contact &&
+                      <p className="text-sm text-slate-500 mt-1">{member.contact}</p>
+                      }
+                          {member.radio_channel &&
+                      <p className="text-xs text-slate-400 mt-1">
                               <Radio className="w-3 h-3 inline mr-1" />
                               Canal: {member.radio_channel}
                             </p>
-                          )}
+                      }
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
-                          onClick={() => deleteStaffMutation.mutate(member.id)}
-                        >
+                        <Button
+                      variant="ghost"
+                      size="icon"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
+                      onClick={() => deleteStaffMutation.mutate(member.id)}>
+
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </Card>
-                  ))}
+                )}
                 </div>
-              )}
+              }
             </TabsContent>
 
             <TabsContent value="resources" className="space-y-4">
@@ -359,30 +359,30 @@ export default function IncidentDetail() {
                 </Link>
               </div>
 
-              {resources.length === 0 ? (
-                <Card className="p-8 text-center">
+              {resources.length === 0 ?
+              <Card className="p-8 text-center">
                   <Radio className="w-10 h-10 text-slate-300 mx-auto mb-3" />
                   <p className="text-slate-500">No hay recursos asignados</p>
-                </Card>
-              ) : (
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {resources.map((resource) => (
-                    <Card key={resource.id} className="p-4">
+                </Card> :
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                  {resources.map((resource) =>
+                <Card key={resource.id} className="p-4">
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold text-slate-900">{resource.name}</p>
                           <p className="text-sm text-slate-500">{resource.category}</p>
                         </div>
                         <Badge variant={resource.status === 'deployed' ? 'default' : 'secondary'}>
-                          {resource.status === 'deployed' ? 'Desplegado' : 
-                           resource.status === 'available' ? 'Disponible' :
-                           resource.status === 'en_route' ? 'En Camino' : 'Fuera de Servicio'}
+                          {resource.status === 'deployed' ? 'Desplegado' :
+                      resource.status === 'available' ? 'Disponible' :
+                      resource.status === 'en_route' ? 'En Camino' : 'Fuera de Servicio'}
                         </Badge>
                       </div>
                     </Card>
-                  ))}
+                )}
                 </div>
-              )}
+              }
             </TabsContent>
           </Tabs>
         </div>
@@ -406,8 +406,8 @@ export default function IncidentDetail() {
         onClose={() => setShowEditForm(false)}
         onSubmit={updateMutation.mutate}
         incident={incident}
-        isLoading={updateMutation.isPending}
-      />
+        isLoading={updateMutation.isPending} />
+
 
       {/* Add Staff Modal */}
       <Dialog open={showStaffForm} onOpenChange={setShowStaffForm}>
@@ -420,15 +420,15 @@ export default function IncidentDetail() {
               <label className="text-sm font-medium">Rol</label>
               <Select
                 value={newStaff.role}
-                onValueChange={(value) => setNewStaff({ ...newStaff, role: value })}
-              >
+                onValueChange={(value) => setNewStaff({ ...newStaff, role: value })}>
+
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar rol" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(roleLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>{label}</SelectItem>
-                  ))}
+                  {Object.entries(roleLabels).map(([value, label]) =>
+                  <SelectItem key={value} value={value}>{label}</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -437,32 +437,32 @@ export default function IncidentDetail() {
               <Input
                 value={newStaff.name}
                 onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-                placeholder="Nombre completo"
-              />
+                placeholder="Nombre completo" />
+
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Contacto</label>
               <Input
                 value={newStaff.contact}
                 onChange={(e) => setNewStaff({ ...newStaff, contact: e.target.value })}
-                placeholder="Teléfono o radio"
-              />
+                placeholder="Teléfono o radio" />
+
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Canal de Radio</label>
               <Input
                 value={newStaff.radio_channel}
                 onChange={(e) => setNewStaff({ ...newStaff, radio_channel: e.target.value })}
-                placeholder="Ej: Canal 5"
-              />
+                placeholder="Ej: Canal 5" />
+
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button variant="outline" onClick={() => setShowStaffForm(false)}>Cancelar</Button>
-              <Button 
+              <Button
                 onClick={() => createStaffMutation.mutate(newStaff)}
                 disabled={!newStaff.role || !newStaff.name || createStaffMutation.isPending}
-                className="bg-orange-500 hover:bg-orange-600"
-              >
+                className="bg-orange-500 hover:bg-orange-600">
+
                 Agregar
               </Button>
             </div>
@@ -482,8 +482,8 @@ export default function IncidentDetail() {
                 <label className="text-sm font-medium">Categoría</label>
                 <Select
                   value={newLog.category}
-                  onValueChange={(value) => setNewLog({ ...newLog, category: value })}
-                >
+                  onValueChange={(value) => setNewLog({ ...newLog, category: value })}>
+
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -501,8 +501,8 @@ export default function IncidentDetail() {
                 <label className="text-sm font-medium">Prioridad</label>
                 <Select
                   value={newLog.priority}
-                  onValueChange={(value) => setNewLog({ ...newLog, priority: value })}
-                >
+                  onValueChange={(value) => setNewLog({ ...newLog, priority: value })}>
+
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -520,16 +520,16 @@ export default function IncidentDetail() {
                 value={newLog.action}
                 onChange={(e) => setNewLog({ ...newLog, action: e.target.value })}
                 placeholder="Describa la acción o evento..."
-                rows={3}
-              />
+                rows={3} />
+
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button variant="outline" onClick={() => setShowLogForm(false)}>Cancelar</Button>
-              <Button 
+              <Button
                 onClick={() => createLogMutation.mutate(newLog)}
                 disabled={!newLog.action || createLogMutation.isPending}
-                className="bg-orange-500 hover:bg-orange-600"
-              >
+                className="bg-orange-500 hover:bg-orange-600">
+
                 <Send className="w-4 h-4 mr-2" />
                 Registrar
               </Button>
@@ -537,6 +537,6 @@ export default function IncidentDetail() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>);
+
 }
