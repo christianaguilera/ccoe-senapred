@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl } from 'react-leaflet';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, AlertTriangle, Flame } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+
+const { BaseLayer } = LayersControl;
 
 // Fix for default marker icons in React-Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -132,10 +134,26 @@ export default function IncidentMap({
         >
           <MapController center={mapCenter} zoom={mapZoom} />
           
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <LayersControl position="topright">
+            <BaseLayer checked name="Mapa Estándar">
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            </BaseLayer>
+            <BaseLayer name="Satélite">
+              <TileLayer
+                attribution='&copy; Google'
+                url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+              />
+            </BaseLayer>
+            <BaseLayer name="Híbrido">
+              <TileLayer
+                attribution='&copy; Google'
+                url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+              />
+            </BaseLayer>
+          </LayersControl>
 
           {incidents.map((incident) => {
             if (!incident.coordinates?.lat || !incident.coordinates?.lng) return null;
