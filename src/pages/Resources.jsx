@@ -116,6 +116,35 @@ export default function Resources() {
     },
   });
 
+  const assignMutation = useMutation({
+    mutationFn: ({ resourceId, incidentId }) => 
+      base44.entities.Resource.update(resourceId, { 
+        incident_id: incidentId,
+        status: 'deployed'
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['resources'] });
+      setShowAssignDialog(false);
+      setResourceToAssign(null);
+    }
+  });
+
+  const handleResourceClick = (resource) => {
+    if (resource.status === 'available') {
+      setResourceToAssign(resource);
+      setShowAssignDialog(true);
+    }
+  };
+
+  const handleAssignToIncident = (incidentId) => {
+    if (resourceToAssign) {
+      assignMutation.mutate({
+        resourceId: resourceToAssign.id,
+        incidentId: incidentId
+      });
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: '',
@@ -270,7 +299,16 @@ export default function Resources() {
             const status = statusConfig[resource.status] || statusConfig.available;
             
             return (
-              <Card key={resource.id} className="p-5 group hover:shadow-md transition-shadow">
+              <Card 
+                key={resource.id} 
+                className={cn(
+                  "p-5 group transition-all",
+                  resource.status === 'available' 
+                    ? "hover:shadow-lg hover:border-orange-500 cursor-pointer" 
+                    : "hover:shadow-md"
+                )}
+                onClick={() => handleResourceClick(resource)}
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
                     <TypeIcon className="w-6 h-6 text-slate-600" />
@@ -280,8 +318,13 @@ export default function Resources() {
                       <div>
                         <h3 className="font-semibold text-slate-900 truncate">{resource.name}</h3>
                         <p className="text-sm text-slate-500">{resource.category || typeLabels[resource.type]}</p>
+                        {resource.status === 'available' && (
+                          <p className="text-xs text-orange-600 mt-1 font-medium">
+                            Click para asignar
+                          </p>
+                        )}
                       </div>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                         <Button 
                           variant="ghost" 
                           size="icon" 
@@ -318,6 +361,57 @@ export default function Resources() {
           })}
         </div>
       )}
+
+      {/* Assign to Incident Dialog */}
+      <Dialog open={showAssignDialog} onOpenChange={setShowAssignDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Asignar Recurso a Incidente</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            {resourceToAssign && (
+              <div className="p-3 bg-slate-50 rounded-lg">
+                <p className="text-sm text-slate-600">Recurso seleccionado:</p>
+                <p className="font-semibold text-slate-900">{resourceToAssign.name}</p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Seleccionar Incidente Activo:</Label>
+              {incidents.length === 0 ? (
+                <p className="text-sm text-slate-500 p-4 border border-dashed rounded-lg text-center">
+                  No hay incidentes activos disponibles
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {incidents.map((incident) => (
+                    <Card
+                      key={incident.id}
+                      className="p-3 hover:bg-orange-50 cursor-pointer transition-colors"
+                      onClick={() => handleAssignToIncident(incident.id)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-slate-900">{incident.name}</p>
+                          <p className="text-xs text-slate-500">#{incident.incident_number}</p>
+                          <p className="text-xs text-slate-600 mt-1">{incident.location}</p>
+                        </div>
+                        <Badge className="bg-red-100 text-red-700">Activo</Badge>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button variant="outline" onClick={() => setShowAssignDialog(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Form Modal */}
       <Dialog open={showForm} onOpenChange={resetForm}>
