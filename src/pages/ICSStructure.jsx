@@ -230,237 +230,174 @@ export default function ICSStructure() {
           <Skeleton className="h-64 w-full" />
         </div>
       ) : (
-        <div className="space-y-6">
-          {/* Incident Commander - Top Level */}
-          <div className="flex flex-col items-center">
-            <div className="w-full max-w-md">
-              <div className="text-center mb-2">
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                  Comando
-                </h3>
+        <Card className="p-8 bg-gradient-to-br from-slate-50 to-white">
+          {/* Organigrama Visual */}
+          <div className="space-y-8">
+            
+            {/* Nivel 1 - Comandante del Incidente */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-80">
+                <div 
+                  className="relative group cursor-pointer"
+                  onClick={() => handleAssign('incident_commander')}
+                >
+                  <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl opacity-75 group-hover:opacity-100 blur transition duration-300" />
+                  <div className="relative bg-white rounded-xl border-2 border-orange-500 p-6 hover:shadow-xl transition-all">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center flex-shrink-0">
+                        <Shield className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-orange-600 uppercase tracking-wider">Comando</p>
+                        <h3 className="font-bold text-slate-900 text-lg">Comandante del Incidente</h3>
+                        {getStaffByRole('incident_commander') ? (
+                          <div className="mt-1">
+                            <p className="font-semibold text-slate-700">{getStaffByRole('incident_commander').name}</p>
+                            {getStaffByRole('incident_commander').contact && (
+                              <p className="text-xs text-slate-500">{getStaffByRole('incident_commander').contact}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-slate-400 italic mt-1">Sin asignar</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div 
-                className="relative"
-                onClick={() => handleAssign('incident_commander')}
-              >
-                <OrgChartCard
-                  role="incident_commander"
-                  title={roleConfig.incident_commander.title}
-                  member={getStaffByRole('incident_commander')}
-                  level={1}
-                  color={roleConfig.incident_commander.color}
-                  variant="commander"
-                />
-                {!getStaffByRole('incident_commander') && (
-                  <Button 
-                    size="sm" 
-                    className="absolute top-2 right-2 opacity-0 hover:opacity-100 transition-opacity"
-                    variant="secondary"
-                  >
-                    <Plus className="w-4 h-4 mr-1" />
-                    Asignar
-                  </Button>
-                )}
-              </div>
+
+              {/* Líneas verticales hacia Staff de Comando */}
+              <div className="w-0.5 h-8 bg-slate-300" />
+              <div className="w-px h-4 bg-slate-300" />
             </div>
 
-            {/* Connector Line */}
-            <div className="w-0.5 h-8 bg-slate-300" />
-          </div>
-
-          {/* Command Staff - Second Level */}
-          <div>
-            <div className="text-center mb-4">
-              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                Staff de Comando
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-              {['public_info_officer', 'safety_officer', 'liaison_officer'].map((role) => {
+            {/* Nivel 2 - Staff de Comando */}
+            <div className="relative">
+              {/* Línea horizontal superior */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-slate-300" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto pt-8">
+              {['public_info_officer', 'safety_officer', 'liaison_officer'].map((role, idx) => {
                 const config = roleConfig[role];
                 const member = getStaffByRole(role);
+                const Icon = config.icon;
                 return (
-                  <div 
-                    key={role}
-                    className="relative group"
-                    onClick={() => handleAssign(role)}
-                  >
-                    <OrgChartCard
-                      role={role}
-                      title={config.title}
-                      member={member}
-                      level={2}
-                      color={config.color}
-                      variant="staff"
-                    />
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      {member ? (
-                        <>
-                          <Button 
-                            size="sm" 
-                            variant="secondary"
-                            className="h-7 px-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingMember(member);
-                              setShowForm(true);
-                            }}
-                          >
-                            <Edit2 className="w-3 h-3" />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="destructive"
-                            className="h-7 px-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteMutation.mutate(member.id);
-                            }}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </>
-                      ) : (
-                        <Button 
-                          size="sm" 
-                          variant="secondary"
-                          className="h-7"
-                        >
-                          <Plus className="w-3 h-3 mr-1" />
-                          Asignar
-                        </Button>
-                      )}
+                  <div key={role} className="relative">
+                    {/* Línea vertical hacia arriba */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-8 bg-slate-300 -mt-8" />
+                    
+                    <div 
+                      className="relative group cursor-pointer"
+                      onClick={() => handleAssign(role)}
+                    >
+                      <div className="bg-white rounded-lg border-2 border-slate-200 p-4 hover:border-slate-400 hover:shadow-lg transition-all">
+                        <div className="flex items-start gap-3">
+                          <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center flex-shrink-0`}>
+                            <Icon className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-slate-500 uppercase">Staff</p>
+                            <h4 className="font-semibold text-sm text-slate-900 leading-tight mb-1">
+                              {config.title}
+                            </h4>
+                            {member ? (
+                              <div>
+                                <p className="text-sm font-medium text-slate-700">{member.name}</p>
+                                {member.contact && (
+                                  <p className="text-xs text-slate-500">{member.contact}</p>
+                                )}
+                              </div>
+                            ) : (
+                              <p className="text-xs text-slate-400 italic">Sin asignar</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
               })}
+              </div>
             </div>
-          </div>
 
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2 border-slate-300" />
+            {/* Línea vertical hacia Secciones Generales */}
+            <div className="flex flex-col items-center py-6">
+              <div className="w-px h-12 bg-slate-300" />
+              <div className="w-20 h-px bg-slate-300" />
+              <div className="w-px h-12 bg-slate-300" />
             </div>
-          </div>
 
-          {/* General Staff - Sections */}
-          <div>
-            <div className="text-center mb-4">
-              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                Secciones Generales
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Nivel 3 - Secciones Generales */}
+            <div className="relative">
+              {/* Línea horizontal superior */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-11/12 h-px bg-slate-300" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-8">
               {['operations_chief', 'planning_chief', 'logistics_chief', 'finance_chief'].map((role) => {
                 const config = roleConfig[role];
                 const member = getStaffByRole(role);
                 const Icon = config.icon;
                 
                 return (
-                  <Card 
-                    key={role}
-                    className="group hover:shadow-lg transition-all cursor-pointer overflow-hidden"
-                    onClick={() => handleAssign(role)}
-                  >
-                    <div className={`h-2 ${config.color}`} />
-                    <div className="p-5">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center`}>
-                          <Icon className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-sm text-slate-900 leading-tight">
-                            {config.title}
-                          </h4>
-                        </div>
-                      </div>
-
-                      {member ? (
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <p className="font-semibold text-slate-900">{member.name}</p>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button 
-                                size="sm" 
-                                variant="ghost"
-                                className="h-7 w-7 p-0"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setEditingMember(member);
-                                  setShowForm(true);
-                                }}
-                              >
-                                <Edit2 className="w-3 h-3" />
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                variant="ghost"
-                                className="h-7 w-7 p-0 text-red-500"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteMutation.mutate(member.id);
-                                }}
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </Button>
+                  <div key={role} className="relative">
+                    {/* Línea vertical hacia arriba */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-8 bg-slate-300 -mt-8" />
+                    
+                    <div 
+                      className="group cursor-pointer"
+                      onClick={() => handleAssign(role)}
+                    >
+                      <div className="bg-white rounded-lg border-2 border-slate-200 overflow-hidden hover:border-slate-400 hover:shadow-xl transition-all">
+                        <div className={`h-3 ${config.color}`} />
+                        <div className="p-5">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className={`w-12 h-12 rounded-lg ${config.color} flex items-center justify-center flex-shrink-0`}>
+                              <Icon className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-semibold text-slate-500 uppercase">Sección</p>
+                              <h4 className="font-bold text-sm text-slate-900 leading-tight">
+                                {config.title}
+                              </h4>
                             </div>
                           </div>
-                          {member.contact && (
-                            <p className="text-xs text-slate-500">{member.contact}</p>
+
+                          {member ? (
+                            <div className="space-y-1 border-t pt-3">
+                              <p className="font-semibold text-slate-900 text-sm">{member.name}</p>
+                              {member.contact && (
+                                <p className="text-xs text-slate-500">📞 {member.contact}</p>
+                              )}
+                              {member.radio_channel && (
+                                <div className="flex items-center gap-1 text-xs text-slate-600">
+                                  <Radio className="w-3 h-3" />
+                                  {member.radio_channel}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-center py-3 border-t">
+                              <AlertCircle className="w-6 h-6 text-slate-300 mx-auto mb-1" />
+                              <p className="text-xs text-slate-400 italic">Sin asignar</p>
+                            </div>
                           )}
-                          {member.radio_channel && (
-                            <Badge variant="outline" className="text-xs">
-                              <Radio className="w-3 h-3 mr-1" />
-                              {member.radio_channel}
-                            </Badge>
-                          )}
-                          <p className="text-xs text-slate-400 mt-2">{config.description}</p>
                         </div>
-                      ) : (
-                        <div className="text-center py-4">
-                          <AlertCircle className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                          <p className="text-sm text-slate-400 mb-3">Sin asignar</p>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            className="w-full opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <Plus className="w-3 h-3 mr-1" />
-                            Asignar
-                          </Button>
-                        </div>
-                      )}
+                      </div>
                     </div>
-                  </Card>
+                  </div>
                 );
               })}
+              </div>
+            </div>
+
+            {/* Nota informativa */}
+            <div className="mt-8 text-center">
+              <p className="text-xs text-slate-400 italic">
+                Haz clic en cualquier posición para asignar o editar personal
+              </p>
             </div>
           </div>
-
-          {/* Legend */}
-          <Card className="p-4 bg-slate-50">
-            <h4 className="font-semibold text-slate-900 mb-3 text-sm">Leyenda ICS</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-orange-600" />
-                <span className="text-slate-600">Comando</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-emerald-600" />
-                <span className="text-slate-600">Operaciones</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-cyan-600" />
-                <span className="text-slate-600">Planificación</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-amber-600" />
-                <span className="text-slate-600">Logística</span>
-              </div>
-            </div>
-          </Card>
-        </div>
+        </Card>
       )}
 
       {/* Assignment Form */}
