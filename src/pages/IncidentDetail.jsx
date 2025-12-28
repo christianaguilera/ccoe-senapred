@@ -50,6 +50,7 @@ import IncidentForm from '../components/incidents/IncidentForm';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
 import IncidentMap from '../components/maps/IncidentMap';
 import FormSCI201 from '../components/reports/FormSCI201';
+import FormSCI202 from '../components/reports/FormSCI202';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -94,6 +95,7 @@ export default function IncidentDetail() {
   const [showStaffForm, setShowStaffForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showSCI201, setShowSCI201] = useState(false);
+  const [showSCI202, setShowSCI202] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
@@ -318,7 +320,7 @@ export default function IncidentDetail() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {!showEditForm && !showSCI201 && !showInstitutions && !showStaffForm && !showLogForm && incident.coordinates?.lat && incident.coordinates?.lng &&
+          {!showEditForm && !showSCI201 && !showSCI202 && !showInstitutions && !showStaffForm && !showLogForm && incident.coordinates?.lat && incident.coordinates?.lng &&
           <IncidentMap
             incidents={[incident]}
             selectedIncident={incident}
@@ -500,12 +502,20 @@ export default function IncidentDetail() {
           </div>
           <ActivityTimeline activities={activities} incidents={[incident]} />
 
-          <Button
-            className="w-full bg-blue-600 hover:bg-blue-700 mt-4"
-            onClick={() => setShowSCI201(true)}>
-            <FileText className="w-4 h-4 mr-2" />
-            SCI-201-Resumen del Incidente
-          </Button>
+          <div className="space-y-2 mt-4">
+            <Button
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              onClick={() => setShowSCI201(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              SCI-201-Resumen del Incidente
+            </Button>
+            <Button
+              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              onClick={() => setShowSCI202(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              SCI-202-Plan de Acción del Incidente
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -651,6 +661,12 @@ export default function IncidentDetail() {
       <FormSCI201
         open={showSCI201}
         onClose={() => setShowSCI201(false)}
+        incident={incident} />
+
+      {/* Formulario SCI-202 */}
+      <FormSCI202
+        open={showSCI202}
+        onClose={() => setShowSCI202(false)}
         incident={incident} />
 
       {/* Institutions Modal */}
