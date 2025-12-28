@@ -62,8 +62,12 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
   }, [coordinates?.lat, coordinates?.lng]);
 
   useEffect(() => {
-    if (address && address !== searchAddress && !isInitialMount.current) {
+    if (address && address !== searchAddress) {
       setSearchAddress(address);
+      // Si cambia la dirección desde fuera, buscar las coordenadas automáticamente
+      if (!isInitialMount.current && address.trim()) {
+        handleSearchForAddress(address);
+      }
     }
     isInitialMount.current = false;
   }, [address]);
@@ -101,14 +105,14 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchAddress.trim()) return;
+  const handleSearchForAddress = async (addressToSearch) => {
+    if (!addressToSearch.trim()) return;
     
     setIsSearching(true);
     try {
       // Using Nominatim (OpenStreetMap) geocoding service
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress)}&limit=1&accept-language=es`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressToSearch)}&limit=1&accept-language=es`
       );
       const data = await response.json();
       
@@ -120,15 +124,16 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
         if (onAddressChange) {
           onAddressChange(display_name);
         }
-      } else {
-        alert('No se encontró la ubicación. Intenta con una dirección más específica.');
       }
     } catch (error) {
       console.error('Error al buscar ubicación:', error);
-      alert('Error al buscar la ubicación. Por favor, intenta nuevamente.');
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleSearch = () => {
+    handleSearchForAddress(searchAddress);
   };
 
   return (
@@ -210,7 +215,6 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
           zoom={13}
           style={{ height: '300px', width: '100%' }}
           scrollWheelZoom={true}
-          key={`${mapCenter[0]}-${mapCenter[1]}`}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
