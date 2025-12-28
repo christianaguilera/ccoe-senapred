@@ -6,7 +6,8 @@ import {
   Download, 
   FileDown,
   BarChart3,
-  TrendingUp
+  TrendingUp,
+  FileEdit
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import ReportFilters from '../components/reports/ReportFilters';
 import ReportTable from '../components/reports/ReportTable';
+import FormSCI201 from '../components/reports/FormSCI201';
 
 const typeLabels = {
   fire: 'Incendio',
@@ -49,6 +51,9 @@ export default function Reports() {
     status: 'all',
     severity: 'all'
   });
+
+  const [showSCI201, setShowSCI201] = useState(false);
+  const [selectedIncident, setSelectedIncident] = useState(null);
 
   const { data: incidents = [], isLoading } = useQuery({
     queryKey: ['incidents'],
@@ -251,12 +256,23 @@ export default function Reports() {
             Exportar CSV
           </Button>
           <Button 
-            className="bg-orange-500 hover:bg-orange-600"
+            variant="outline"
             onClick={exportToPDF}
             disabled={filteredIncidents.length === 0}
           >
             <Download className="w-4 h-4 mr-2" />
             Exportar PDF
+          </Button>
+          <Button 
+            className="bg-orange-500 hover:bg-orange-600"
+            onClick={() => {
+              setSelectedIncident(filteredIncidents[0] || null);
+              setShowSCI201(true);
+            }}
+            disabled={isLoading}
+          >
+            <FileEdit className="w-4 h-4 mr-2" />
+            Formulario SCI-201
           </Button>
         </div>
       </div>
@@ -327,8 +343,21 @@ export default function Reports() {
           ))}
         </div>
       ) : (
-        <ReportTable incidents={filteredIncidents} />
+        <ReportTable 
+          incidents={filteredIncidents}
+          onOpenSCI201={(incident) => {
+            setSelectedIncident(incident);
+            setShowSCI201(true);
+          }}
+        />
       )}
+
+      {/* Formulario SCI-201 */}
+      <FormSCI201 
+        open={showSCI201}
+        onClose={() => setShowSCI201(false)}
+        incident={selectedIncident}
+      />
     </div>
   );
 }
