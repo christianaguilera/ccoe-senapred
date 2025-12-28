@@ -683,6 +683,12 @@ export default function IncidentDetail() {
                       <SelectItem value="Municipalidad">Municipalidad</SelectItem>
                       <SelectItem value="PDI">PDI</SelectItem>
                       <SelectItem value="Defensa Civil">Defensa Civil</SelectItem>
+                      <SelectItem value="CONAF">CONAF</SelectItem>
+                      <SelectItem value="MOP">MOP</SelectItem>
+                      <SelectItem value="Armada de Chile">Armada de Chile</SelectItem>
+                      <SelectItem value="FACH">FACH</SelectItem>
+                      <SelectItem value="BRIFE Ejército">BRIFE Ejército</SelectItem>
+                      <SelectItem value="PARME Ejército">PARME Ejército</SelectItem>
                       <SelectItem value="Otro">Otro</SelectItem>
                     </SelectContent>
                   </Select>
