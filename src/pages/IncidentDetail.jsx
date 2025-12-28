@@ -459,7 +459,7 @@ export default function IncidentDetail() {
             className="w-full bg-blue-600 hover:bg-blue-700 mt-4"
             onClick={() => setShowSCI201(true)}>
             <FileText className="w-4 h-4 mr-2" />
-            Formulario SCI-201
+            SCI-201-Resumen del Incidente
           </Button>
         </div>
       </div>
