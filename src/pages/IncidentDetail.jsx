@@ -53,6 +53,7 @@ import FormSCI201 from '../components/reports/FormSCI201';
 import FormSCI202 from '../components/reports/FormSCI202';
 import FormSCI203 from '../components/reports/FormSCI203';
 import FormSCI204 from '../components/reports/FormSCI204';
+import FormSCI205 from '../components/reports/FormSCI205';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -100,6 +101,7 @@ export default function IncidentDetail() {
   const [showSCI202, setShowSCI202] = useState(false);
   const [showSCI203, setShowSCI203] = useState(false);
   const [showSCI204, setShowSCI204] = useState(false);
+  const [showSCI205, setShowSCI205] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
@@ -324,7 +326,7 @@ export default function IncidentDetail() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {!showEditForm && !showSCI201 && !showSCI202 && !showSCI203 && !showSCI204 && !showInstitutions && !showStaffForm && !showLogForm && incident.coordinates?.lat && incident.coordinates?.lng &&
+          {!showEditForm && !showSCI201 && !showSCI202 && !showSCI203 && !showSCI204 && !showSCI205 && !showInstitutions && !showStaffForm && !showLogForm && incident.coordinates?.lat && incident.coordinates?.lng &&
           <IncidentMap
             incidents={[incident]}
             selectedIncident={incident}
@@ -531,6 +533,12 @@ export default function IncidentDetail() {
               <FileText className="w-4 h-4 mr-2" />
               SCI-204-Asignaciones Tácticas
             </Button>
+            <Button
+              className="w-full bg-teal-600 hover:bg-teal-700"
+              onClick={() => setShowSCI205(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              SCI-205-Plan de Comunicaciones
+            </Button>
             </div>
         </div>
       </div>
@@ -695,6 +703,12 @@ export default function IncidentDetail() {
       <FormSCI204
         open={showSCI204}
         onClose={() => setShowSCI204(false)}
+        incident={incident} />
+
+      {/* Formulario SCI-205 */}
+      <FormSCI205
+        open={showSCI205}
+        onClose={() => setShowSCI205(false)}
         incident={incident} />
 
       {/* Institutions Modal */}
