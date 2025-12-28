@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -43,7 +43,7 @@ export default function Dashboard() {
   // Notificar sobre incidentes críticos activos al cargar
   useEffect(() => {
     const notifyCriticalIncidents = async () => {
-      if (criticalIncidents.length > 0 && !isLoading) {
+      if (criticalIncidents.length > 0 && !loadingIncidents) {
         const user = await base44.auth.me();
         const existingNotifications = await base44.entities.Notification.filter({
           user_email: user.email,
@@ -73,7 +73,7 @@ export default function Dashboard() {
     };
     
     notifyCriticalIncidents();
-  }, [criticalIncidents.length, isLoading]);
+  }, [criticalIncidents.length, loadingIncidents]);
 
   return (
     <div className="space-y-8">
