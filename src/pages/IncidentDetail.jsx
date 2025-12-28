@@ -289,7 +289,7 @@ export default function IncidentDetail() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {!showEditForm && incident.coordinates?.lat && incident.coordinates?.lng &&
+          {!showEditForm && !showSCI201 && incident.coordinates?.lat && incident.coordinates?.lng &&
           <IncidentMap
             incidents={[incident]}
             selectedIncident={incident}
