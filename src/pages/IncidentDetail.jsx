@@ -276,21 +276,13 @@ export default function IncidentDetail() {
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowSCI201(true)}
-            className="border-blue-500 text-blue-600 hover:bg-blue-50">
-            <FileText className="w-4 h-4 mr-2" />
-            Formulario SCI-201
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShowEditForm(true)}>
-            <Edit2 className="w-4 h-4 mr-2" />
-            Editar
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={() => setShowEditForm(true)}>
+
+          <Edit2 className="w-4 h-4 mr-2" />
+          Editar
+        </Button>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -462,6 +454,13 @@ export default function IncidentDetail() {
             </Button>
           </div>
           <ActivityTimeline activities={activities} incidents={[incident]} />
+
+          <Button
+            className="w-full bg-blue-600 hover:bg-blue-700 mt-4"
+            onClick={() => setShowSCI201(true)}>
+            <FileText className="w-4 h-4 mr-2" />
+            Formulario SCI-201
+          </Button>
         </div>
       </div>
 
