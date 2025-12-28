@@ -49,6 +49,7 @@ import { cn } from "@/lib/utils";
 import IncidentForm from '../components/incidents/IncidentForm';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
 import IncidentMap from '../components/maps/IncidentMap';
+import ICSStructureView from '../components/incidents/ICSStructureView';
 import FormSCI201 from '../components/reports/FormSCI201';
 import FormSCI202 from '../components/reports/FormSCI202';
 import FormSCI203 from '../components/reports/FormSCI203';
@@ -411,6 +412,9 @@ export default function IncidentDetail() {
               </Button>
             </div>
           </Card>
+
+          {/* ICS Structure View */}
+          <ICSStructureView staff={staff} />
 
           {/* Tabs */}
           <Tabs defaultValue="staff" className="space-y-4">
