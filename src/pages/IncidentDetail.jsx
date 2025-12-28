@@ -450,7 +450,7 @@ export default function IncidentDetail() {
               Entrada
             </Button>
           </div>
-          <ActivityTimeline activities={activities} />
+          <ActivityTimeline activities={activities} incidents={[incident]} />
         </div>
       </div>
 

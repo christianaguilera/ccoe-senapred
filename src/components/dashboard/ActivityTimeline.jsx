@@ -20,7 +20,7 @@ const categoryConfig = {
   general: 'General'
 };
 
-export default function ActivityTimeline({ activities }) {
+export default function ActivityTimeline({ activities, incidents = [] }) {
   if (!activities || activities.length === 0) {
     return (
       <Card className="p-6 border-slate-200">
@@ -49,18 +49,27 @@ export default function ActivityTimeline({ activities }) {
 
               {/* Content */}
               <div className="flex-1 pb-4">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <Badge variant="outline" className={priority.color}>
                     {categoryConfig[activity.category] || 'General'}
                   </Badge>
                   <span className="text-xs text-slate-400">
                     {activity.timestamp 
-                      ? format(new Date(activity.timestamp), "HH:mm", { locale: es })
-                      : format(new Date(activity.created_date), "HH:mm", { locale: es })
+                      ? format(new Date(activity.timestamp), "dd/MM/yyyy HH:mm", { locale: es })
+                      : format(new Date(activity.created_date), "dd/MM/yyyy HH:mm", { locale: es })
                     }
                   </span>
                 </div>
                 <p className="text-sm text-slate-700">{activity.action}</p>
+                {(() => {
+                  const incident = incidents.find(inc => inc.id === activity.incident_id);
+                  return incident && (
+                    <div className="text-xs text-slate-500 mt-2 space-y-0.5">
+                      {incident.region && <p>📍 Región: {incident.region}</p>}
+                      {incident.comuna && <p>🏘️ Comuna: {incident.comuna}</p>}
+                    </div>
+                  );
+                })()}
                 {activity.reported_by && (
                   <p className="text-xs text-slate-400 mt-1">Por: {activity.reported_by}</p>
                 )}

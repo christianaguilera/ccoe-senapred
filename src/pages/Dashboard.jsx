@@ -218,7 +218,7 @@ export default function Dashboard() {
               </div>
             </Card>
           ) : (
-            <ActivityTimeline activities={activities} />
+            <ActivityTimeline activities={activities} incidents={incidents} />
           )}
         </div>
       </div>
