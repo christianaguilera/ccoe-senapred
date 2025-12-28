@@ -230,9 +230,9 @@ export default function IncidentDetail() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Content */}
-        <div className="bg-gray-200 lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {incident.coordinates?.lat && incident.coordinates?.lng &&
+          {!showEditForm && incident.coordinates?.lat && incident.coordinates?.lng &&
           <IncidentMap
             incidents={[incident]}
             selectedIncident={incident}
