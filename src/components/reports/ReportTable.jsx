@@ -40,7 +40,7 @@ const statusConfig = {
   monitoring: 'bg-blue-100 text-blue-700'
 };
 
-export default function ReportTable({ incidents }) {
+export default function ReportTable({ incidents, onOpenSCI201 }) {
   if (incidents.length === 0) {
     return (
       <Card className="p-12 text-center">
