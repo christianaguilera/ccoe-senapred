@@ -97,7 +97,7 @@ export default function IncidentDetail() {
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
-  const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1 });
+  const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', nombre_especifico: '', contact_person: '', phone: '', units_deployed: 1 });
 
   const queryClient = useQueryClient();
 
@@ -218,7 +218,7 @@ export default function IncidentDetail() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['institutions', incidentId] });
-      setNewInstitution({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1 });
+      setNewInstitution({ nombre: 'Bomberos', nombre_especifico: '', contact_person: '', phone: '', units_deployed: 1 });
       setShowInstitutions(false);
     }
   });
@@ -694,6 +694,13 @@ export default function IncidentDetail() {
                   </Select>
                 </div>
                 <div className="space-y-2">
+                  <label className="text-sm font-medium">Nombre Específico (opcional)</label>
+                  <Input
+                    value={newInstitution.nombre_especifico}
+                    onChange={(e) => setNewInstitution({ ...newInstitution, nombre_especifico: e.target.value })}
+                    placeholder="Ej: Bomberos de Santiago, 3ra Compañía" />
+                </div>
+                <div className="space-y-2">
                   <label className="text-sm font-medium">Persona de Contacto</label>
                   <Input
                     value={newInstitution.contact_person}
@@ -742,7 +749,10 @@ export default function IncidentDetail() {
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <p className="font-semibold text-slate-900">{institution.nombre}</p>
+                            <p className="font-semibold text-slate-900">
+                              {institution.nombre}
+                              {institution.nombre_especifico && ` - ${institution.nombre_especifico}`}
+                            </p>
                             {institution.units_deployed > 0 && (
                               <Badge variant="secondary">
                                 {institution.units_deployed} unidad(es)
