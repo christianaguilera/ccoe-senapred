@@ -55,6 +55,7 @@ import FormSCI202 from '../components/reports/FormSCI202';
 import FormSCI203 from '../components/reports/FormSCI203';
 import FormSCI204 from '../components/reports/FormSCI204';
 import FormSCI205 from '../components/reports/FormSCI205';
+import FormSCI206 from '../components/reports/FormSCI206';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -103,6 +104,7 @@ export default function IncidentDetail() {
   const [showSCI203, setShowSCI203] = useState(false);
   const [showSCI204, setShowSCI204] = useState(false);
   const [showSCI205, setShowSCI205] = useState(false);
+  const [showSCI206, setShowSCI206] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
@@ -553,6 +555,12 @@ export default function IncidentDetail() {
               <FileText className="w-4 h-4 mr-2" />
               SCI-205-Plan de Comunicaciones
             </Button>
+            <Button
+              className="w-full bg-rose-600 hover:bg-rose-700"
+              onClick={() => setShowSCI206(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              SCI-206-Plan Médico
+            </Button>
             </div>
         </div>
       </div>
@@ -723,6 +731,12 @@ export default function IncidentDetail() {
       <FormSCI205
         open={showSCI205}
         onClose={() => setShowSCI205(false)}
+        incident={incident} />
+
+      {/* Formulario SCI-206 */}
+      <FormSCI206
+        open={showSCI206}
+        onClose={() => setShowSCI206(false)}
         incident={incident} />
 
       {/* Institutions Modal */}
