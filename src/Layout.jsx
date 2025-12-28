@@ -11,7 +11,8 @@ import {
   Shield,
   Bell,
   MapPin,
-  FileText
+  FileText,
+  Archive
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,7 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const archiveNavigation = [
-    { name: 'Archivo de Incidentes', href: createPageUrl('DeletedIncidents'), icon: AlertTriangle, page: 'DeletedIncidents' },
+    { name: 'Archivo de Incidentes', href: createPageUrl('DeletedIncidents'), icon: Archive, page: 'DeletedIncidents' },
   ];
 
   return (
