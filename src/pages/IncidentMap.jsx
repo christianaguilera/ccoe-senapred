@@ -27,6 +27,7 @@ import IncidentCard from '../components/incidents/IncidentCard';
 
 export default function IncidentMapPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState('active');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [viewMode, setViewMode] = useState('map'); // 'map' or 'list'
@@ -34,6 +35,23 @@ export default function IncidentMapPage() {
   const { data: incidents = [], isLoading } = useQuery({
     queryKey: ['incidents'],
     queryFn: () => base44.entities.Incident.list('-created_date', 100),
+  });
+
+  const { data: resources = [] } = useQuery({
+    queryKey: ['resources'],
+    queryFn: () => base44.entities.Resource.list('-created_date', 200),
+  });
+
+  const { data: pois = [] } = useQuery({
+    queryKey: ['pois'],
+    queryFn: () => base44.entities.PointOfInterest.filter({ status: 'active' }),
+  });
+
+  const createPOIMutation = useMutation({
+    mutationFn: (poiData) => base44.entities.PointOfInterest.create(poiData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pois'] });
+    }
   });
 
   const filteredIncidents = incidents.filter((incident) => {
@@ -162,11 +180,12 @@ export default function IncidentMapPage() {
         </Card>
       ) : viewMode === 'map' ? (
         <div className="space-y-4">
-          <IncidentMap
+          <InteractiveMap
             incidents={filteredIncidents}
-            onIncidentClick={handleIncidentClick}
+            resources={resources}
+            pois={pois}
+            onAddPOI={(poiData) => createPOIMutation.mutate(poiData)}
             height="600px"
-            showRadius={statusFilter === 'active'}
           />
           
           {/* Legend */}
