@@ -56,6 +56,7 @@ import FormSCI203 from '../components/reports/FormSCI203';
 import FormSCI204 from '../components/reports/FormSCI204';
 import FormSCI205 from '../components/reports/FormSCI205';
 import FormSCI206 from '../components/reports/FormSCI206';
+import FormSCI207 from '../components/reports/FormSCI207';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -105,6 +106,7 @@ export default function IncidentDetail() {
   const [showSCI204, setShowSCI204] = useState(false);
   const [showSCI205, setShowSCI205] = useState(false);
   const [showSCI206, setShowSCI206] = useState(false);
+  const [showSCI207, setShowSCI207] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
@@ -329,7 +331,7 @@ export default function IncidentDetail() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {!showEditForm && !showSCI201 && !showSCI202 && !showSCI203 && !showSCI204 && !showSCI205 && !showSCI206 && !showInstitutions && !showStaffForm && !showLogForm && incident.coordinates?.lat && incident.coordinates?.lng &&
+          {!showEditForm && !showSCI201 && !showSCI202 && !showSCI203 && !showSCI204 && !showSCI205 && !showSCI206 && !showSCI207 && !showInstitutions && !showStaffForm && !showLogForm && incident.coordinates?.lat && incident.coordinates?.lng &&
           <IncidentMap
             incidents={[incident]}
             selectedIncident={incident}
@@ -561,6 +563,12 @@ export default function IncidentDetail() {
               <FileText className="w-4 h-4 mr-2" />
               SCI-206-Plan Médico
             </Button>
+            <Button
+              className="w-full bg-red-600 hover:bg-red-700"
+              onClick={() => setShowSCI207(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              SCI-207-Registro de Víctimas
+            </Button>
             </div>
         </div>
       </div>
@@ -737,6 +745,12 @@ export default function IncidentDetail() {
       <FormSCI206
         open={showSCI206}
         onClose={() => setShowSCI206(false)}
+        incident={incident} />
+
+      {/* Formulario SCI-207 */}
+      <FormSCI207
+        open={showSCI207}
+        onClose={() => setShowSCI207(false)}
         incident={incident} />
 
       {/* Institutions Modal */}
