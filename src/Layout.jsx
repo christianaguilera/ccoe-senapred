@@ -30,7 +30,7 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const archiveNavigation = [
-    { name: 'Incidentes Eliminados', href: createPageUrl('DeletedIncidents'), icon: AlertTriangle, page: 'DeletedIncidents' },
+    { name: 'Archivo de Incidentes', href: createPageUrl('DeletedIncidents'), icon: AlertTriangle, page: 'DeletedIncidents' },
   ];
 
   return (
