@@ -263,17 +263,6 @@ export default function Reports() {
             <Download className="w-4 h-4 mr-2" />
             Exportar PDF
           </Button>
-          <Button 
-            className="bg-orange-500 hover:bg-orange-600"
-            onClick={() => {
-              setSelectedIncident(filteredIncidents[0] || null);
-              setShowSCI201(true);
-            }}
-            disabled={isLoading}
-          >
-            <FileEdit className="w-4 h-4 mr-2" />
-            Formulario SCI-201
-          </Button>
         </div>
       </div>
 
