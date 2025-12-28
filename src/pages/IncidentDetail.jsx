@@ -22,7 +22,8 @@ import {
   Anchor,
   Cloud,
   HelpCircle,
-  FileText } from
+  FileText,
+  Building2 } from
 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -93,8 +94,10 @@ export default function IncidentDetail() {
   const [showStaffForm, setShowStaffForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showSCI201, setShowSCI201] = useState(false);
+  const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
+  const [newInstitution, setNewInstitution] = useState({ name: '', type: 'bomberos', contact_person: '', phone: '', units_deployed: 1 });
 
   const queryClient = useQueryClient();
 
@@ -122,6 +125,12 @@ export default function IncidentDetail() {
   const { data: resources = [] } = useQuery({
     queryKey: ['resources', incidentId],
     queryFn: () => base44.entities.Resource.filter({ incident_id: incidentId }),
+    enabled: !!incidentId
+  });
+
+  const { data: institutions = [] } = useQuery({
+    queryKey: ['institutions', incidentId],
+    queryFn: () => base44.entities.Institution.filter({ incident_id: incidentId }),
     enabled: !!incidentId
   });
 
@@ -198,6 +207,26 @@ export default function IncidentDetail() {
     mutationFn: (id) => base44.entities.CommandStaff.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff', incidentId] });
+    }
+  });
+
+  const createInstitutionMutation = useMutation({
+    mutationFn: (data) => base44.entities.Institution.create({
+      ...data,
+      incident_id: incidentId,
+      arrival_time: new Date().toISOString()
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['institutions', incidentId] });
+      setNewInstitution({ name: '', type: 'bomberos', contact_person: '', phone: '', units_deployed: 1 });
+      setShowInstitutions(false);
+    }
+  });
+
+  const deleteInstitutionMutation = useMutation({
+    mutationFn: (id) => base44.entities.Institution.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['institutions', incidentId] });
     }
   });
 
@@ -346,6 +375,22 @@ export default function IncidentDetail() {
                   <p className="font-medium">{resources.length} recurso(s)</p>
                 </div>
               </div>
+              <div className="flex items-center gap-3 text-slate-600">
+                <Building2 className="w-5 h-5 text-slate-400" />
+                <div>
+                  <p className="text-xs text-slate-400">Instituciones Presentes</p>
+                  <p className="font-medium">{institutions.length} institución(es)</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="pt-4 border-t mt-4">
+              <Button 
+                className="w-full bg-indigo-600 hover:bg-indigo-700"
+                onClick={() => setShowInstitutions(true)}>
+                <Building2 className="w-4 h-4 mr-2" />
+                Gestionar Instituciones Presentes
+              </Button>
             </div>
           </Card>
 
@@ -607,6 +652,147 @@ export default function IncidentDetail() {
         open={showSCI201}
         onClose={() => setShowSCI201(false)}
         incident={incident} />
+
+      {/* Institutions Modal */}
+      <Dialog open={showInstitutions} onOpenChange={setShowInstitutions}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Instituciones Presentes en el Incidente</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 pt-4">
+            {/* Add Institution Form */}
+            <Card className="p-4 bg-slate-50">
+              <h4 className="font-semibold mb-4">Agregar Institución</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Nombre de la Institución</label>
+                  <Input
+                    value={newInstitution.name}
+                    onChange={(e) => setNewInstitution({ ...newInstitution, name: e.target.value })}
+                    placeholder="Ej: Bomberos de Santiago" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Tipo</label>
+                  <Select
+                    value={newInstitution.type}
+                    onValueChange={(value) => setNewInstitution({ ...newInstitution, type: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bomberos">Bomberos</SelectItem>
+                      <SelectItem value="carabineros">Carabineros</SelectItem>
+                      <SelectItem value="ambulancia">Ambulancia/SAMU</SelectItem>
+                      <SelectItem value="ejercito">Ejército</SelectItem>
+                      <SelectItem value="onemi">ONEMI</SelectItem>
+                      <SelectItem value="cruz_roja">Cruz Roja</SelectItem>
+                      <SelectItem value="municipalidad">Municipalidad</SelectItem>
+                      <SelectItem value="otro">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Persona de Contacto</label>
+                  <Input
+                    value={newInstitution.contact_person}
+                    onChange={(e) => setNewInstitution({ ...newInstitution, contact_person: e.target.value })}
+                    placeholder="Nombre del contacto" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Teléfono</label>
+                  <Input
+                    value={newInstitution.phone}
+                    onChange={(e) => setNewInstitution({ ...newInstitution, phone: e.target.value })}
+                    placeholder="+56 9 1234 5678" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Unidades Desplegadas</label>
+                  <Input
+                    type="number"
+                    value={newInstitution.units_deployed}
+                    onChange={(e) => setNewInstitution({ ...newInstitution, units_deployed: parseInt(e.target.value) || 1 })}
+                    min="1" />
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    className="w-full bg-indigo-600 hover:bg-indigo-700"
+                    onClick={() => createInstitutionMutation.mutate(newInstitution)}
+                    disabled={!newInstitution.name || createInstitutionMutation.isPending}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Agregar Institución
+                  </Button>
+                </div>
+              </div>
+            </Card>
+
+            {/* Institutions List */}
+            <div className="space-y-3">
+              <h4 className="font-semibold">Instituciones Registradas ({institutions.length})</h4>
+              {institutions.length === 0 ? (
+                <Card className="p-8 text-center">
+                  <Building2 className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                  <p className="text-slate-500">No hay instituciones registradas</p>
+                </Card>
+              ) : (
+                <div className="space-y-2">
+                  {institutions.map((institution) => (
+                    <Card key={institution.id} className="p-4 group hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline" className="capitalize">
+                              {institution.type.replace('_', ' ')}
+                            </Badge>
+                            {institution.units_deployed > 0 && (
+                              <Badge variant="secondary">
+                                {institution.units_deployed} unidad(es)
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="font-semibold text-slate-900">{institution.name}</p>
+                          <div className="grid grid-cols-2 gap-2 mt-2 text-sm text-slate-600">
+                            {institution.contact_person && (
+                              <div className="flex items-center gap-1">
+                                <User className="w-3 h-3" />
+                                <span>{institution.contact_person}</span>
+                              </div>
+                            )}
+                            {institution.phone && (
+                              <div className="flex items-center gap-1">
+                                <Radio className="w-3 h-3" />
+                                <span>{institution.phone}</span>
+                              </div>
+                            )}
+                          </div>
+                          {institution.arrival_time && (
+                            <p className="text-xs text-slate-400 mt-2">
+                              Llegada: {format(new Date(institution.arrival_time), "dd/MM/yyyy HH:mm", { locale: es })}
+                            </p>
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
+                          onClick={() => deleteInstitutionMutation.mutate(institution.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end pt-4 border-t">
+              <Button variant="outline" onClick={() => setShowInstitutions(false)}>
+                Cerrar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       </div>);
 
       }
