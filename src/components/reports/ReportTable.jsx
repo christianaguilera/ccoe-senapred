@@ -4,7 +4,7 @@ import { createPageUrl } from '../../utils';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, FileEdit } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
@@ -126,11 +126,23 @@ export default function ReportTable({ incidents, onOpenSCI201 }) {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Link to={createPageUrl(`IncidentDetail?id=${incident.id}`)}>
-                      <Button variant="ghost" size="sm">
-                        <ExternalLink className="w-4 h-4" />
-                      </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link to={createPageUrl(`IncidentDetail?id=${incident.id}`)}>
+                        <Button variant="ghost" size="sm">
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </Link>
+                      {onOpenSCI201 && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => onOpenSCI201(incident)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          <FileEdit className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
