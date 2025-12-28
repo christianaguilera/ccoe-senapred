@@ -144,7 +144,11 @@ export default function FormSCI203({ open, onClose, incident }) {
                 <h2 className="text-2xl font-bold text-orange-600">Formulario SCI - 203</h2>
                 <p className="text-lg font-semibold text-slate-700">Listado de Asignación en la Organización</p>
               </div>
-              <div className="w-24"></div>
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/694ed54b1d1364757e1b5450/93620ed88_LogoSENAPRED.png" 
+                alt="Logo SENAPRED"
+                className="w-24 h-16 object-contain"
+              />
             </div>
           </div>
 
