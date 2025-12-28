@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +36,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
     incident_commander: '',
     start_time: new Date().toISOString().slice(0, 16),
   });
+  const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (incident) {
@@ -76,6 +77,39 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
+  };
+
+  const handleLocationChange = (newLocation) => {
+    setFormData({ ...formData, location: newLocation });
+    
+    // Auto-búsqueda con debounce
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    searchTimeoutRef.current = setTimeout(async () => {
+      if (newLocation.trim().length > 5) {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(newLocation)}&limit=1&accept-language=es`
+          );
+          const data = await response.json();
+          
+          if (data && data.length > 0) {
+            const { lat, lon } = data[0];
+            setFormData(prev => ({
+              ...prev,
+              coordinates: {
+                lat: parseFloat(lat),
+                lng: parseFloat(lon)
+              }
+            }));
+          }
+        } catch (error) {
+          console.error('Error al buscar coordenadas:', error);
+        }
+      }
+    }, 1000);
   };
 
   return (
@@ -190,10 +224,13 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Dirección o ubicación del incidente"
+                  onChange={(e) => handleLocationChange(e.target.value)}
+                  placeholder="Escribe la dirección y el mapa se actualizará automáticamente"
                   required
                 />
+                <p className="text-xs text-slate-500">
+                  El mapa se actualiza automáticamente al escribir la dirección
+                </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
