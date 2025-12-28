@@ -30,13 +30,16 @@ export default function Incidents() {
 
   const queryClient = useQueryClient();
 
-  const { data: incidents = [], isLoading } = useQuery({
+  const { data: allIncidents = [], isLoading } = useQuery({
     queryKey: ['incidents'],
     queryFn: () => base44.entities.Incident.list('-created_date', 100),
   });
 
+  // Filter out deleted incidents
+  const incidents = allIncidents.filter(i => !i.deleted);
+
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Incident.delete(id),
+    mutationFn: (id) => base44.entities.Incident.update(id, { deleted: true }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['incidents'] });
     }
