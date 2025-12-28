@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import React, { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,30 +29,48 @@ function LocationMarker({ position, setPosition, onReverseGeocode }) {
   return position ? <Marker position={position} /> : null;
 }
 
+function MapUpdater({ center }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (center) {
+      map.setView(center, 13);
+    }
+  }, [center, map]);
+  
+  return null;
+}
+
 export default function LocationPicker({ coordinates, onCoordinatesChange, address, onAddressChange }) {
   const [position, setPosition] = useState(
     coordinates?.lat && coordinates?.lng 
       ? [coordinates.lat, coordinates.lng] 
       : [19.4326, -99.1332] // Default: Mexico City
   );
+  const [mapCenter, setMapCenter] = useState(position);
   const [searchAddress, setSearchAddress] = useState(address || '');
   const [isSearching, setIsSearching] = useState(false);
   const [isReverseGeocoding, setIsReverseGeocoding] = useState(false);
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
     if (coordinates?.lat && coordinates?.lng) {
-      setPosition([coordinates.lat, coordinates.lng]);
+      const newPos = [coordinates.lat, coordinates.lng];
+      setPosition(newPos);
+      setMapCenter(newPos);
     }
-  }, [coordinates]);
+  }, [coordinates?.lat, coordinates?.lng]);
 
   useEffect(() => {
-    if (address && address !== searchAddress) {
+    if (address && address !== searchAddress && !isInitialMount.current) {
       setSearchAddress(address);
     }
+    isInitialMount.current = false;
   }, [address]);
 
   const handlePositionChange = (newPosition) => {
     setPosition(newPosition);
+    setMapCenter(newPosition);
     if (onCoordinatesChange) {
       onCoordinatesChange({
         lat: newPosition[0],
@@ -188,15 +206,17 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
       {/* Map */}
       <div className="border rounded-lg overflow-hidden">
         <MapContainer
-          center={position}
+          center={mapCenter}
           zoom={13}
           style={{ height: '300px', width: '100%' }}
           scrollWheelZoom={true}
+          key={`${mapCenter[0]}-${mapCenter[1]}`}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <MapUpdater center={mapCenter} />
           <LocationMarker 
             position={position} 
             setPosition={handlePositionChange}
