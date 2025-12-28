@@ -685,7 +685,7 @@ export default function IncidentDetail() {
                       <SelectItem value="carabineros">Carabineros</SelectItem>
                       <SelectItem value="ambulancia">Ambulancia/SAMU</SelectItem>
                       <SelectItem value="ejercito">Ejército</SelectItem>
-                      <SelectItem value="onemi">ONEMI</SelectItem>
+                      <SelectItem value="senapred">SENAPRED</SelectItem>
                       <SelectItem value="cruz_roja">Cruz Roja</SelectItem>
                       <SelectItem value="municipalidad">Municipalidad</SelectItem>
                       <SelectItem value="otro">Otro</SelectItem>
