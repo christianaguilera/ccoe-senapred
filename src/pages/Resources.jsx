@@ -67,6 +67,8 @@ export default function Resources() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [resourceToAssign, setResourceToAssign] = useState(null);
 
   const [formData, setFormData] = useState({
     name: '',
