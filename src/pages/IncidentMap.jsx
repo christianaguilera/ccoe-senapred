@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { 
@@ -22,12 +22,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import InteractiveMap from '../components/maps/InteractiveMap';
+import IncidentMap from '../components/maps/IncidentMap';
 import IncidentCard from '../components/incidents/IncidentCard';
 
 export default function IncidentMapPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState('active');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [viewMode, setViewMode] = useState('map'); // 'map' or 'list'
@@ -35,23 +34,6 @@ export default function IncidentMapPage() {
   const { data: incidents = [], isLoading } = useQuery({
     queryKey: ['incidents'],
     queryFn: () => base44.entities.Incident.list('-created_date', 100),
-  });
-
-  const { data: resources = [] } = useQuery({
-    queryKey: ['resources'],
-    queryFn: () => base44.entities.Resource.list('-created_date', 200),
-  });
-
-  const { data: pois = [] } = useQuery({
-    queryKey: ['pois'],
-    queryFn: () => base44.entities.PointOfInterest.filter({ status: 'active' }),
-  });
-
-  const createPOIMutation = useMutation({
-    mutationFn: (poiData) => base44.entities.PointOfInterest.create(poiData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pois'] });
-    }
   });
 
   const filteredIncidents = incidents.filter((incident) => {
@@ -180,12 +162,11 @@ export default function IncidentMapPage() {
         </Card>
       ) : viewMode === 'map' ? (
         <div className="space-y-4">
-          <InteractiveMap
+          <IncidentMap
             incidents={filteredIncidents}
-            resources={resources}
-            pois={pois}
-            onAddPOI={(poiData) => createPOIMutation.mutate(poiData)}
+            onIncidentClick={handleIncidentClick}
             height="600px"
+            showRadius={statusFilter === 'active'}
           />
           
           {/* Legend */}
