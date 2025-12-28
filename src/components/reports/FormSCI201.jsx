@@ -73,7 +73,7 @@ export default function FormSCI201({ open, onClose, incident }) {
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto z-[100]">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl">Formulario SCI-201 - Resumen del Incidente</DialogTitle>
+            <DialogTitle className="text-xl">SCI-201-Resumen del Incidente</DialogTitle>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={handlePrint}>
                 <Printer className="w-4 h-4 mr-2" />
