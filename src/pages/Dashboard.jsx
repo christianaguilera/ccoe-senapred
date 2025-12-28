@@ -81,7 +81,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Panel de Control</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Panel de Mando</h1>
           <p className="text-slate-500 mt-1">Resumen del sistema de comando de incidentes</p>
         </div>
         <Link to={createPageUrl('Incidents')}>
