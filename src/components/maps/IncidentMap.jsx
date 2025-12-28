@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl, Polygon } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl } from 'react-leaflet';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -107,19 +107,7 @@ const createPOIIcon = (type) => {
   });
 };
 
-// SENAPRED alert regions (example data)
-const senapredAlertRegions = [
-  {
-    name: 'Región Metropolitana',
-    type: 'Roja',
-    coordinates: [
-      [-33.35, -70.85],
-      [-33.35, -70.45],
-      [-33.60, -70.45],
-      [-33.60, -70.85]
-    ]
-  }
-];
+
 
 function MapController({ center, zoom }) {
   const map = useMap();
@@ -248,15 +236,7 @@ export default function IncidentMap({
     return labels[type] || type;
   };
 
-  const getAlertColor = (type) => {
-    const colors = {
-      'Roja': '#ef4444',
-      'Amarilla': '#eab308',
-      'Verde': '#22c55e',
-      'Temprana Preventiva': '#3b82f6'
-    };
-    return colors[type] || '#64748b';
-  };
+
 
   return (
     <Card className="overflow-hidden">
@@ -301,39 +281,6 @@ export default function IncidentMap({
                 url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
               />
             </BaseLayer>
-
-            {/* Capa de Alertas SENAPRED */}
-            <Overlay name="Alertas SENAPRED">
-              <>
-                {senapredAlertRegions.map((region, idx) => (
-                  <Polygon
-                    key={idx}
-                    positions={region.coordinates}
-                    pathOptions={{
-                      color: getAlertColor(region.type),
-                      fillColor: getAlertColor(region.type),
-                      fillOpacity: 0.15,
-                      weight: 2
-                    }}
-                  >
-                    <Popup>
-                      <div className="p-2">
-                        <h3 className="font-semibold text-slate-900">{region.name}</h3>
-                        <Badge 
-                          className="mt-1"
-                          style={{ 
-                            backgroundColor: getAlertColor(region.type),
-                            color: 'white'
-                          }}
-                        >
-                          Alerta {region.type}
-                        </Badge>
-                      </div>
-                    </Popup>
-                  </Polygon>
-                ))}
-              </>
-            </Overlay>
 
             {/* Capa de Radio de Incidentes */}
             <Overlay checked name="Radio de Incidentes">
