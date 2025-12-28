@@ -16,7 +16,7 @@ import {
   Cloud,
   Users,
   HelpCircle,
-  Trash2
+  Archive
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -112,9 +112,9 @@ export default function IncidentCard({ incident, onDelete }) {
               variant="ghost"
               size="icon"
               onClick={handleDelete}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500 hover:bg-red-50"
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-orange-500 hover:bg-orange-50"
             >
-              <Trash2 className="w-4 h-4" />
+              <Archive className="w-4 h-4" />
             </Button>
             <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-orange-500 group-hover:translate-x-1 transition-all" />
           </div>
