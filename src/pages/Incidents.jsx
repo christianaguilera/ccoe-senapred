@@ -35,6 +35,13 @@ export default function Incidents() {
     queryFn: () => base44.entities.Incident.list('-created_date', 100),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Incident.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incidents'] });
+    }
+  });
+
   const createMutation = useMutation({
     mutationFn: async (data) => {
       const newIncident = await base44.entities.Incident.create(data);
