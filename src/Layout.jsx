@@ -52,9 +52,11 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-800">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/694ed54b1d1364757e1b5450/b5ac78cc1_LogoSENAPRED.png" 
+              alt="SENAPRED Logo"
+              className="w-12 h-12 object-contain"
+            />
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight">ICS Command</h1>
               <p className="text-xs text-slate-400">Sistema de Incidentes</p>
