@@ -89,10 +89,20 @@ export default function FormSCI201({ open, onClose, incident }) {
 
         <div ref={formRef} className="space-y-6 pt-4 bg-white">
           {/* Header del formulario */}
-          <div className="text-center border-b-2 border-orange-500 pb-4">
-            <h2 className="text-2xl font-bold text-orange-600">Formulario SCI - 201</h2>
-            <p className="text-lg font-semibold text-slate-700">Resumen del Incidente</p>
-            <p className="text-xs text-slate-500">Rev. 06 - 2015</p>
+          <div className="border-b-2 border-orange-500 pb-4">
+            <div className="flex items-start gap-4">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/694ed54b1d1364757e1b5450/1ee2fb157_LogoSCI.jpg" 
+                alt="Logo SCI"
+                className="w-24 h-16 object-contain"
+              />
+              <div className="flex-1 text-center">
+                <h2 className="text-2xl font-bold text-orange-600">Formulario SCI - 201</h2>
+                <p className="text-lg font-semibold text-slate-700">Resumen del Incidente</p>
+                <p className="text-xs text-slate-500">Rev. 06 - 2015</p>
+              </div>
+              <div className="w-24"></div>
+            </div>
           </div>
 
           <Tabs defaultValue="page1" className="w-full">
