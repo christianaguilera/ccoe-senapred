@@ -59,6 +59,7 @@ import FormSCI206 from '../components/reports/FormSCI206';
 import FormSCI207 from '../components/reports/FormSCI207';
 import FormSCI211 from '../components/reports/FormSCI211';
 import FormSCI214 from '../components/reports/FormSCI214';
+import GeneralIncidentReport from '../components/reports/GeneralIncidentReport';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -111,6 +112,7 @@ export default function IncidentDetail() {
   const [showSCI207, setShowSCI207] = useState(false);
   const [showSCI211, setShowSCI211] = useState(false);
   const [showSCI214, setShowSCI214] = useState(false);
+  const [showGeneralReport, setShowGeneralReport] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
@@ -119,7 +121,7 @@ export default function IncidentDetail() {
   // Check if any modal/dialog is open
   const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 || 
     showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 || 
-    showSCI207 || showSCI211 || showSCI214 || showInstitutions;
+    showSCI207 || showSCI211 || showSCI214 || showGeneralReport || showInstitutions;
 
   const queryClient = useQueryClient();
 
@@ -327,13 +329,20 @@ export default function IncidentDetail() {
             </div>
           </div>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => setShowEditForm(true)}>
-
-          <Edit2 className="w-4 h-4 mr-2" />
-          Editar
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            className="bg-orange-600 hover:bg-orange-700 text-white"
+            onClick={() => setShowGeneralReport(true)}>
+            <FileText className="w-4 h-4 mr-2" />
+            Reporte General
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowEditForm(true)}>
+            <Edit2 className="w-4 h-4 mr-2" />
+            Editar
+          </Button>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -784,6 +793,17 @@ export default function IncidentDetail() {
         open={showSCI214}
         onClose={() => setShowSCI214(false)}
         incident={incident} />
+
+      {/* Reporte General */}
+      <GeneralIncidentReport
+        open={showGeneralReport}
+        onClose={() => setShowGeneralReport(false)}
+        incident={incident}
+        staff={staff}
+        resources={resources}
+        institutions={institutions}
+        activities={activities}
+      />
 
       {/* Institutions Modal */}
       <Dialog open={showInstitutions} onOpenChange={setShowInstitutions}>
