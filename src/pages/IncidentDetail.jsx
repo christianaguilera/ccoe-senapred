@@ -58,6 +58,7 @@ import FormSCI205 from '../components/reports/FormSCI205';
 import FormSCI206 from '../components/reports/FormSCI206';
 import FormSCI207 from '../components/reports/FormSCI207';
 import FormSCI211 from '../components/reports/FormSCI211';
+import FormSCI214 from '../components/reports/FormSCI214';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -109,6 +110,7 @@ export default function IncidentDetail() {
   const [showSCI206, setShowSCI206] = useState(false);
   const [showSCI207, setShowSCI207] = useState(false);
   const [showSCI211, setShowSCI211] = useState(false);
+  const [showSCI214, setShowSCI214] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
@@ -117,7 +119,7 @@ export default function IncidentDetail() {
   // Check if any modal/dialog is open
   const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 || 
     showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 || 
-    showSCI207 || showSCI211 || showInstitutions;
+    showSCI207 || showSCI211 || showSCI214 || showInstitutions;
 
   const queryClient = useQueryClient();
 
@@ -581,6 +583,12 @@ export default function IncidentDetail() {
               <FileText className="w-4 h-4 mr-2" />
               SCI-211-Registro y Control de Recursos
             </Button>
+            <Button
+              className="w-full bg-cyan-600 hover:bg-cyan-700"
+              onClick={() => setShowSCI214(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              SCI-214-Registro de Actividades
+            </Button>
             </div>
         </div>
       </div>
@@ -769,6 +777,12 @@ export default function IncidentDetail() {
       <FormSCI211
         open={showSCI211}
         onClose={() => setShowSCI211(false)}
+        incident={incident} />
+
+      {/* Formulario SCI-214 */}
+      <FormSCI214
+        open={showSCI214}
+        onClose={() => setShowSCI214(false)}
         incident={incident} />
 
       {/* Institutions Modal */}
