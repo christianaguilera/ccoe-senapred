@@ -208,7 +208,7 @@ export default function Dashboard() {
 
           {/* Activity Timeline */}
           <div>
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Actividad Reciente</h2>
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Actividad Reciente Regional</h2>
             {loadingActivities ? (
               <Card className="p-6">
                 <div className="space-y-4">
