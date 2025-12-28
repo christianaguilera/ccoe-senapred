@@ -22,7 +22,8 @@ import {
   Anchor,
   Cloud,
   HelpCircle,
-  FileText } from
+  FileText,
+  Building2 } from
 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -93,6 +94,7 @@ export default function IncidentDetail() {
   const [showStaffForm, setShowStaffForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showSCI201, setShowSCI201] = useState(false);
+  const [showInstitutions, setShowInstitutions] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
 
@@ -408,12 +410,18 @@ export default function IncidentDetail() {
             <TabsContent value="resources" className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="font-semibold text-slate-900">Recursos Asignados</h3>
-                <Link to={createPageUrl(`Resources?incident=${incidentId}`)}>
-                  <Button size="sm">
-                    <Plus className="w-4 h-4 mr-1" />
-                    Gestionar
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => setShowInstitutions(true)}>
+                    <Building2 className="w-4 h-4 mr-1" />
+                    Instituciones
                   </Button>
-                </Link>
+                  <Link to={createPageUrl(`Resources?incident=${incidentId}`)}>
+                    <Button size="sm">
+                      <Plus className="w-4 h-4 mr-1" />
+                      Gestionar
+                    </Button>
+                  </Link>
+                </div>
               </div>
 
               {resources.length === 0 ?
@@ -598,6 +606,46 @@ export default function IncidentDetail() {
                 Registrar
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Instituciones Presentes Modal */}
+      <Dialog open={showInstitutions} onOpenChange={setShowInstitutions}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Instituciones Presentes en el Incidente</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            {(() => {
+              const institutions = [...new Set(resources.map(r => r.category).filter(Boolean))];
+              return institutions.length > 0 ? (
+                <div className="space-y-2">
+                  {institutions.map((institution, index) => {
+                    const count = resources.filter(r => r.category === institution).length;
+                    return (
+                      <Card key={index} className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Building2 className="w-5 h-5 text-orange-600" />
+                            <div>
+                              <p className="font-semibold text-slate-900">{institution}</p>
+                              <p className="text-sm text-slate-500">{count} recurso{count !== 1 ? 's' : ''}</p>
+                            </div>
+                          </div>
+                          <Badge variant="secondary">{count}</Badge>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Building2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-slate-500">No hay instituciones registradas</p>
+                </div>
+              );
+            })()}
           </div>
         </DialogContent>
       </Dialog>
