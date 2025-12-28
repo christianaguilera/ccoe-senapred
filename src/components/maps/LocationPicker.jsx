@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap, LayersControl } from 'react-leaflet';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MapPin, Search } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+
+const { BaseLayer } = LayersControl;
 
 // Fix for default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -216,10 +218,26 @@ export default function LocationPicker({ coordinates, onCoordinatesChange, addre
           style={{ height: '300px', width: '100%' }}
           scrollWheelZoom={true}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <LayersControl position="topright">
+            <BaseLayer checked name="Mapa Estándar">
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+            </BaseLayer>
+            <BaseLayer name="Satélite">
+              <TileLayer
+                attribution='&copy; Google'
+                url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+              />
+            </BaseLayer>
+            <BaseLayer name="Híbrido">
+              <TileLayer
+                attribution='&copy; Google'
+                url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+              />
+            </BaseLayer>
+          </LayersControl>
           <MapUpdater center={mapCenter} />
           <LocationMarker 
             position={position} 
