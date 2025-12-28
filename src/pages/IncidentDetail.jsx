@@ -237,35 +237,35 @@ export default function IncidentDetail() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4 flex-1">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="flex items-start gap-4 flex-1">
           <Link to={createPageUrl('Incidents')}>
             <Button variant="ghost" size="icon" className="rounded-xl">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
           <div className="flex-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-2">
               <span className="text-sm font-mono text-slate-400">
                 #{incident.incident_number || 'N/A'}
               </span>
               <span className={cn("w-2 h-2 rounded-full animate-pulse", status.color)} />
               <span className={cn("text-sm font-medium", status.text)}>{status.label}</span>
             </div>
-            <div className="flex items-center gap-3 mt-1">
+            <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl font-bold text-slate-900">{incident.name}</h1>
               <Select
                 value={incident.status}
                 onValueChange={(value) => updateMutation.mutate({ status: value })}
               >
-                <SelectTrigger className="w-40 h-9">
+                <SelectTrigger className="w-auto min-w-[140px] h-10 border-2 border-orange-500 bg-orange-50 hover:bg-orange-100 font-semibold shadow-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Activo</SelectItem>
-                  <SelectItem value="contained">Contenido</SelectItem>
-                  <SelectItem value="monitoring">Monitoreo</SelectItem>
-                  <SelectItem value="resolved">Resuelto</SelectItem>
+                  <SelectItem value="active">🔴 Activo</SelectItem>
+                  <SelectItem value="contained">🟡 Contenido</SelectItem>
+                  <SelectItem value="monitoring">🔵 Monitoreo</SelectItem>
+                  <SelectItem value="resolved">🟢 Resuelto</SelectItem>
                 </SelectContent>
               </Select>
             </div>
