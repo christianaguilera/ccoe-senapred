@@ -28,6 +28,9 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
     severity: 'medium',
     status: 'active',
     location: '',
+    region: '',
+    provincia: '',
+    comuna: '',
     coordinates: { lat: 19.4326, lng: -99.1332 },
     description: '',
     incident_commander: '',
@@ -43,6 +46,9 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
         severity: incident.severity || 'medium',
         status: incident.status || 'active',
         location: incident.location || '',
+        region: incident.region || '',
+        provincia: incident.provincia || '',
+        comuna: incident.comuna || '',
         coordinates: incident.coordinates || { lat: 19.4326, lng: -99.1332 },
         description: incident.description || '',
         incident_commander: incident.incident_commander || '',
@@ -56,6 +62,9 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
         severity: 'medium',
         status: 'active',
         location: '',
+        region: '',
+        provincia: '',
+        comuna: '',
         coordinates: { lat: 19.4326, lng: -99.1332 },
         description: '',
         incident_commander: '',
@@ -185,6 +194,36 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
                   placeholder="Dirección o ubicación del incidente"
                   required
                 />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="region">Región</Label>
+                  <Input
+                    id="region"
+                    value={formData.region}
+                    onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                    placeholder="Ej: Metropolitana"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="provincia">Provincia</Label>
+                  <Input
+                    id="provincia"
+                    value={formData.provincia}
+                    onChange={(e) => setFormData({ ...formData, provincia: e.target.value })}
+                    placeholder="Ej: Santiago"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="comuna">Comuna</Label>
+                  <Input
+                    id="comuna"
+                    value={formData.comuna}
+                    onChange={(e) => setFormData({ ...formData, comuna: e.target.value })}
+                    placeholder="Ej: Las Condes"
+                  />
+                </div>
               </div>
 
           <div className="space-y-2">
