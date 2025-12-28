@@ -10,7 +10,8 @@ import {
   X,
   Shield,
   Bell,
-  MapPin
+  MapPin,
+  FileText
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Mapa', href: createPageUrl('IncidentMap'), icon: MapPin, page: 'IncidentMap' },
     { name: 'Estructura ICS', href: createPageUrl('ICSStructure'), icon: Users, page: 'ICSStructure' },
     { name: 'Recursos', href: createPageUrl('Resources'), icon: Package, page: 'Resources' },
+    { name: 'Reportes', href: createPageUrl('Reports'), icon: FileText, page: 'Reports' },
   ];
 
   return (

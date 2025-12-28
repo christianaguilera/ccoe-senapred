@@ -1,23 +1,25 @@
 import Dashboard from './pages/Dashboard';
-import Incidents from './pages/Incidents';
-import IncidentDetail from './pages/IncidentDetail';
-import Resources from './pages/Resources';
 import ICSStructure from './pages/ICSStructure';
+import IncidentDetail from './pages/IncidentDetail';
 import IncidentMap from './pages/IncidentMap';
+import Incidents from './pages/Incidents';
+import Resources from './pages/Resources';
+import Reports from './pages/Reports';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Dashboard": Dashboard,
-    "Incidents": Incidents,
-    "IncidentDetail": IncidentDetail,
-    "Resources": Resources,
     "ICSStructure": ICSStructure,
+    "IncidentDetail": IncidentDetail,
     "IncidentMap": IncidentMap,
+    "Incidents": Incidents,
+    "Resources": Resources,
+    "Reports": Reports,
 }
 
 export const pagesConfig = {
-    mainPage: "Dashboard",
+    mainPage: "IncidentDetail",
     Pages: PAGES,
     Layout: __Layout,
 };
