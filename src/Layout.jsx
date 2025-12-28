@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import NotificationBell from './components/notifications/NotificationBell';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -108,10 +109,7 @@ export default function Layout({ children, currentPageName }) {
             </Button>
             
             <div className="flex items-center gap-3 ml-auto">
-              <Button variant="ghost" size="icon" className="relative text-slate-600">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-orange-500 rounded-full" />
-              </Button>
+              <NotificationBell />
             </div>
           </div>
         </header>

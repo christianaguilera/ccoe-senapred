@@ -36,9 +36,47 @@ export default function Incidents() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Incident.create(data),
+    mutationFn: async (data) => {
+      const newIncident = await base44.entities.Incident.create(data);
+      
+      // Crear notificación si es crítico
+      if (data.severity === 'critical' || data.severity === 'high') {
+        const user = await base44.auth.me();
+        await base44.entities.Notification.create({
+          title: `Nuevo incidente ${data.severity === 'critical' ? 'CRÍTICO' : 'de alta prioridad'}`,
+          message: `${data.name} - ${data.location}`,
+          type: data.severity === 'critical' ? 'critical_alert' : 'incident_created',
+          priority: data.severity,
+          related_incident_id: newIncident.id,
+          user_email: user.email,
+          read: false
+        });
+
+        // Enviar email si es crítico
+        if (data.severity === 'critical') {
+          await base44.integrations.Core.SendEmail({
+            to: user.email,
+            subject: `🚨 ALERTA CRÍTICA: ${data.name}`,
+            body: `
+              <h2>Nuevo Incidente Crítico Registrado</h2>
+              <p><strong>Incidente:</strong> ${data.name}</p>
+              <p><strong>Número:</strong> #${data.incident_number}</p>
+              <p><strong>Tipo:</strong> ${data.type}</p>
+              <p><strong>Ubicación:</strong> ${data.location}</p>
+              <p><strong>Severidad:</strong> CRÍTICO</p>
+              <p><strong>Descripción:</strong> ${data.description || 'Sin descripción'}</p>
+              <br>
+              <p>Por favor, revise el sistema inmediatamente.</p>
+            `
+          });
+        }
+      }
+      
+      return newIncident;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['incidents'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
       setShowForm(false);
     },
   });

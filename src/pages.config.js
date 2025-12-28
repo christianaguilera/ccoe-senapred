@@ -3,8 +3,8 @@ import ICSStructure from './pages/ICSStructure';
 import IncidentDetail from './pages/IncidentDetail';
 import IncidentMap from './pages/IncidentMap';
 import Incidents from './pages/Incidents';
-import Resources from './pages/Resources';
 import Reports from './pages/Reports';
+import Resources from './pages/Resources';
 import __Layout from './Layout.jsx';
 
 
@@ -14,8 +14,8 @@ export const PAGES = {
     "IncidentDetail": IncidentDetail,
     "IncidentMap": IncidentMap,
     "Incidents": Incidents,
-    "Resources": Resources,
     "Reports": Reports,
+    "Resources": Resources,
 }
 
 export const pagesConfig = {

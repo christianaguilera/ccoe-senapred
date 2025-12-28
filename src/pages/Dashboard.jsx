@@ -40,6 +40,41 @@ export default function Dashboard() {
   const criticalIncidents = incidents.filter(i => i.severity === 'critical' && i.status === 'active');
   const deployedResources = resources.filter(r => r.status === 'deployed');
 
+  // Notificar sobre incidentes críticos activos al cargar
+  useEffect(() => {
+    const notifyCriticalIncidents = async () => {
+      if (criticalIncidents.length > 0 && !isLoading) {
+        const user = await base44.auth.me();
+        const existingNotifications = await base44.entities.Notification.filter({
+          user_email: user.email,
+          type: 'critical_alert'
+        });
+        
+        // Solo notificar incidentes críticos que no tienen notificación reciente
+        for (const incident of criticalIncidents) {
+          const hasRecentNotification = existingNotifications.some(
+            n => n.related_incident_id === incident.id && 
+            new Date(n.created_date) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+          );
+          
+          if (!hasRecentNotification) {
+            await base44.entities.Notification.create({
+              title: '⚠️ Incidente crítico activo',
+              message: `${incident.name} - ${incident.location}`,
+              type: 'critical_alert',
+              priority: 'critical',
+              related_incident_id: incident.id,
+              user_email: user.email,
+              read: false
+            });
+          }
+        }
+      }
+    };
+    
+    notifyCriticalIncidents();
+  }, [criticalIncidents.length, isLoading]);
+
   return (
     <div className="space-y-8">
       {/* Header */}

@@ -123,9 +123,45 @@ export default function IncidentDetail() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.Incident.update(incidentId, data),
+    mutationFn: async (data) => {
+      const updated = await base44.entities.Incident.update(incidentId, data);
+      
+      // Crear notificación si cambió a crítico o se actualizó un incidente crítico
+      if (data.severity === 'critical' || incident.severity === 'critical') {
+        const user = await base44.auth.me();
+        await base44.entities.Notification.create({
+          title: `Incidente actualizado: ${data.severity === 'critical' ? 'CRÍTICO' : incident.name}`,
+          message: `${data.name || incident.name} ha sido actualizado`,
+          type: 'incident_updated',
+          priority: data.severity || incident.severity,
+          related_incident_id: incidentId,
+          user_email: user.email,
+          read: false
+        });
+
+        // Enviar email si es crítico
+        if (data.severity === 'critical') {
+          await base44.integrations.Core.SendEmail({
+            to: user.email,
+            subject: `🚨 Actualización de Incidente Crítico: ${data.name || incident.name}`,
+            body: `
+              <h2>Incidente Crítico Actualizado</h2>
+              <p><strong>Incidente:</strong> ${data.name || incident.name}</p>
+              <p><strong>Número:</strong> #${incident.incident_number}</p>
+              <p><strong>Estado:</strong> ${data.status || incident.status}</p>
+              <p><strong>Severidad:</strong> ${data.severity || incident.severity}</p>
+              <br>
+              <p>El incidente ha sido modificado. Por favor, revise los cambios.</p>
+            `
+          });
+        }
+      }
+      
+      return updated;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['incident', incidentId] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
       setShowEditForm(false);
     }
   });
