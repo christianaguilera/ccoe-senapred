@@ -47,6 +47,7 @@ import { cn } from "@/lib/utils";
 import IncidentForm from '../components/incidents/IncidentForm';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
 import IncidentMap from '../components/maps/IncidentMap';
+import FormSCI201 from '../components/reports/FormSCI201';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -90,6 +91,7 @@ export default function IncidentDetail() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [showStaffForm, setShowStaffForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
+  const [showSCI201, setShowSCI201] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
 
@@ -273,13 +275,21 @@ export default function IncidentDetail() {
             </div>
           </div>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => setShowEditForm(true)}>
-
-          <Edit2 className="w-4 h-4 mr-2" />
-          Editar
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowSCI201(true)}
+            className="border-blue-500 text-blue-600 hover:bg-blue-50">
+            <FileText className="w-4 h-4 mr-2" />
+            Formulario SCI-201
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowEditForm(true)}>
+            <Edit2 className="w-4 h-4 mr-2" />
+            Editar
+          </Button>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -591,6 +601,12 @@ export default function IncidentDetail() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>);
 
-}
+      {/* Formulario SCI-201 */}
+      <FormSCI201
+        open={showSCI201}
+        onClose={() => setShowSCI201(false)}
+        incident={incident} />
+      </div>);
+
+      }
