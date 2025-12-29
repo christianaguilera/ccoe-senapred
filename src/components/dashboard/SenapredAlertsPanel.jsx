@@ -13,7 +13,6 @@ const alertTypeColors = {
 };
 
 export default function SenapredAlertsPanel() {
-  const { isDarkMode } = useTheme();
   const [loading, setLoading] = useState(false);
 
   const handleRefresh = () => {
