@@ -970,6 +970,65 @@ export default function DrawableOperationsMap({
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
+            {/* Icon Type Selector */}
+            {currentDrawing?.geometry?.type === 'icon' && !editingDrawing && (
+              <div className="space-y-2">
+                <Label>Tipo de Icono</Label>
+                <Select
+                  value={metadata.resourceId ? 'resource' : 'general'}
+                  onValueChange={(value) => {
+                    if (value === 'general') {
+                      setMetadata({ ...metadata, resourceId: null });
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="general">Icono General</SelectItem>
+                    <SelectItem value="resource">Recurso del Incidente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Resource Selector */}
+            {currentDrawing?.geometry?.type === 'icon' && !editingDrawing && metadata.resourceId === null && resources.length > 0 && (
+              <div className="space-y-2">
+                <Label>Vincular con Recurso (Opcional)</Label>
+                <Select
+                  value={metadata.resourceId || 'none'}
+                  onValueChange={(value) => {
+                    if (value !== 'none') {
+                      const resource = resources.find(r => r.id === value);
+                      if (resource) {
+                        setMetadata({ 
+                          ...metadata, 
+                          resourceId: value,
+                          name: resource.name 
+                        });
+                      }
+                    } else {
+                      setMetadata({ ...metadata, resourceId: null });
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sin vincular" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sin vincular</SelectItem>
+                    {resources.filter(r => r.status === 'deployed' || r.status === 'available').map(resource => (
+                      <SelectItem key={resource.id} value={resource.id}>
+                        {resource.name} - {resource.category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label>Nombre</Label>
               <Input
