@@ -22,6 +22,7 @@ export default function OperationsBoard({ open, onClose, incident }) {
     coordenadas: incident?.coordinates ? `${incident.coordinates.lat}, ${incident.coordinates.lng}` : '',
     objetivos: ['', '', ''],
     estrategias: ['', '', ''],
+    tacticas: ['', '', ''],
     instituciones: {
       comandante_operaciones: false,
       of_enlace: false,
@@ -233,6 +234,27 @@ export default function OperationsBoard({ open, onClose, incident }) {
                           <Input
                             value={est}
                             onChange={(e) => handleItemChange('estrategias', idx, e.target.value)}
+                            className="bg-white text-slate-900 h-8"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
+                  <Card className="p-4 bg-orange-500 text-white">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-bold">TÁCTICAS:</h3>
+                      <Button size="sm" variant="ghost" className="text-white h-6" onClick={() => handleAddItem('tacticas')}>
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {boardData.tacticas.map((tac, idx) => (
+                        <div key={idx} className="flex gap-1">
+                          <span className="text-white text-sm">{idx + 1}.</span>
+                          <Input
+                            value={tac}
+                            onChange={(e) => handleItemChange('tacticas', idx, e.target.value)}
                             className="bg-white text-slate-900 h-8"
                           />
                         </div>
