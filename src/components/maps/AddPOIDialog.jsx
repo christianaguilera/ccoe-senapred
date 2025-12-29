@@ -6,6 +6,26 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix for default marker icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+function MapClickHandler({ onLocationSelect }) {
+  useMapEvents({
+    click(e) {
+      onLocationSelect(e.latlng);
+    }
+  });
+  return null;
+}
 
 const poiTypes = {
   // Etiquetas SCI oficiales
@@ -45,7 +65,7 @@ const poiTypes = {
   other: '📍 Otro'
 };
 
-export default function AddPOIDialog({ open, onClose, onAdd, initialCoordinates = null }) {
+export default function AddPOIDialog({ open, onClose, onAdd, initialCoordinates = null, incidentCoordinates = null }) {
   const [formData, setFormData] = useState({
     name: '',
     type: 'pc',
@@ -53,6 +73,17 @@ export default function AddPOIDialog({ open, onClose, onAdd, initialCoordinates 
     contact_info: '',
     coordinates: initialCoordinates || { lat: '', lng: '' }
   });
+
+  const mapCenter = incidentCoordinates 
+    ? [incidentCoordinates.lat, incidentCoordinates.lng] 
+    : [-33.4489, -70.6693];
+
+  const handleMapClick = (latlng) => {
+    setFormData({
+      ...formData,
+      coordinates: { lat: latlng.lat, lng: latlng.lng }
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -68,11 +99,34 @@ export default function AddPOIDialog({ open, onClose, onAdd, initialCoordinates 
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Agregar Punto de Interés</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+        
+        {/* Map Section */}
+        <div className="mb-4">
+          <Label className="mb-2 block">Seleccionar ubicación en el mapa (click para marcar)</Label>
+          <div style={{ height: '300px', width: '100%' }} className="rounded-lg overflow-hidden border">
+            <MapContainer
+              center={mapCenter}
+              zoom={13}
+              style={{ height: '100%', width: '100%' }}
+              scrollWheelZoom={true}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <MapClickHandler onLocationSelect={handleMapClick} />
+              {formData.coordinates.lat && formData.coordinates.lng && (
+                <Marker position={[formData.coordinates.lat, formData.coordinates.lng]} />
+              )}
+            </MapContainer>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>Nombre *</Label>
             <Input

@@ -512,6 +512,7 @@ export default function IncidentMap({
           }}
           onAdd={(data) => createPOI.mutate(data)}
           initialCoordinates={clickedCoords}
+          incidentCoordinates={selectedIncident?.coordinates || (incidents[0]?.coordinates)}
         />
       )}
     </Card>
