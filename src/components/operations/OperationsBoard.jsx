@@ -12,6 +12,7 @@ import { es } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import ICSStructureView from '../incidents/ICSStructureView';
+import IncidentMap from '../maps/IncidentMap';
 
 export default function OperationsBoard({ open, onClose, incident, staff = [] }) {
   const boardRef = useRef(null);
@@ -495,12 +496,23 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                       </Button>
                     </div>
 
-                    {/* Área para imagen/mapa */}
-                    <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 min-h-[400px] bg-slate-50 flex flex-col items-center justify-center">
-                      <Upload className="w-12 h-12 text-slate-400 mb-2" />
-                      <p className="text-slate-500 text-sm">Cargar imagen del escenario</p>
-                      <p className="text-slate-400 text-xs">(Vista aérea o mapa del área)</p>
-                    </div>
+                    {/* Mapa del escenario */}
+                    {incident?.coordinates?.lat && incident?.coordinates?.lng ? (
+                      <IncidentMap
+                        incidents={[incident]}
+                        selectedIncident={incident}
+                        height="450px"
+                        showRadius={true}
+                        incidentId={incident.id}
+                        enablePOI={true}
+                      />
+                    ) : (
+                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 min-h-[400px] bg-slate-50 flex flex-col items-center justify-center">
+                        <Upload className="w-12 h-12 text-slate-400 mb-2" />
+                        <p className="text-slate-500 text-sm">Sin coordenadas del incidente</p>
+                        <p className="text-slate-400 text-xs">(Configure ubicación en detalles del incidente)</p>
+                      </div>
+                    )}
                   </Card>
                 </div>
 
