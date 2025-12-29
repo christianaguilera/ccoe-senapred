@@ -167,6 +167,7 @@ export default function IncidentMapPage() {
             onIncidentClick={handleIncidentClick}
             height="600px"
             showRadius={statusFilter === 'active'}
+            enablePOI={true}
           />
           
           {/* Legend */}
