@@ -39,7 +39,13 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
       senapred: false,
       cogrid_comunal: false,
       cogrid_provincial: false,
-      cogrid_regional: false
+      cogrid_regional: false,
+      socorro_andino: false,
+      uav_drones: false,
+      ubro: false,
+      urat: false,
+      cruz_roja: false,
+      defensa_civil: false
     },
     puesto_comando: {
       ubicacion: '',
@@ -434,6 +440,78 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                           className="w-4 h-4"
                         />
                         <span className="text-sm font-medium">FACH</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.socorro_andino}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, socorro_andino: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">Socorro Andino</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.uav_drones}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, uav_drones: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">UAV Drones</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.ubro}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, ubro: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">UBRO</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.urat}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, urat: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">URAT</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.cruz_roja}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, cruz_roja: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">Cruz Roja</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.defensa_civil}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, defensa_civil: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">Defensa Civil</span>
                       </label>
                     </div>
                   </Card>
