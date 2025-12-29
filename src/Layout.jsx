@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { 
@@ -17,9 +17,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import NotificationBell from './components/notifications/NotificationBell';
+import ThemeToggle from './components/ThemeToggle';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('themeMode');
+    return saved === 'dark' || saved === null; // Default to dark
+  });
+
+  useEffect(() => {
+    localStorage.setItem('themeMode', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   const navigation = [
     { name: 'Dashboard', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
@@ -36,7 +45,10 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className={cn(
+      "min-h-screen transition-colors duration-300",
+      isDarkMode ? "bg-slate-950" : "bg-slate-50"
+    )}>
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div 
@@ -47,25 +59,38 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed top-0 left-0 z-50 h-full w-72 bg-slate-900 transform transition-transform duration-300 ease-out lg:translate-x-0",
+        "fixed top-0 left-0 z-50 h-full w-72 transform transition-all duration-300 ease-out lg:translate-x-0",
+        isDarkMode ? "bg-slate-900" : "bg-white border-r border-slate-200",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-800">
+          <div className={cn(
+            "flex items-center gap-3 px-6 py-6 border-b",
+            isDarkMode ? "border-slate-800" : "border-slate-200"
+          )}>
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/694ed54b1d1364757e1b5450/b5ac78cc1_LogoSENAPRED.png" 
               alt="SENAPRED Logo"
               className="w-12 h-12 object-contain"
             />
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">ICS Command</h1>
-              <p className="text-xs text-slate-400">Sistema de Incidentes</p>
+              <h1 className={cn(
+                "text-lg font-bold tracking-tight",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>ICS Command</h1>
+              <p className={cn(
+                "text-xs",
+                isDarkMode ? "text-slate-400" : "text-slate-600"
+              )}>Sistema de Incidentes</p>
             </div>
             <Button 
               variant="ghost" 
               size="icon"
-              className="ml-auto lg:hidden text-slate-400"
+              className={cn(
+                "ml-auto lg:hidden",
+                isDarkMode ? "text-slate-400" : "text-slate-600"
+              )}
               onClick={() => setSidebarOpen(false)}
             >
               <X className="w-5 h-5" />
@@ -86,7 +111,9 @@ export default function Layout({ children, currentPageName }) {
                       "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                       isActive 
                         ? "bg-orange-500/10 text-orange-400 border border-orange-500/20" 
-                        : "text-slate-400 hover:text-white hover:bg-slate-800"
+                        : isDarkMode
+                        ? "text-slate-400 hover:text-white hover:bg-slate-800"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     )}
                   >
                     <item.icon className={cn("w-5 h-5", isActive && "text-orange-400")} />
@@ -97,8 +124,14 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {/* Archive Section */}
-            <div className="pt-4 mt-4 border-t border-slate-800">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 mb-2">
+            <div className={cn(
+              "pt-4 mt-4 border-t",
+              isDarkMode ? "border-slate-800" : "border-slate-200"
+            )}>
+              <p className={cn(
+                "text-xs font-semibold uppercase tracking-wider px-4 mb-2",
+                isDarkMode ? "text-slate-500" : "text-slate-500"
+              )}>
                 Archivo
               </p>
               <div className="space-y-1.5">
@@ -113,7 +146,9 @@ export default function Layout({ children, currentPageName }) {
                         "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                         isActive 
                           ? "bg-orange-500/10 text-orange-400 border border-orange-500/20" 
-                          : "text-slate-400 hover:text-white hover:bg-slate-800"
+                          : isDarkMode
+                          ? "text-slate-400 hover:text-white hover:bg-slate-800"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       )}
                     >
                       <item.icon className={cn("w-5 h-5", isActive && "text-orange-400")} />
@@ -126,7 +161,10 @@ export default function Layout({ children, currentPageName }) {
           </nav>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-slate-800">
+          <div className={cn(
+            "px-6 py-4 border-t",
+            isDarkMode ? "border-slate-800" : "border-slate-200"
+          )}>
             <p className="text-xs text-slate-500">v1.0 · ICS Protocol</p>
           </div>
         </div>
@@ -135,18 +173,27 @@ export default function Layout({ children, currentPageName }) {
       {/* Main content */}
       <div className="lg:pl-72">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/50">
+        <header className={cn(
+          "sticky top-0 z-30 backdrop-blur-xl border-b transition-colors duration-300",
+          isDarkMode 
+            ? "bg-slate-900/80 border-slate-800" 
+            : "bg-white/80 border-slate-200/50"
+        )}>
           <div className="flex items-center justify-between px-4 lg:px-8 py-4">
             <Button 
               variant="ghost" 
               size="icon"
-              className="lg:hidden text-slate-600"
+              className={cn(
+                "lg:hidden",
+                isDarkMode ? "text-slate-400" : "text-slate-600"
+              )}
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="w-5 h-5" />
             </Button>
             
             <div className="flex items-center gap-3 ml-auto">
+              <ThemeToggle isDark={isDarkMode} onToggle={() => setIsDarkMode(!isDarkMode)} />
               <NotificationBell />
             </div>
           </div>
