@@ -1,4 +1,3 @@
-import Dashboard from './pages/Dashboard';
 import DeletedIncidents from './pages/DeletedIncidents';
 import ICSStructure from './pages/ICSStructure';
 import IncidentDetail from './pages/IncidentDetail';
@@ -7,11 +6,11 @@ import Incidents from './pages/Incidents';
 import NotificationRules from './pages/NotificationRules';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
+import Dashboard from './pages/Dashboard';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
     "DeletedIncidents": DeletedIncidents,
     "ICSStructure": ICSStructure,
     "IncidentDetail": IncidentDetail,
@@ -20,6 +19,7 @@ export const PAGES = {
     "NotificationRules": NotificationRules,
     "Reports": Reports,
     "Resources": Resources,
+    "Dashboard": Dashboard,
 }
 
 export const pagesConfig = {
