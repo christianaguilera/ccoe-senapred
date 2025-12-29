@@ -65,7 +65,7 @@ const roleConfig = {
 };
 
 export default function ICSStructureView({ staff = [] }) {
-  const { isDarkMode } = useTheme();
+  const { isDarkMode } = useTheme?.() || { isDarkMode: false };
   const getStaffByRole = (role) => staff.find(m => m.role === role);
 
   const commanderStaff = ['public_info_officer', 'safety_officer', 'liaison_officer'];
