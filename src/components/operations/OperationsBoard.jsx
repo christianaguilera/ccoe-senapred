@@ -26,20 +26,10 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
     estrategias: ['', '', ''],
     tacticas: ['', '', ''],
     instituciones: {
-      comandante_operaciones: false,
-      of_enlace: false,
-      inf_publica: false,
-      operaciones: false,
-      of_seguridad: false,
-      delegacion_presidencial: false,
-      planificacion: false,
-      gobierno_regional: false,
-      logistica: false,
-      org_tecnico_1: false,
-      adm_finanzas: false,
-      org_tecnico_2: false,
-      enlace: false,
-      org_tecnico_3: false
+      samu: false,
+      bomberos: false,
+      carabineros: false,
+      gope: false
     },
     puesto_comando: {
       ubicacion: '',
@@ -266,21 +256,55 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
 
                   <Card className="p-4 bg-orange-500 text-white">
                     <h3 className="font-bold mb-2">INSTITUCIONES</h3>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      {Object.keys(boardData.instituciones).map((inst) => (
-                        <label key={inst} className="flex items-center gap-1 text-white">
-                          <input
-                            type="checkbox"
-                            checked={boardData.instituciones[inst]}
-                            onChange={(e) => setBoardData({
-                              ...boardData,
-                              instituciones: { ...boardData.instituciones, [inst]: e.target.checked }
-                            })}
-                            className="w-3 h-3"
-                          />
-                          <span className="text-[10px]">{inst.replace(/_/g, ' ').toUpperCase()}</span>
-                        </label>
-                      ))}
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.samu}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, samu: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">SAMU</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.bomberos}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, bomberos: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">Bomberos</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.carabineros}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, carabineros: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">Carabineros</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.gope}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, gope: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">GOPE</span>
+                      </label>
                     </div>
                   </Card>
                 </div>
