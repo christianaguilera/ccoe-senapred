@@ -2,20 +2,23 @@ import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTheme } from '../contexts/ThemeContext';
 
-export default function ThemeToggle({ isDark, onToggle }) {
+export default function ThemeToggle() {
+  const { isDarkMode, setIsDarkMode } = useTheme();
+  
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={onToggle}
+      onClick={() => setIsDarkMode(!isDarkMode)}
       className={cn(
         "relative",
-        isDark ? "text-yellow-400 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-100"
+        isDarkMode ? "text-yellow-400 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-100"
       )}
-      title={isDark ? "Cambiar a modo luz" : "Cambiar a modo nocturno"}
+      title={isDarkMode ? "Cambiar a modo luz" : "Cambiar a modo nocturno"}
     >
-      {isDark ? (
+      {isDarkMode ? (
         <Sun className="w-5 h-5" />
       ) : (
         <Moon className="w-5 h-5" />

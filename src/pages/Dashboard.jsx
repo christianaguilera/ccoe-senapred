@@ -25,8 +25,11 @@ import SenapredAlertsPanel from '../components/dashboard/SenapredAlertsPanel';
 import ChileanSeismicPanel from '../components/dashboard/ChileanSeismicPanel';
 import HydrometricStationsPanel from '../components/dashboard/HydrometricStationsPanel';
 import WindyPanel from '../components/dashboard/WindyPanel';
+import { useTheme } from '../contexts/ThemeContext';
+import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
+  const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
     return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy'];
@@ -106,19 +109,37 @@ export default function Dashboard() {
   const panels = {
     activity: (
       <div>
-        <div className="flex items-center gap-2 pb-3 border-b border-slate-800 mb-4">
+        <div className={cn(
+          "flex items-center gap-2 pb-3 border-b mb-4",
+          isDarkMode ? "border-slate-800" : "border-slate-300"
+        )}>
           <div className="w-1 h-6 bg-blue-500"></div>
-          <h2 className="text-lg font-bold text-white tracking-wider">MONITOREO TÉCNICO REGIONAL</h2>
+          <h2 className={cn(
+            "text-lg font-bold tracking-wider",
+            isDarkMode ? "text-white" : "text-slate-900"
+          )}>MONITOREO TÉCNICO REGIONAL</h2>
         </div>
         {loadingActivities ? (
-          <Card className="p-6">
+          <Card className={cn(
+            "p-6",
+            isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"
+          )}>
             <div className="space-y-4">
               {[1, 2, 3].map(i => (
                 <div key={i} className="flex gap-4">
-                  <Skeleton className="w-3 h-3 rounded-full" />
+                  <Skeleton className={cn(
+                    "w-3 h-3 rounded-full",
+                    isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                  )} />
                   <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className={cn(
+                      "h-4 w-24",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
+                    <Skeleton className={cn(
+                      "h-4 w-full",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
                   </div>
                 </div>
               ))}
@@ -171,24 +192,42 @@ export default function Dashboard() {
   }, [criticalIncidents.length, loadingIncidents]);
 
   return (
-    <div className="min-h-screen bg-slate-950 -m-8 p-8 space-y-6">
+    <div className={cn(
+      "min-h-screen -m-8 p-8 space-y-6 transition-colors duration-300",
+      isDarkMode ? "bg-slate-950" : "bg-slate-100"
+    )}>
       {/* Header - Command Center Style */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className={cn(
+        "flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b",
+        isDarkMode ? "border-slate-800" : "border-slate-300"
+      )}>
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">CENTRO DE CONTROL DE EMERGENCIAS</h1>
+            <h1 className={cn(
+              "text-3xl font-bold tracking-tight",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>CENTRO DE CONTROL DE EMERGENCIAS</h1>
           </div>
-          <p className="text-slate-400 text-sm">Panel de Mando y Monitoreo | Sistema ICS</p>
+          <p className={cn(
+            "text-sm",
+            isDarkMode ? "text-slate-400" : "text-slate-600"
+          )}>Panel de Mando y Monitoreo | Sistema ICS</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <p className="text-xs text-slate-500">FECHA</p>
-            <p className="text-sm font-mono text-white">{new Date().toLocaleDateString('es-CL')}</p>
+            <p className={cn("text-xs", isDarkMode ? "text-slate-500" : "text-slate-600")}>FECHA</p>
+            <p className={cn(
+              "text-sm font-mono",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>{new Date().toLocaleDateString('es-CL')}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-slate-500">HORA</p>
-            <p className="text-sm font-mono text-white">{new Date().toLocaleTimeString('es-CL')}</p>
+            <p className={cn("text-xs", isDarkMode ? "text-slate-500" : "text-slate-600")}>HORA</p>
+            <p className={cn(
+              "text-sm font-mono",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>{new Date().toLocaleTimeString('es-CL')}</p>
           </div>
           <Link to={createPageUrl('Incidents')}>
             <Button className="bg-orange-500 hover:bg-orange-600 shadow-lg">
@@ -201,18 +240,34 @@ export default function Dashboard() {
 
       {/* Critical Alert - Command Center Style */}
       {criticalIncidents.length > 0 && (
-        <div className="bg-gradient-to-r from-red-950 to-red-900 border-2 border-red-500 rounded-lg p-4 flex items-center gap-4 shadow-2xl shadow-red-500/20">
+        <div className={cn(
+          "border-2 border-red-500 rounded-lg p-4 flex items-center gap-4 shadow-2xl",
+          isDarkMode 
+            ? "bg-gradient-to-r from-red-950 to-red-900 shadow-red-500/20" 
+            : "bg-gradient-to-r from-red-100 to-red-50 shadow-red-500/10"
+        )}>
           <div className="w-14 h-14 rounded-lg bg-red-500 flex items-center justify-center animate-pulse shadow-lg">
             <AlertTriangle className="w-7 h-7 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-white text-lg">
+            <h3 className={cn(
+              "font-bold text-lg",
+              isDarkMode ? "text-white" : "text-red-900"
+            )}>
               ⚠️ {criticalIncidents.length} INCIDENTE{criticalIncidents.length > 1 ? 'S' : ''} CRÍTICO{criticalIncidents.length > 1 ? 'S' : ''} ACTIVO{criticalIncidents.length > 1 ? 'S' : ''}
             </h3>
-            <p className="text-sm text-red-200 font-medium">REQUIERE ATENCIÓN INMEDIATA</p>
+            <p className={cn(
+              "text-sm font-medium",
+              isDarkMode ? "text-red-200" : "text-red-700"
+            )}>REQUIERE ATENCIÓN INMEDIATA</p>
           </div>
           <Link to={createPageUrl('Incidents')}>
-            <Button className="bg-white text-red-600 hover:bg-red-50 font-bold shadow-lg">
+            <Button className={cn(
+              "font-bold shadow-lg",
+              isDarkMode 
+                ? "bg-white text-red-600 hover:bg-red-50" 
+                : "bg-red-600 text-white hover:bg-red-700"
+            )}>
               VER DETALLES
               <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
@@ -225,41 +280,90 @@ export default function Dashboard() {
         {loadingIncidents ? (
           <>
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="bg-slate-900 border border-slate-800 rounded-lg p-6">
-                <Skeleton className="h-4 w-24 mb-3 bg-slate-800" />
-                <Skeleton className="h-8 w-16 bg-slate-800" />
+              <div key={i} className={cn(
+                "border rounded-lg p-6",
+                isDarkMode 
+                  ? "bg-slate-900 border-slate-800" 
+                  : "bg-white border-slate-200"
+              )}>
+                <Skeleton className={cn("h-4 w-24 mb-3", isDarkMode ? "bg-slate-800" : "bg-slate-200")} />
+                <Skeleton className={cn("h-8 w-16", isDarkMode ? "bg-slate-800" : "bg-slate-200")} />
               </div>
             ))}
           </>
         ) : (
           <>
-            <div className="bg-gradient-to-br from-red-950 to-slate-900 border-2 border-red-500/50 rounded-lg p-6 shadow-xl">
+            <div className={cn(
+              "border-2 rounded-lg p-6 shadow-xl",
+              isDarkMode 
+                ? "bg-gradient-to-br from-red-950 to-slate-900 border-red-500/50" 
+                : "bg-gradient-to-br from-red-50 to-white border-red-300"
+            )}>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold text-red-300 tracking-wider">INCIDENTES ACTIVOS</p>
-                <Flame className="w-5 h-5 text-red-400" />
+                <p className={cn(
+                  "text-xs font-bold tracking-wider",
+                  isDarkMode ? "text-red-300" : "text-red-700"
+                )}>INCIDENTES ACTIVOS</p>
+                <Flame className={cn("w-5 h-5", isDarkMode ? "text-red-400" : "text-red-600")} />
               </div>
-              <p className="text-4xl font-bold text-white">{activeIncidents.length}</p>
+              <p className={cn(
+                "text-4xl font-bold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>{activeIncidents.length}</p>
             </div>
-            <div className="bg-gradient-to-br from-blue-950 to-slate-900 border-2 border-blue-500/50 rounded-lg p-6 shadow-xl">
+            <div className={cn(
+              "border-2 rounded-lg p-6 shadow-xl",
+              isDarkMode 
+                ? "bg-gradient-to-br from-blue-950 to-slate-900 border-blue-500/50" 
+                : "bg-gradient-to-br from-blue-50 to-white border-blue-300"
+            )}>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold text-blue-300 tracking-wider">RECURSOS DESPLEGADOS</p>
-                <Package className="w-5 h-5 text-blue-400" />
+                <p className={cn(
+                  "text-xs font-bold tracking-wider",
+                  isDarkMode ? "text-blue-300" : "text-blue-700"
+                )}>RECURSOS DESPLEGADOS</p>
+                <Package className={cn("w-5 h-5", isDarkMode ? "text-blue-400" : "text-blue-600")} />
               </div>
-              <p className="text-4xl font-bold text-white">{deployedResources.length}</p>
+              <p className={cn(
+                "text-4xl font-bold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>{deployedResources.length}</p>
             </div>
-            <div className="bg-gradient-to-br from-emerald-950 to-slate-900 border-2 border-emerald-500/50 rounded-lg p-6 shadow-xl">
+            <div className={cn(
+              "border-2 rounded-lg p-6 shadow-xl",
+              isDarkMode 
+                ? "bg-gradient-to-br from-emerald-950 to-slate-900 border-emerald-500/50" 
+                : "bg-gradient-to-br from-emerald-50 to-white border-emerald-300"
+            )}>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold text-emerald-300 tracking-wider">TOTAL RECURSOS</p>
-                <Users className="w-5 h-5 text-emerald-400" />
+                <p className={cn(
+                  "text-xs font-bold tracking-wider",
+                  isDarkMode ? "text-emerald-300" : "text-emerald-700"
+                )}>TOTAL RECURSOS</p>
+                <Users className={cn("w-5 h-5", isDarkMode ? "text-emerald-400" : "text-emerald-600")} />
               </div>
-              <p className="text-4xl font-bold text-white">{resources.length}</p>
+              <p className={cn(
+                "text-4xl font-bold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>{resources.length}</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-950 to-slate-900 border-2 border-purple-500/50 rounded-lg p-6 shadow-xl">
+            <div className={cn(
+              "border-2 rounded-lg p-6 shadow-xl",
+              isDarkMode 
+                ? "bg-gradient-to-br from-purple-950 to-slate-900 border-purple-500/50" 
+                : "bg-gradient-to-br from-purple-50 to-white border-purple-300"
+            )}>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold text-purple-300 tracking-wider">INCIDENTES HOY</p>
-                <Clock className="w-5 h-5 text-purple-400" />
+                <p className={cn(
+                  "text-xs font-bold tracking-wider",
+                  isDarkMode ? "text-purple-300" : "text-purple-700"
+                )}>INCIDENTES HOY</p>
+                <Clock className={cn("w-5 h-5", isDarkMode ? "text-purple-400" : "text-purple-600")} />
               </div>
-              <p className="text-4xl font-bold text-white">{incidents.filter(i => {
+              <p className={cn(
+                "text-4xl font-bold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>{incidents.filter(i => {
                 const today = new Date().toDateString();
                 return new Date(i.created_date).toDateString() === today;
               }).length}</p>
@@ -272,12 +376,23 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Active Incidents */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h2 className="text-lg font-bold text-white tracking-wider flex items-center gap-2">
+          <div className={cn(
+            "flex items-center justify-between pb-3 border-b",
+            isDarkMode ? "border-slate-800" : "border-slate-300"
+          )}>
+            <h2 className={cn(
+              "text-lg font-bold tracking-wider flex items-center gap-2",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>
               <div className="w-1 h-6 bg-orange-500"></div>
               INCIDENTES ACTIVOS
             </h2>
-            <Link to={createPageUrl('Incidents')} className="text-sm text-orange-400 hover:text-orange-300 font-bold flex items-center gap-1">
+            <Link to={createPageUrl('Incidents')} className={cn(
+              "text-sm font-bold flex items-center gap-1",
+              isDarkMode 
+                ? "text-orange-400 hover:text-orange-300" 
+                : "text-orange-600 hover:text-orange-700"
+            )}>
               VER TODOS
               <ChevronRight className="w-4 h-4" />
             </Link>
@@ -286,25 +401,61 @@ export default function Dashboard() {
           {loadingIncidents ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="bg-slate-900 border border-slate-800 rounded-lg p-5">
+                <div key={i} className={cn(
+                  "border rounded-lg p-5",
+                  isDarkMode 
+                    ? "bg-slate-900 border-slate-800" 
+                    : "bg-white border-slate-200"
+                )}>
                   <div className="flex gap-4">
-                    <Skeleton className="w-12 h-12 rounded-xl bg-slate-800" />
+                    <Skeleton className={cn(
+                      "w-12 h-12 rounded-xl",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
                     <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-32 bg-slate-800" />
-                      <Skeleton className="h-5 w-full bg-slate-800" />
-                      <Skeleton className="h-4 w-48 bg-slate-800" />
+                      <Skeleton className={cn(
+                        "h-4 w-32",
+                        isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                      )} />
+                      <Skeleton className={cn(
+                        "h-5 w-full",
+                        isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                      )} />
+                      <Skeleton className={cn(
+                        "h-4 w-48",
+                        isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                      )} />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : activeIncidents.length === 0 ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-emerald-900/50 border-2 border-emerald-500 flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-8 h-8 text-emerald-400" />
+            <div className={cn(
+              "border rounded-lg p-8 text-center",
+              isDarkMode 
+                ? "bg-slate-900 border-slate-800" 
+                : "bg-white border-slate-200"
+            )}>
+              <div className={cn(
+                "w-16 h-16 rounded-full border-2 flex items-center justify-center mx-auto mb-4",
+                isDarkMode 
+                  ? "bg-emerald-900/50 border-emerald-500" 
+                  : "bg-emerald-50 border-emerald-300"
+              )}>
+                <AlertTriangle className={cn(
+                  "w-8 h-8",
+                  isDarkMode ? "text-emerald-400" : "text-emerald-600"
+                )} />
               </div>
-              <h3 className="font-semibold text-white">SIN INCIDENTES ACTIVOS</h3>
-              <p className="text-slate-400 text-sm mt-1">Todos los incidentes han sido resueltos</p>
+              <h3 className={cn(
+                "font-semibold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>SIN INCIDENTES ACTIVOS</h3>
+              <p className={cn(
+                "text-sm mt-1",
+                isDarkMode ? "text-slate-400" : "text-slate-600"
+              )}>Todos los incidentes han sido resueltos</p>
             </div>
           ) : (
             <div className="space-y-3">

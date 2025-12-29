@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { 
@@ -18,17 +18,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import NotificationBell from './components/notifications/NotificationBell';
 import ThemeToggle from './components/ThemeToggle';
+import { useTheme } from './contexts/ThemeContext';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem('themeMode');
-    return saved === 'dark' || saved === null; // Default to dark
-  });
-
-  useEffect(() => {
-    localStorage.setItem('themeMode', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
+  const { isDarkMode, setIsDarkMode } = useTheme();
 
   const navigation = [
     { name: 'Dashboard', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
@@ -193,7 +187,7 @@ export default function Layout({ children, currentPageName }) {
             </Button>
             
             <div className="flex items-center gap-3 ml-auto">
-              <ThemeToggle isDark={isDarkMode} onToggle={() => setIsDarkMode(!isDarkMode)} />
+              <ThemeToggle />
               <NotificationBell />
             </div>
           </div>

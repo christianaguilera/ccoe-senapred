@@ -21,6 +21,7 @@ import {
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
+import { useTheme } from '../../contexts/ThemeContext';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -47,6 +48,7 @@ const statusConfig = {
 };
 
 export default function IncidentCard({ incident, onDelete }) {
+  const { isDarkMode } = useTheme();
   const type = typeConfig[incident.type] || typeConfig.other;
   const severity = severityConfig[incident.severity] || severityConfig.medium;
   const status = statusConfig[incident.status] || statusConfig.active;
@@ -62,7 +64,12 @@ export default function IncidentCard({ incident, onDelete }) {
 
   return (
     <Link to={createPageUrl(`IncidentDetail?id=${incident.id}`)} className="w-[70%]">
-      <div className="group p-5 bg-slate-900 border-2 border-slate-800 hover:border-orange-500/50 rounded-lg hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 cursor-pointer">
+      <div className={cn(
+        "group p-5 border-2 rounded-lg hover:shadow-xl transition-all duration-300 cursor-pointer",
+        isDarkMode 
+          ? "bg-slate-900 border-slate-800 hover:border-orange-500/50 hover:shadow-orange-500/10" 
+          : "bg-white border-slate-200 hover:border-orange-400 hover:shadow-orange-400/10"
+      )}>
         <div className="flex items-start gap-4">
           {/* Type icon */}
           <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-lg", type.color)}>
@@ -72,18 +79,32 @@ export default function IncidentCard({ incident, onDelete }) {
           {/* Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono text-slate-500 font-bold">
+              <span className={cn(
+                "text-xs font-mono font-bold",
+                isDarkMode ? "text-slate-500" : "text-slate-600"
+              )}>
                 #{incident.incident_number || 'N/A'}
               </span>
               <span className={cn("w-2 h-2 rounded-full animate-pulse", status.color)} />
-              <span className="text-xs text-slate-400 font-semibold">{status.label}</span>
+              <span className={cn(
+                "text-xs font-semibold",
+                isDarkMode ? "text-slate-400" : "text-slate-600"
+              )}>{status.label}</span>
             </div>
             
-            <h3 className="font-bold text-white truncate group-hover:text-orange-400 transition-colors tracking-wide">
+            <h3 className={cn(
+              "font-bold truncate transition-colors tracking-wide",
+              isDarkMode 
+                ? "text-white group-hover:text-orange-400" 
+                : "text-slate-900 group-hover:text-orange-600"
+            )}>
               {incident.name}
             </h3>
             
-            <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-slate-400 font-medium">
+            <div className={cn(
+              "flex flex-wrap items-center gap-3 mt-2 text-sm font-medium",
+              isDarkMode ? "text-slate-400" : "text-slate-600"
+            )}>
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5" />
                 <span className="truncate max-w-[150px]">{incident.location}</span>
@@ -112,11 +133,21 @@ export default function IncidentCard({ incident, onDelete }) {
               variant="ghost"
               size="icon"
               onClick={handleDelete}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-orange-400 hover:bg-slate-800"
+              className={cn(
+                "opacity-0 group-hover:opacity-100 transition-opacity",
+                isDarkMode 
+                  ? "text-slate-400 hover:text-orange-400 hover:bg-slate-800" 
+                  : "text-slate-600 hover:text-orange-600 hover:bg-orange-50"
+              )}
             >
               <Archive className="w-4 h-4" />
             </Button>
-            <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
+            <ChevronRight className={cn(
+              "w-5 h-5 group-hover:translate-x-1 transition-all",
+              isDarkMode 
+                ? "text-slate-600 group-hover:text-orange-400" 
+                : "text-slate-400 group-hover:text-orange-600"
+            )} />
           </div>
         </div>
       </div>
