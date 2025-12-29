@@ -22,7 +22,7 @@ export default function SenapredAlertsPanel() {
 
   return (
     <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="bg-slate-50 mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
             <AlertTriangle className="w-5 h-5 text-orange-600" />
@@ -36,23 +36,23 @@ export default function SenapredAlertsPanel() {
           variant="ghost"
           size="icon"
           onClick={handleRefresh}
-          disabled={loading}
-        >
+          disabled={loading}>
+
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
         </Button>
       </div>
 
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="p-3 border rounded-lg">
+      {loading ?
+      <div className="space-y-3">
+          {[1, 2, 3].map((i) =>
+        <div key={i} className="p-3 border rounded-lg">
               <Skeleton className="h-4 w-full mb-2" />
               <Skeleton className="h-3 w-32" />
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-3 max-h-96 overflow-y-auto">
+        )}
+        </div> :
+
+      <div className="space-y-3 max-h-96 overflow-y-auto">
           {/* Alerta Roja - Región Metropolitana */}
           <div className="p-3 border rounded-lg hover:bg-slate-50 transition-colors">
             <div className="flex items-start justify-between gap-2 mb-2">
@@ -108,19 +108,19 @@ export default function SenapredAlertsPanel() {
             <p className="text-xs text-slate-500">28-12-2025 10:13</p>
           </div>
         </div>
-      )}
+      }
 
       <div className="mt-4 pt-4 border-t">
         <a
           href="https://senapred.cl/alertas"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1 justify-center"
-        >
+          className="text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1 justify-center">
+
           Ver todas las alertas en SENAPRED
           <ExternalLink className="w-3 h-3" />
         </a>
       </div>
-    </Card>
-  );
+    </Card>);
+
 }
