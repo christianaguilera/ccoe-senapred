@@ -8,16 +8,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin } from 'lucide-react';
 
 const poiTypes = {
-  command_center: 'Centro de Comando',
-  resource_station: 'Estación de Recursos',
-  medical_post: 'Puesto Médico',
-  staging_area: 'Área de Preparación',
-  heliport: 'Helipuerto',
-  water_source: 'Fuente de Agua',
-  hazard_zone: 'Zona de Peligro',
-  evacuation_point: 'Punto de Evacuación',
-  supply_depot: 'Depósito de Suministros',
-  other: 'Otro'
+  command_center: '🏢 Centro de Comando',
+  resource_station: '📦 Estación de Recursos',
+  medical_post: '🏥 Puesto Médico',
+  staging_area: '🚧 Área de Preparación',
+  heliport: '🚁 Helipuerto',
+  water_source: '💧 Fuente de Agua',
+  hazard_zone: '☢️ Zona de Peligro',
+  evacuation_point: '🚪 Punto de Evacuación',
+  supply_depot: '🏪 Depósito de Suministros',
+  firefighters: '🚒 Bomberos',
+  ambulance: '🚑 Ambulancia',
+  police: '🚓 Policía',
+  rescue_team: '🦺 Equipo de Rescate',
+  shelter: '🏠 Refugio',
+  food_distribution: '🍽️ Distribución de Alimentos',
+  water_distribution: '🚰 Distribución de Agua',
+  generator: '⚡ Generador',
+  communications: '📡 Comunicaciones',
+  roadblock: '🚧 Bloqueo de Ruta',
+  debris: '💥 Escombros',
+  field_hospital: '⛺ Hospital de Campaña',
+  military: '🪖 Militar',
+  volunteers: '🤝 Voluntarios',
+  other: '📍 Otro'
 };
 
 export default function AddPOIDialog({ open, onClose, onAdd, initialCoordinates = null }) {
