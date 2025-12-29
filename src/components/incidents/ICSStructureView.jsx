@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Info, AlertCircle, Users, Radio, ClipboardList, FileText, DollarSign } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { useTheme } from '../contexts/ThemeContext';
 
 const roleConfig = {
   incident_commander: { 
@@ -64,6 +65,7 @@ const roleConfig = {
 };
 
 export default function ICSStructureView({ staff = [] }) {
+  const { isDarkMode } = useTheme();
   const getStaffByRole = (role) => staff.find(m => m.role === role);
 
   const commanderStaff = ['public_info_officer', 'safety_officer', 'liaison_officer'];
@@ -76,8 +78,15 @@ export default function ICSStructureView({ staff = [] }) {
     return (
       <div className="relative group">
         <div className={cn(
-          "bg-white rounded-lg border-2 p-3 transition-all",
-          member ? "border-slate-200 hover:border-slate-400 hover:shadow-lg" : "border-dashed border-slate-200"
+          "rounded-lg border-2 p-3 transition-all",
+          isDarkMode ? "bg-slate-800" : "bg-white",
+          member 
+            ? isDarkMode 
+              ? "border-slate-700 hover:border-slate-600 hover:shadow-lg" 
+              : "border-slate-200 hover:border-slate-400 hover:shadow-lg"
+            : isDarkMode
+              ? "border-dashed border-slate-700"
+              : "border-dashed border-slate-200"
         )}>
           <div className="flex items-start gap-2">
             <div className={cn(
@@ -90,12 +99,18 @@ export default function ICSStructureView({ staff = [] }) {
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide truncate">
                 {config.level === 1 ? 'Comando' : config.level === 2 ? 'Staff' : 'Sección'}
               </p>
-              <h4 className="font-semibold text-xs text-slate-900 leading-tight">
+              <h4 className={cn(
+                "font-semibold text-xs leading-tight",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>
                 {config.title}
               </h4>
               {member ? (
                 <div className="mt-1">
-                  <p className="text-xs font-medium text-slate-700 truncate">{member.name}</p>
+                  <p className={cn(
+                    "text-xs font-medium truncate",
+                    isDarkMode ? "text-slate-300" : "text-slate-700"
+                  )}>{member.name}</p>
                   {member.radio_channel && (
                     <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
                       <Radio className="w-2.5 h-2.5" />
@@ -114,8 +129,16 @@ export default function ICSStructureView({ staff = [] }) {
   };
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-slate-50 to-white">
-      <h3 className="font-semibold text-slate-900 mb-6 flex items-center gap-2">
+    <Card className={cn(
+      "p-6",
+      isDarkMode 
+        ? "bg-slate-900 border-slate-800" 
+        : "bg-gradient-to-br from-slate-50 to-white"
+    )}>
+      <h3 className={cn(
+        "font-semibold mb-6 flex items-center gap-2",
+        isDarkMode ? "text-white" : "text-slate-900"
+      )}>
         <Shield className="w-5 h-5 text-orange-600" />
         Estructura ICS del Incidente
       </h3>
