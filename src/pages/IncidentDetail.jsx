@@ -66,6 +66,7 @@ import FormSCI222 from '../components/reports/FormSCI222';
 import GeneralIncidentReport from '../components/reports/GeneralIncidentReport';
 import OperationsBoard from '../components/operations/OperationsBoard';
 import SituationRoomAlert from '../components/alerts/SituationRoomAlert';
+import { useTheme } from '../components/contexts/ThemeContext';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -103,6 +104,7 @@ const roleLabels = {
 };
 
 export default function IncidentDetail() {
+  const { isDarkMode } = useTheme();
   const urlParams = new URLSearchParams(window.location.search);
   const incidentId = urlParams.get('id');
 
@@ -323,7 +325,10 @@ export default function IncidentDetail() {
               <span className={cn("text-sm font-medium", status.text)}>{status.label}</span>
             </div>
             <div className="relative">
-              <h1 className="text-slate-50 pr-48 text-2xl font-bold">{incident.name}</h1>
+              <h1 className={cn(
+                "text-2xl font-bold pr-48",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>{incident.name}</h1>
               <div className="absolute top-0 right-0">
                 <Select
                   value={incident.status}
@@ -378,7 +383,10 @@ export default function IncidentDetail() {
           }
 
           {/* Info Card */}
-          <Card className="p-6">
+          <Card className={cn(
+            "p-6",
+            isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+          )}>
             <div className="flex items-start gap-4 mb-6">
               <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center", type.color)}>
                 <TypeIcon className="w-7 h-7 text-white" />
@@ -388,41 +396,56 @@ export default function IncidentDetail() {
                   <Badge className={severity.color}>{severity.label}</Badge>
                   <Badge variant="secondary">{type.label}</Badge>
                 </div>
-                <p className="text-slate-600">{incident.description || 'Sin descripción'}</p>
+                <p className={cn(
+                  "text-sm",
+                  isDarkMode ? "text-slate-300" : "text-slate-600"
+                )}>{incident.description || 'Sin descripción'}</p>
               </div>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t">
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className={cn(
+                "flex items-center gap-3",
+                isDarkMode ? "text-slate-300" : "text-slate-600"
+              )}>
                 <MapPin className="w-5 h-5 text-slate-400" />
                 <div>
                   <p className="text-xs text-slate-400">Ubicación</p>
-                  <p className="font-medium">{incident.location}</p>
+                  <p className={cn("font-medium", isDarkMode ? "text-white" : "text-slate-900")}>{incident.location}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className={cn(
+                "flex items-center gap-3",
+                isDarkMode ? "text-slate-300" : "text-slate-600"
+              )}>
                 <Clock className="w-5 h-5 text-slate-400" />
                 <div>
                   <p className="text-xs text-slate-400">Inicio</p>
-                  <p className="font-medium">
+                  <p className={cn("font-medium", isDarkMode ? "text-white" : "text-slate-900")}>
                     {incident.start_time ?
                     format(new Date(incident.start_time), "dd MMM yyyy, HH:mm", { locale: es }) :
                     'No especificado'}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className={cn(
+                "flex items-center gap-3",
+                isDarkMode ? "text-slate-300" : "text-slate-600"
+              )}>
                 <User className="w-5 h-5 text-slate-400" />
                 <div>
                   <p className="text-xs text-slate-400">Comandante</p>
-                  <p className="font-medium">{incident.incident_commander || 'No asignado'}</p>
+                  <p className={cn("font-medium", isDarkMode ? "text-white" : "text-slate-900")}>{incident.incident_commander || 'No asignado'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-slate-600">
+              <div className={cn(
+                "flex items-center gap-3",
+                isDarkMode ? "text-slate-300" : "text-slate-600"
+              )}>
                 <Radio className="w-5 h-5 text-slate-400" />
                 <div>
                   <p className="text-xs text-slate-400">Recursos Asignados</p>
-                  <p className="font-medium">{resources.length} recurso(s)</p>
+                  <p className={cn("font-medium", isDarkMode ? "text-white" : "text-slate-900")}>{resources.length} recurso(s)</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-slate-600">
@@ -466,7 +489,10 @@ export default function IncidentDetail() {
 
             <TabsContent value="staff" className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold text-slate-900">Estructura de Comando</h3>
+                <h3 className={cn(
+                  "font-semibold",
+                  isDarkMode ? "text-white" : "text-slate-900"
+                )}>Estructura de Comando</h3>
                 <Button size="sm" onClick={() => setShowStaffForm(true)}>
                   <Plus className="w-4 h-4 mr-1" />
                   Agregar
@@ -515,7 +541,10 @@ export default function IncidentDetail() {
 
             <TabsContent value="resources" className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold text-slate-900">Recursos Asignados</h3>
+                <h3 className={cn(
+                  "font-semibold",
+                  isDarkMode ? "text-white" : "text-slate-900"
+                )}>Recursos Asignados</h3>
                 <Link to={createPageUrl(`Resources?incident=${incidentId}`)}>
                   <Button size="sm">
                     <Plus className="w-4 h-4 mr-1" />
@@ -555,7 +584,10 @@ export default function IncidentDetail() {
         {/* Sidebar - Activity */}
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="font-semibold text-slate-900">Bitácora</h3>
+            <h3 className={cn(
+              "font-semibold",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>Bitácora</h3>
             <Button size="sm" variant="outline" onClick={() => setShowLogForm(true)}>
               <Plus className="w-4 h-4 mr-1" />
               Entrada
@@ -954,7 +986,10 @@ export default function IncidentDetail() {
 
             {/* Institutions List */}
             <div className="space-y-3">
-              <h4 className="font-semibold">Instituciones Registradas ({institutions.length})</h4>
+              <h4 className={cn(
+                "font-semibold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>Instituciones Registradas ({institutions.length})</h4>
               {institutions.length === 0 ?
               <Card className="p-8 text-center">
                   <Building2 className="w-10 h-10 text-slate-300 mx-auto mb-3" />
@@ -967,7 +1002,10 @@ export default function IncidentDetail() {
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <p className="font-semibold text-slate-900">{institution.nombre}</p>
+                            <p className={cn(
+                              "font-semibold",
+                              isDarkMode ? "text-white" : "text-slate-900"
+                            )}>{institution.nombre}</p>
                             {institution.units_deployed > 0 &&
                         <Badge variant="secondary">
                                 {institution.units_deployed} unidad(es)
