@@ -54,46 +54,57 @@ export default function FormSCI202({ open, onClose, incident }) {
   };
 
   const handleDownloadPDF = async () => {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    
-    // Capturar todas las páginas del documento
-    const pages = formRef.current.querySelectorAll('[role="tabpanel"]');
-    
-    for (let i = 0; i < pages.length; i++) {
-      const page = pages[i];
+    try {
+      // Esperar a que todas las imágenes se carguen
+      const images = formRef.current.querySelectorAll('img');
+      await Promise.all(
+        Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = resolve; // Resolver incluso si falla para continuar
+          });
+        })
+      );
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      // Hacer visible la página temporalmente para capturarla
-      const originalDisplay = page.style.display;
-      page.style.display = 'block';
-      page.setAttribute('data-state', 'active');
+      const pages = formRef.current.querySelectorAll('[role="tabpanel"]');
       
-      const canvas = await html2canvas(page, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        windowWidth: page.scrollWidth,
-        windowHeight: page.scrollHeight
-      });
-      
-      // Restaurar el estado original
-      page.style.display = originalDisplay;
-      if (i !== 0) page.setAttribute('data-state', 'inactive');
-      
-      const imgData = canvas.toDataURL('image/png');
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      // Agregar nueva página si no es la primera
-      if (i > 0) {
-        pdf.addPage();
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+        const originalDisplay = page.style.display;
+        page.style.display = 'block';
+        page.setAttribute('data-state', 'active');
+        
+        await new Promise(resolve => setTimeout(resolve, 100)); // Pequeña espera
+        
+        const canvas = await html2canvas(page, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          windowWidth: page.scrollWidth,
+          windowHeight: page.scrollHeight
+        });
+        
+        page.style.display = originalDisplay;
+        if (i !== 0) page.setAttribute('data-state', 'inactive');
+        
+        const imgData = canvas.toDataURL('image/png');
+        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+        
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, Math.min(imgHeight, pdfHeight));
       }
       
-      // Agregar imagen de la página
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, Math.min(imgHeight, pdfHeight));
+      pdf.save(`SCI-202-${incident?.incident_number || 'formulario'}.pdf`);
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('Error al generar el PDF. Por favor intente nuevamente.');
     }
-    
-    pdf.save(`SCI-202-${incident?.incident_number || 'formulario'}.pdf`);
   };
 
   return (
