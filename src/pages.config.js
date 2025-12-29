@@ -4,9 +4,9 @@ import ICSStructure from './pages/ICSStructure';
 import IncidentDetail from './pages/IncidentDetail';
 import IncidentMap from './pages/IncidentMap';
 import Incidents from './pages/Incidents';
+import NotificationRules from './pages/NotificationRules';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
-import NotificationRules from './pages/NotificationRules';
 import __Layout from './Layout.jsx';
 
 
@@ -17,9 +17,9 @@ export const PAGES = {
     "IncidentDetail": IncidentDetail,
     "IncidentMap": IncidentMap,
     "Incidents": Incidents,
+    "NotificationRules": NotificationRules,
     "Reports": Reports,
     "Resources": Resources,
-    "NotificationRules": NotificationRules,
 }
 
 export const pagesConfig = {

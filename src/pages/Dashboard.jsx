@@ -20,6 +20,7 @@ import StatsCard from '../components/dashboard/StatsCard';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
 import IncidentCard from '../components/incidents/IncidentCard';
 import SenapredAlertsPanel from '../components/dashboard/SenapredAlertsPanel';
+import ChileanSeismicPanel from '../components/dashboard/ChileanSeismicPanel';
 
 export default function Dashboard() {
   const { data: incidents = [], isLoading: loadingIncidents } = useQuery({
@@ -205,6 +206,9 @@ export default function Dashboard() {
         <div className="space-y-4">
           {/* SENAPRED Alerts */}
           <SenapredAlertsPanel />
+
+          {/* Chilean Seismic Activity */}
+          <ChileanSeismicPanel />
 
           {/* Activity Timeline */}
           <div>
