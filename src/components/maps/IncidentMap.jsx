@@ -345,8 +345,8 @@ export default function IncidentMap({
           </Button>
         </div>
       )}
-      
-      <div style={{ height, width: '100%' }}>
+
+      <div style={{ height: showAddPOI ? '250px' : height, width: '100%' }}>
         <MapContainer
           center={mapCenter}
           zoom={mapZoom}
