@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { 
   AlertTriangle, 
   Users, 
@@ -10,7 +11,8 @@ import {
   Clock,
   ChevronRight,
   Plus,
-  Flame
+  Flame,
+  GripVertical
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -25,6 +27,11 @@ import HydrometricStationsPanel from '../components/dashboard/HydrometricStation
 import WindyPanel from '../components/dashboard/WindyPanel';
 
 export default function Dashboard() {
+  const [panelOrder, setPanelOrder] = useState(() => {
+    const saved = localStorage.getItem('dashboardPanelOrder');
+    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy'];
+  });
+
   const { data: incidents = [], isLoading: loadingIncidents } = useQuery({
     queryKey: ['incidents'],
     queryFn: () => base44.entities.Incident.list('-created_date', 50),
@@ -43,6 +50,46 @@ export default function Dashboard() {
   const activeIncidents = incidents.filter(i => i.status === 'active');
   const criticalIncidents = incidents.filter(i => i.severity === 'critical' && i.status === 'active');
   const deployedResources = resources.filter(r => r.status === 'deployed');
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(panelOrder);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setPanelOrder(items);
+    localStorage.setItem('dashboardPanelOrder', JSON.stringify(items));
+  };
+
+  const panels = {
+    activity: (
+      <div>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Actividad Reciente Regional</h2>
+        {loadingActivities ? (
+          <Card className="p-6">
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="flex gap-4">
+                  <Skeleton className="w-3 h-3 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        ) : (
+          <ActivityTimeline activities={activities} incidents={incidents} />
+        )}
+      </div>
+    ),
+    senapred: <SenapredAlertsPanel />,
+    seismic: <ChileanSeismicPanel />,
+    hydrometric: <HydrometricStationsPanel />,
+    windy: <WindyPanel />
+  };
 
   // Notificar sobre incidentes críticos activos al cargar
   useEffect(() => {
@@ -205,41 +252,38 @@ export default function Dashboard() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="space-y-4">
-          {/* Activity Timeline */}
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Actividad Reciente Regional</h2>
-            {loadingActivities ? (
-              <Card className="p-6">
-                <div className="space-y-4">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="flex gap-4">
-                      <Skeleton className="w-3 h-3 rounded-full" />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className="h-4 w-24" />
-                        <Skeleton className="h-4 w-full" />
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="dashboard-panels">
+            {(provided) => (
+              <div 
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="space-y-4"
+              >
+                {panelOrder.map((panelId, index) => (
+                  <Draggable key={panelId} draggableId={panelId} index={index}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`relative ${snapshot.isDragging ? 'z-50' : ''}`}
+                      >
+                        <div 
+                          {...provided.dragHandleProps}
+                          className="absolute -left-8 top-4 cursor-move opacity-0 hover:opacity-100 transition-opacity z-10"
+                        >
+                          <GripVertical className="w-5 h-5 text-slate-400" />
+                        </div>
+                        {panels[panelId]}
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            ) : (
-              <ActivityTimeline activities={activities} incidents={incidents} />
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
             )}
-          </div>
-
-          {/* SENAPRED Alerts */}
-          <SenapredAlertsPanel />
-
-          {/* Chilean Seismic Activity */}
-          <ChileanSeismicPanel />
-
-          {/* Hydrometric Stations */}
-          <HydrometricStationsPanel />
-
-          {/* Windy Weather Map */}
-          <WindyPanel />
-        </div>
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );
