@@ -266,14 +266,18 @@ export default function Dashboard() {
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        className={`relative ${snapshot.isDragging ? 'z-50' : ''}`}
+                        {...provided.dragHandleProps}
+                        className={`relative touch-none ${snapshot.isDragging ? 'z-50 opacity-90 scale-105 shadow-2xl' : ''} transition-all duration-200`}
+                        style={{
+                          ...provided.draggableProps.style,
+                          cursor: snapshot.isDragging ? 'grabbing' : 'grab'
+                        }}
                       >
-                        <div 
-                          {...provided.dragHandleProps}
-                          className="absolute -left-8 top-4 cursor-move opacity-0 hover:opacity-100 transition-opacity z-10"
-                        >
-                          <GripVertical className="w-5 h-5 text-slate-400" />
-                        </div>
+                        {snapshot.isDragging && (
+                          <div className="absolute -top-2 -left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
+                            Moviendo...
+                          </div>
+                        )}
                         {panels[panelId]}
                       </div>
                     )}
