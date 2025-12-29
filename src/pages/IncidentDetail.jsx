@@ -510,7 +510,10 @@ export default function IncidentDetail() {
 
               <div className="grid sm:grid-cols-2 gap-3">
                   {staff.map((member) =>
-                <Card key={member.id} className="p-4 group">
+                <Card key={member.id} className={cn(
+                  "p-4 group",
+                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+                )}>
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="text-xs text-orange-600 font-medium mb-1">
