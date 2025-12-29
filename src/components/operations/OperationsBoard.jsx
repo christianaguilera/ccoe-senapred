@@ -11,8 +11,9 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import ICSStructureView from '../incidents/ICSStructureView';
 
-export default function OperationsBoard({ open, onClose, incident }) {
+export default function OperationsBoard({ open, onClose, incident, staff = [] }) {
   const boardRef = useRef(null);
   const [boardData, setBoardData] = useState({
     tipo_emergencia: incident?.name || '',
@@ -344,11 +345,8 @@ export default function OperationsBoard({ open, onClose, incident }) {
                   {/* Organigrama Staff */}
                   <Card className="p-4 bg-slate-100">
                     <h3 className="font-semibold text-center mb-4">STAFF DE COMANDO</h3>
-                    <div className="border-2 border-slate-300 rounded p-4 min-h-[300px] bg-white">
-                      <p className="text-xs text-slate-400 text-center">Organigrama del Staff de Comando</p>
-                      <div className="text-center text-xs text-slate-500 mt-2">
-                        (Personalizar según estructura SCI)
-                      </div>
+                    <div className="bg-white">
+                      <ICSStructureView staff={staff} />
                     </div>
                   </Card>
                 </div>

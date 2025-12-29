@@ -860,6 +860,7 @@ export default function IncidentDetail() {
         open={showOperationsBoard}
         onClose={() => setShowOperationsBoard(false)}
         incident={incident}
+        staff={staff}
       />
 
       {/* Institutions Modal */}
