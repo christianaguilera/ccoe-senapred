@@ -573,23 +573,58 @@ export default function DrawableOperationsMap({
               </BaseLayer>
             </LayersControl>
 
-            {/* Render existing drawings */}
-            {drawings.map(drawing => renderDrawing(drawing))}
-
             {/* Incident marker */}
             {incident?.coordinates?.lat && incident?.coordinates?.lng && (
-              <Circle
-                center={[incident.coordinates.lat, incident.coordinates.lng]}
-                radius={500}
-                pathOptions={{
-                  color: '#ef4444',
-                  fillColor: '#ef4444',
-                  fillOpacity: 0.1,
-                  weight: 2,
-                  dashArray: '5, 5'
-                }}
-              />
+              <>
+                <Marker
+                  position={[incident.coordinates.lat, incident.coordinates.lng]}
+                  icon={L.divIcon({
+                    className: 'custom-incident-marker',
+                    html: `
+                      <div style="
+                        background-color: #ef4444;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50% 50% 50% 0;
+                        transform: rotate(-45deg);
+                        border: 3px solid white;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      ">
+                        <div style="transform: rotate(45deg); color: white; font-size: 18px;">⚠️</div>
+                      </div>
+                    `,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 40],
+                    popupAnchor: [0, -40]
+                  })}
+                >
+                  <Popup>
+                    <div className="p-2">
+                      <h3 className="font-bold text-sm mb-1">📍 Incidente</h3>
+                      <p className="text-xs font-semibold">{incident.name}</p>
+                      <p className="text-xs text-slate-500">{incident.location}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+                <Circle
+                  center={[incident.coordinates.lat, incident.coordinates.lng]}
+                  radius={500}
+                  pathOptions={{
+                    color: '#ef4444',
+                    fillColor: '#ef4444',
+                    fillOpacity: 0.1,
+                    weight: 2,
+                    dashArray: '5, 5'
+                  }}
+                />
+              </>
             )}
+
+            {/* Render existing drawings */}
+            {drawings.map(drawing => renderDrawing(drawing))}
           </MapContainer>
         </div>
       </Card>
