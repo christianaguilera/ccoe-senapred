@@ -21,6 +21,7 @@ import ActivityTimeline from '../components/dashboard/ActivityTimeline';
 import IncidentCard from '../components/incidents/IncidentCard';
 import SenapredAlertsPanel from '../components/dashboard/SenapredAlertsPanel';
 import ChileanSeismicPanel from '../components/dashboard/ChileanSeismicPanel';
+import HydrometricStationsPanel from '../components/dashboard/HydrometricStationsPanel';
 
 export default function Dashboard() {
   const { data: incidents = [], isLoading: loadingIncidents } = useQuery({
@@ -209,6 +210,9 @@ export default function Dashboard() {
 
           {/* Chilean Seismic Activity */}
           <ChileanSeismicPanel />
+
+          {/* Hydrometric Stations */}
+          <HydrometricStationsPanel />
 
           {/* Activity Timeline */}
           <div>
