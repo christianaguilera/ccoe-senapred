@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const priorityConfig = {
   info: { color: 'bg-blue-100 text-blue-700', dot: 'bg-blue-500' },

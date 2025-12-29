@@ -25,7 +25,7 @@ import SenapredAlertsPanel from '../components/dashboard/SenapredAlertsPanel';
 import ChileanSeismicPanel from '../components/dashboard/ChileanSeismicPanel';
 import HydrometricStationsPanel from '../components/dashboard/HydrometricStationsPanel';
 import WindyPanel from '../components/dashboard/WindyPanel';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
 export default function Dashboard() {

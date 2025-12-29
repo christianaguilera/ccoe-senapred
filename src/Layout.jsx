@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import NotificationBell from './components/notifications/NotificationBell';
 import ThemeToggle from './components/ThemeToggle';
-import { useTheme } from './contexts/ThemeContext';
+import { useTheme } from './components/contexts/ThemeContext';
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
