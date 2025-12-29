@@ -106,7 +106,7 @@ export default function Dashboard() {
   const panels = {
     activity: (
       <div>
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">Actividad Reciente Regional</h2>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Panel de Monitoreo</h2>
         {loadingActivities ? (
           <Card className="p-6">
             <div className="space-y-4">
