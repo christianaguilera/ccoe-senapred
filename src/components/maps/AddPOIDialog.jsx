@@ -38,30 +38,62 @@ const poiTypes = {
   pas: 'PAS - Puesto Avanzado Seguridad',
   pap: 'PAP - Puesto Avanzado Planificación',
   
-  // Otros puntos de interés
+  // Servicios de Emergencia
   command_center: '🏢 Centro de Comando',
-  resource_station: '📦 Estación de Recursos',
-  medical_post: '🏥 Puesto Médico',
-  staging_area: '🚧 Área de Preparación',
-  heliport: '🚁 Helipuerto',
-  water_source: '💧 Fuente de Agua',
-  hazard_zone: '☢️ Zona de Peligro',
-  evacuation_point: '🚪 Punto de Evacuación',
-  supply_depot: '🏪 Depósito de Suministros',
   firefighters: '🚒 Bomberos',
   ambulance: '🚑 Ambulancia',
   police: '🚓 Policía',
   rescue_team: '🦺 Equipo de Rescate',
-  shelter: '🏠 Refugio',
-  food_distribution: '🍽️ Distribución de Alimentos',
+  military: '🪖 Militar',
+  
+  // Instalaciones Médicas
+  medical_post: '🏥 Puesto Médico',
+  field_hospital: '⛺ Hospital de Campaña',
+  triage_area: '⚕️ Área de Triage',
+  morgue: '⚰️ Morgue Temporal',
+  
+  // Áreas Operativas
+  staging_area: '🚧 Área de Preparación',
+  heliport: '🚁 Helipuerto',
+  landing_zone: '🛬 Zona de Aterrizaje',
+  
+  // Recursos y Suministros
+  resource_station: '📦 Estación de Recursos',
+  supply_depot: '🏪 Depósito de Suministros',
+  water_source: '💧 Fuente de Agua',
   water_distribution: '🚰 Distribución de Agua',
+  food_distribution: '🍽️ Distribución de Alimentos',
   generator: '⚡ Generador',
+  fuel_station: '⛽ Estación de Combustible',
+  
+  // Refugios y Evacuación
+  shelter: '🏠 Refugio',
+  evacuation_point: '🚪 Punto de Evacuación',
+  assembly_point: '👥 Punto de Reunión',
+  safe_zone: '🛡️ Zona Segura',
+  
+  // Comunicaciones
   communications: '📡 Comunicaciones',
+  radio_tower: '📻 Torre de Radio',
+  command_post: '📞 Puesto de Comunicaciones',
+  
+  // Peligros y Restricciones
+  hazard_zone: '☢️ Zona de Peligro',
+  contamination_area: '☣️ Área Contaminada',
   roadblock: '🚧 Bloqueo de Ruta',
   debris: '💥 Escombros',
-  field_hospital: '⛺ Hospital de Campaña',
-  military: '🪖 Militar',
+  collapsed_building: '🏚️ Edificio Colapsado',
+  fire_zone: '🔥 Zona de Incendio',
+  flood_zone: '🌊 Zona Inundada',
+  
+  // Personal y Voluntarios
   volunteers: '🤝 Voluntarios',
+  personnel_area: '👷 Área de Personal',
+  rest_area: '🛌 Área de Descanso',
+  
+  // Otros
+  checkpoint: '🚦 Punto de Control',
+  decontamination: '🧼 Zona de Descontaminación',
   other: '📍 Otro'
 };
 
