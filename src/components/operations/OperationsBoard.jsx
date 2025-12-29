@@ -64,7 +64,8 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
       electricidad: '',
       sanitario: '',
       telecomunicaciones: '',
-      internet: ''
+      internet: '',
+      otros: ''
     },
     evacuaciones: [
       { localidad: '', sae: '', activacion_sirenas: '', asistida: '' }
@@ -654,6 +655,10 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                       <div>
                         <Label className="text-white text-[10px]">INTERNET:</Label>
                         <Input value={boardData.condiciones.internet} onChange={(e) => setBoardData({...boardData, condiciones: {...boardData.condiciones, internet: e.target.value}})} className="bg-white text-slate-900 h-7 text-xs" />
+                      </div>
+                      <div>
+                        <Label className="text-white text-[10px]">OTROS:</Label>
+                        <Input value={boardData.condiciones.otros} onChange={(e) => setBoardData({...boardData, condiciones: {...boardData.condiciones, otros: e.target.value}})} className="bg-white text-slate-900 h-7 text-xs" />
                       </div>
                     </div>
                   </Card>
