@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Info, AlertCircle, Users, Radio, ClipboardList, FileText, DollarSign } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { useTheme } from '../contexts/ThemeContext';
 
 const roleConfig = {
   incident_commander: { 
@@ -64,8 +63,7 @@ const roleConfig = {
   }
 };
 
-export default function ICSStructureView({ staff = [] }) {
-  const { isDarkMode } = useTheme?.() || { isDarkMode: false };
+export default function ICSStructureView({ staff = [], isDarkMode = false }) {
   const getStaffByRole = (role) => staff.find(m => m.role === role);
 
   const commanderStaff = ['public_info_officer', 'safety_officer', 'liaison_officer'];
