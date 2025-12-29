@@ -1,19 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity, ExternalLink, RefreshCw, Map, List } from 'lucide-react';
+import { Activity, ExternalLink, RefreshCw, Map, List, Navigation } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { toast } from 'sonner';
+
+function MapGeolocation({ userLocation }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (userLocation) {
+      map.flyTo([userLocation.lat, userLocation.lng], 10, { duration: 1.5 });
+    }
+  }, [userLocation, map]);
+  
+  return null;
+}
 
 export default function ChileanSeismicPanel() {
   const [earthquakes, setEarthquakes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
+  const [userLocation, setUserLocation] = useState(null);
+  const [locating, setLocating] = useState(false);
 
   const fetchEarthquakes = async () => {
     setLoading(true);
@@ -85,6 +100,31 @@ export default function ChileanSeismicPanel() {
     return '#64748b';
   };
 
+  const handleGeolocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocalización no disponible en este navegador');
+      return;
+    }
+
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        setLocating(false);
+        toast.success('Ubicación obtenida');
+      },
+      (error) => {
+        setLocating(false);
+        toast.error('No se pudo obtener la ubicación');
+        console.error('Geolocation error:', error);
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+  };
+
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
@@ -145,18 +185,39 @@ export default function ChileanSeismicPanel() {
           No se pudieron cargar los datos
         </div>
       ) : viewMode === 'map' ? (
-        <div style={{ height: '400px', width: '100%' }} className="rounded-lg overflow-hidden">
-          <MapContainer
-            center={[-33.4489, -70.6693]}
-            zoom={5}
-            style={{ height: '100%', width: '100%' }}
-            scrollWheelZoom={false}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {earthquakes.filter(eq => eq.latitud && eq.longitud).map((eq, idx) => (
+        <div className="relative">
+          <div style={{ height: '400px', width: '100%' }} className="rounded-lg overflow-hidden">
+            <MapContainer
+              center={[-33.4489, -70.6693]}
+              zoom={5}
+              style={{ height: '100%', width: '100%' }}
+              scrollWheelZoom={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <MapGeolocation userLocation={userLocation} />
+              
+              {userLocation && (
+                <CircleMarker
+                  center={[userLocation.lat, userLocation.lng]}
+                  radius={8}
+                  fillColor="#10b981"
+                  color="#ffffff"
+                  weight={3}
+                  opacity={1}
+                  fillOpacity={0.8}
+                >
+                  <Popup>
+                    <div className="p-2">
+                      <p className="text-sm font-semibold">📍 Tu ubicación</p>
+                    </div>
+                  </Popup>
+                </CircleMarker>
+              )}
+              
+              {earthquakes.filter(eq => eq.latitud && eq.longitud).map((eq, idx) => (
               <CircleMarker
                 key={idx}
                 center={[eq.latitud, eq.longitud]}
@@ -191,6 +252,16 @@ export default function ChileanSeismicPanel() {
             ))}
           </MapContainer>
         </div>
+        <Button
+          onClick={handleGeolocation}
+          disabled={locating}
+          size="sm"
+          className="absolute top-2 right-2 z-[1000] bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-lg"
+        >
+          <Navigation className={`w-4 h-4 mr-1 ${locating ? 'animate-pulse' : ''}`} />
+          {locating ? 'Ubicando...' : 'Mi ubicación'}
+        </Button>
+      </div>
       ) : (
         <div className="space-y-3 max-h-[500px] overflow-y-auto">
           {earthquakes.map((eq, idx) => (
