@@ -99,6 +99,7 @@ export default function DrawableOperationsMap({
   const [currentDrawing, setCurrentDrawing] = useState(null);
   const [editingDrawing, setEditingDrawing] = useState(null);
   const [drawMode, setDrawMode] = useState(null);
+  const [editingPoints, setEditingPoints] = useState(null);
   const [metadata, setMetadata] = useState({
     name: '',
     type: 'hazard_zone',
@@ -161,6 +162,20 @@ export default function DrawableOperationsMap({
     setShowMetadataDialog(true);
   };
 
+  const handleEditPoints = (drawing) => {
+    setEditingPoints(drawing);
+  };
+
+  const handleSaveEditedPoints = () => {
+    if (editingPoints) {
+      const updatedDrawings = drawings.map(d => 
+        d.id === editingPoints.id ? editingPoints : d
+      );
+      onDrawingsChange(updatedDrawings);
+      setEditingPoints(null);
+    }
+  };
+
   const handleDelete = (drawingId) => {
     const updatedDrawings = drawings.filter(d => d.id !== drawingId);
     onDrawingsChange(updatedDrawings);
@@ -200,12 +215,23 @@ export default function DrawableOperationsMap({
 
   const renderDrawing = (drawing) => {
     const color = getDrawingColor(drawing.type);
+    const isEditing = editingPoints?.id === drawing.id;
     
     if (drawing.geometry.type === 'marker') {
       return (
         <Marker 
           key={drawing.id}
-          position={drawing.geometry.coordinates}
+          position={isEditing ? editingPoints.geometry.coordinates : drawing.geometry.coordinates}
+          draggable={isEditing}
+          eventHandlers={isEditing ? {
+            dragend: (e) => {
+              const { lat, lng } = e.target.getLatLng();
+              setEditingPoints({
+                ...editingPoints,
+                geometry: { ...editingPoints.geometry, coordinates: [lat, lng] }
+              });
+            }
+          } : {}}
         >
           <Popup>
             <div className="p-2">
@@ -213,14 +239,29 @@ export default function DrawableOperationsMap({
               <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
               {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
               {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
-              <div className="flex gap-1 mt-2">
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
-                  <Edit2 className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleDelete(drawing.id)}>
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              </div>
+              {isEditing ? (
+                <div className="flex gap-1 mt-2">
+                  <Button size="sm" className="h-6 px-2 bg-green-600 hover:bg-green-700" onClick={handleSaveEditedPoints}>
+                    Guardar
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => setEditingPoints(null)}>
+                    Cancelar
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-1 mt-2">
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEditPoints(drawing)}>
+                    <Edit2 className="w-3 h-3 mr-1" />
+                    Mover
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
+                    Editar
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2 text-red-600" onClick={() => handleDelete(drawing.id)}>
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              )}
             </div>
           </Popup>
         </Marker>
@@ -229,8 +270,8 @@ export default function DrawableOperationsMap({
       return (
         <Circle
           key={drawing.id}
-          center={drawing.geometry.center}
-          radius={drawing.geometry.radius}
+          center={isEditing ? editingPoints.geometry.center : drawing.geometry.center}
+          radius={isEditing ? editingPoints.geometry.radius : drawing.geometry.radius}
           pathOptions={{
             color: color,
             fillColor: color,
@@ -244,105 +285,255 @@ export default function DrawableOperationsMap({
               <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
               {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
               {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
-              <div className="flex gap-1 mt-2">
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
-                  <Edit2 className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleDelete(drawing.id)}>
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              </div>
+              {isEditing ? (
+                <div className="space-y-2">
+                  <Input
+                    type="number"
+                    value={editingPoints.geometry.radius}
+                    onChange={(e) => setEditingPoints({
+                      ...editingPoints,
+                      geometry: { ...editingPoints.geometry, radius: parseFloat(e.target.value) }
+                    })}
+                    placeholder="Radio (metros)"
+                    className="h-7 text-xs"
+                  />
+                  <div className="flex gap-1">
+                    <Button size="sm" className="h-6 px-2 bg-green-600 hover:bg-green-700" onClick={handleSaveEditedPoints}>
+                      Guardar
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => setEditingPoints(null)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-1 mt-2">
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEditPoints(drawing)}>
+                    <Edit2 className="w-3 h-3 mr-1" />
+                    Puntos
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
+                    Editar
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2 text-red-600" onClick={() => handleDelete(drawing.id)}>
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              )}
             </div>
           </Popup>
         </Circle>
       );
     } else if (drawing.geometry.type === 'polygon') {
       return (
-        <Polygon
-          key={drawing.id}
-          positions={drawing.geometry.coordinates}
-          pathOptions={{
-            color: color,
-            fillColor: color,
-            fillOpacity: 0.3,
-            weight: 2
-          }}
-        >
-          <Popup>
-            <div className="p-2">
-              <h3 className="font-bold text-sm mb-1">{drawing.name || 'Sin nombre'}</h3>
-              <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
-              {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
-              {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
-              <div className="flex gap-1 mt-2">
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
-                  <Edit2 className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleDelete(drawing.id)}>
-                  <Trash2 className="w-3 h-3" />
-                </Button>
+        <>
+          <Polygon
+            key={drawing.id}
+            positions={isEditing ? editingPoints.geometry.coordinates : drawing.geometry.coordinates}
+            pathOptions={{
+              color: color,
+              fillColor: color,
+              fillOpacity: 0.3,
+              weight: 2
+            }}
+          >
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-bold text-sm mb-1">{drawing.name || 'Sin nombre'}</h3>
+                <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
+                {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
+                {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
+                {isEditing ? (
+                  <div className="flex gap-1 mt-2">
+                    <Button size="sm" className="h-6 px-2 bg-green-600 hover:bg-green-700" onClick={handleSaveEditedPoints}>
+                      Guardar
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => setEditingPoints(null)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-1 mt-2">
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEditPoints(drawing)}>
+                      <Edit2 className="w-3 h-3 mr-1" />
+                      Puntos
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
+                      Editar
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2 text-red-600" onClick={() => handleDelete(drawing.id)}>
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                )}
               </div>
-            </div>
-          </Popup>
-        </Polygon>
+            </Popup>
+          </Polygon>
+          {isEditing && editingPoints.geometry.coordinates.map((coord, idx) => (
+            <Marker
+              key={`edit-${drawing.id}-${idx}`}
+              position={coord}
+              draggable={true}
+              icon={L.divIcon({
+                className: 'custom-edit-marker',
+                html: `<div style="width: 12px; height: 12px; background: white; border: 2px solid ${color}; border-radius: 50%;"></div>`,
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+              })}
+              eventHandlers={{
+                dragend: (e) => {
+                  const { lat, lng } = e.target.getLatLng();
+                  const newCoords = [...editingPoints.geometry.coordinates];
+                  newCoords[idx] = [lat, lng];
+                  setEditingPoints({
+                    ...editingPoints,
+                    geometry: { ...editingPoints.geometry, coordinates: newCoords }
+                  });
+                }
+              }}
+            />
+          ))}
+        </>
       );
     } else if (drawing.geometry.type === 'polyline') {
       return (
-        <Polyline
-          key={drawing.id}
-          positions={drawing.geometry.coordinates}
-          pathOptions={{
-            color: color,
-            weight: 3
-          }}
-        >
-          <Popup>
-            <div className="p-2">
-              <h3 className="font-bold text-sm mb-1">{drawing.name || 'Sin nombre'}</h3>
-              <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
-              {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
-              {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
-              <div className="flex gap-1 mt-2">
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
-                  <Edit2 className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleDelete(drawing.id)}>
-                  <Trash2 className="w-3 h-3" />
-                </Button>
+        <>
+          <Polyline
+            key={drawing.id}
+            positions={isEditing ? editingPoints.geometry.coordinates : drawing.geometry.coordinates}
+            pathOptions={{
+              color: color,
+              weight: 3
+            }}
+          >
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-bold text-sm mb-1">{drawing.name || 'Sin nombre'}</h3>
+                <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
+                {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
+                {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
+                {isEditing ? (
+                  <div className="flex gap-1 mt-2">
+                    <Button size="sm" className="h-6 px-2 bg-green-600 hover:bg-green-700" onClick={handleSaveEditedPoints}>
+                      Guardar
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => setEditingPoints(null)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-1 mt-2">
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEditPoints(drawing)}>
+                      <Edit2 className="w-3 h-3 mr-1" />
+                      Puntos
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
+                      Editar
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2 text-red-600" onClick={() => handleDelete(drawing.id)}>
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                )}
               </div>
-            </div>
-          </Popup>
-        </Polyline>
+            </Popup>
+          </Polyline>
+          {isEditing && editingPoints.geometry.coordinates.map((coord, idx) => (
+            <Marker
+              key={`edit-${drawing.id}-${idx}`}
+              position={coord}
+              draggable={true}
+              icon={L.divIcon({
+                className: 'custom-edit-marker',
+                html: `<div style="width: 12px; height: 12px; background: white; border: 2px solid ${color}; border-radius: 50%;"></div>`,
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+              })}
+              eventHandlers={{
+                dragend: (e) => {
+                  const { lat, lng } = e.target.getLatLng();
+                  const newCoords = [...editingPoints.geometry.coordinates];
+                  newCoords[idx] = [lat, lng];
+                  setEditingPoints({
+                    ...editingPoints,
+                    geometry: { ...editingPoints.geometry, coordinates: newCoords }
+                  });
+                }
+              }}
+            />
+          ))}
+        </>
       );
     } else if (drawing.geometry.type === 'rectangle') {
       return (
-        <Rectangle
-          key={drawing.id}
-          bounds={drawing.geometry.coordinates}
-          pathOptions={{
-            color: color,
-            fillColor: color,
-            fillOpacity: 0.3,
-            weight: 2
-          }}
-        >
-          <Popup>
-            <div className="p-2">
-              <h3 className="font-bold text-sm mb-1">{drawing.name || 'Sin nombre'}</h3>
-              <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
-              {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
-              {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
-              <div className="flex gap-1 mt-2">
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
-                  <Edit2 className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleDelete(drawing.id)}>
-                  <Trash2 className="w-3 h-3" />
-                </Button>
+        <>
+          <Rectangle
+            key={drawing.id}
+            bounds={isEditing ? editingPoints.geometry.coordinates : drawing.geometry.coordinates}
+            pathOptions={{
+              color: color,
+              fillColor: color,
+              fillOpacity: 0.3,
+              weight: 2
+            }}
+          >
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-bold text-sm mb-1">{drawing.name || 'Sin nombre'}</h3>
+                <p className="text-xs text-slate-600 mb-1">{getTypeLabel(drawing.type)}</p>
+                {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
+                {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
+                {isEditing ? (
+                  <div className="flex gap-1 mt-2">
+                    <Button size="sm" className="h-6 px-2 bg-green-600 hover:bg-green-700" onClick={handleSaveEditedPoints}>
+                      Guardar
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => setEditingPoints(null)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-1 mt-2">
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEditPoints(drawing)}>
+                      <Edit2 className="w-3 h-3 mr-1" />
+                      Puntos
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
+                      Editar
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 px-2 text-red-600" onClick={() => handleDelete(drawing.id)}>
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                )}
               </div>
-            </div>
-          </Popup>
-        </Rectangle>
+            </Popup>
+          </Rectangle>
+          {isEditing && editingPoints.geometry.coordinates.map((coord, idx) => (
+            <Marker
+              key={`edit-${drawing.id}-${idx}`}
+              position={coord}
+              draggable={true}
+              icon={L.divIcon({
+                className: 'custom-edit-marker',
+                html: `<div style="width: 12px; height: 12px; background: white; border: 2px solid ${color}; border-radius: 50%;"></div>`,
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+              })}
+              eventHandlers={{
+                dragend: (e) => {
+                  const { lat, lng } = e.target.getLatLng();
+                  const newCoords = [...editingPoints.geometry.coordinates];
+                  newCoords[idx] = [lat, lng];
+                  setEditingPoints({
+                    ...editingPoints,
+                    geometry: { ...editingPoints.geometry, coordinates: newCoords }
+                  });
+                }
+              }}
+            />
+          ))}
+        </>
       );
     }
     return null;
