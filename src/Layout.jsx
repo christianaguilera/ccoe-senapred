@@ -18,11 +18,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import NotificationBell from './components/notifications/NotificationBell';
 import ThemeToggle from './components/ThemeToggle';
-import { useTheme } from './components/contexts/ThemeContext';
+import { ThemeProvider, useTheme } from './components/contexts/ThemeContext';
 
-export default function Layout({ children, currentPageName }) {
+function LayoutContent({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { isDarkMode, setIsDarkMode } = useTheme();
+  const { isDarkMode } = useTheme();
 
   const navigation = [
     { name: 'Dashboard', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
@@ -199,5 +199,13 @@ export default function Layout({ children, currentPageName }) {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function Layout({ children, currentPageName }) {
+  return (
+    <ThemeProvider>
+      <LayoutContent children={children} currentPageName={currentPageName} />
+    </ThemeProvider>
   );
 }
