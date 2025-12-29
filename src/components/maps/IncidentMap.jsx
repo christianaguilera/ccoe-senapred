@@ -57,6 +57,18 @@ const createIncidentIcon = (severity, type) => {
 
 // Custom icon for POIs
 const createPOIIcon = (type) => {
+  // SCI Label types use text instead of emojis
+  const labelTypes = {
+    pc: { text: 'PC', shape: 'square', bg: '#f97316' },
+    acv: { text: 'ACV', shape: 'circle', bg: '#eab308' },
+    staging_e: { text: 'E', shape: 'circle', bg: '#eab308' },
+    helibase_h: { text: 'H', shape: 'circle', bg: '#eab308' },
+    base_b: { text: 'B', shape: 'circle', bg: '#eab308' },
+    camp_c: { text: 'C', shape: 'circle', bg: '#eab308' },
+    pas: { text: 'PAS', shape: 'square', bg: '#f97316' },
+    pap: { text: 'PAP', shape: 'square', bg: '#f97316' }
+  };
+
   const icons = {
     command_center: '🏢',
     resource_station: '📦',
@@ -110,6 +122,37 @@ const createPOIIcon = (type) => {
     volunteers: '#14b8a6',
     other: '#64748b'
   };
+
+  // Check if this is a label type (SCI labels)
+  if (labelTypes[type]) {
+    const label = labelTypes[type];
+    const borderRadius = label.shape === 'circle' ? '50%' : '8px';
+    return L.divIcon({
+      className: 'custom-poi-label',
+      html: `
+        <div style="
+          background-color: ${label.bg};
+          width: 45px;
+          height: 45px;
+          border-radius: ${borderRadius};
+          border: 3px solid white;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          font-weight: bold;
+          color: white;
+          font-family: Arial, sans-serif;
+        ">
+          ${label.text}
+        </div>
+      `,
+      iconSize: [45, 45],
+      iconAnchor: [22, 22],
+      popupAnchor: [0, -22]
+    });
+  }
 
   return L.divIcon({
     className: 'custom-poi-marker',
@@ -273,6 +316,14 @@ export default function IncidentMap({
       field_hospital: 'Hospital de Campaña',
       military: 'Militar',
       volunteers: 'Voluntarios',
+      pc: 'PC - Puesto de Comando',
+      acv: 'ACV - Área Concentración de Víctimas',
+      staging_e: 'E - Área de Espera',
+      helibase_h: 'H - Helibase',
+      base_b: 'B - Base',
+      camp_c: 'C - Campamento',
+      pas: 'PAS - Puesto Avanzado de Seguridad',
+      pap: 'PAP - Puesto Avanzado de Planificación',
       other: 'Otro'
     };
     return labels[type] || type;

@@ -8,6 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin } from 'lucide-react';
 
 const poiTypes = {
+  // Etiquetas SCI oficiales
+  pc: 'PC - Puesto de Comando',
+  acv: 'ACV - Área Concentración de Víctimas',
+  staging_e: 'E - Área de Espera',
+  helibase_h: 'H - Helibase',
+  base_b: 'B - Base',
+  camp_c: 'C - Campamento',
+  pas: 'PAS - Puesto Avanzado Seguridad',
+  pap: 'PAP - Puesto Avanzado Planificación',
+  
+  // Otros puntos de interés
   command_center: '🏢 Centro de Comando',
   resource_station: '📦 Estación de Recursos',
   medical_post: '🏥 Puesto Médico',
@@ -37,7 +48,7 @@ const poiTypes = {
 export default function AddPOIDialog({ open, onClose, onAdd, initialCoordinates = null }) {
   const [formData, setFormData] = useState({
     name: '',
-    type: 'command_center',
+    type: 'pc',
     description: '',
     contact_info: '',
     coordinates: initialCoordinates || { lat: '', lng: '' }
@@ -48,7 +59,7 @@ export default function AddPOIDialog({ open, onClose, onAdd, initialCoordinates 
     onAdd(formData);
     setFormData({
       name: '',
-      type: 'command_center',
+      type: 'pc',
       description: '',
       contact_info: '',
       coordinates: { lat: '', lng: '' }
