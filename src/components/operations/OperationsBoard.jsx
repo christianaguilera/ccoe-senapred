@@ -49,7 +49,8 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
     },
     puesto_comando: {
       ubicacion: '',
-      oficial: incident?.incident_commander || ''
+      oficial: incident?.incident_commander || '',
+      institucion: ''
     },
     perimetros: [
       { ubicacion: '', institucion: '' }
@@ -542,6 +543,17 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                           onChange={(e) => setBoardData({
                             ...boardData,
                             puesto_comando: { ...boardData.puesto_comando, oficial: e.target.value }
+                          })}
+                          className="bg-white text-slate-900"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <Label className="text-white text-xs">INSTITUCIÓN:</Label>
+                        <Input
+                          value={boardData.puesto_comando.institucion}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            puesto_comando: { ...boardData.puesto_comando, institucion: e.target.value }
                           })}
                           className="bg-white text-slate-900"
                         />
