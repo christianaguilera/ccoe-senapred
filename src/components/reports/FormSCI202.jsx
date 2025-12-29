@@ -14,9 +14,11 @@ import jsPDF from 'jspdf';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import ICSStructureView from '../incidents/ICSStructureView';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function FormSCI202({ open, onClose, incident }) {
   const formRef = useRef(null);
+  const { isDarkMode } = useTheme();
   
   const { data: staff = [] } = useQuery({
     queryKey: ['staff', incident?.id],
@@ -366,7 +368,7 @@ export default function FormSCI202({ open, onClose, incident }) {
               <Card className="p-6">
                 <div className="space-y-4">
                   <Label className="font-semibold text-base">15. Organigrama para el Periodo Operacional:</Label>
-                  <ICSStructureView staff={staff} />
+                  <ICSStructureView staff={staff} isDarkMode={isDarkMode} />
 
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                     <div className="space-y-2">
