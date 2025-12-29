@@ -482,7 +482,10 @@ export default function IncidentDetail() {
 
           {/* Tabs */}
           <Tabs defaultValue="staff" className="space-y-4">
-            <TabsList className="bg-slate-100 w-full justify-start">
+            <TabsList className={cn(
+              "w-full justify-start",
+              isDarkMode ? "bg-slate-800" : "bg-slate-100"
+            )}>
               <TabsTrigger value="staff">Personal de Comando</TabsTrigger>
               <TabsTrigger value="resources">Recursos</TabsTrigger>
             </TabsList>
