@@ -205,15 +205,6 @@ export default function Dashboard() {
 
         {/* Right Sidebar */}
         <div className="space-y-4">
-          {/* SENAPRED Alerts */}
-          <SenapredAlertsPanel />
-
-          {/* Chilean Seismic Activity */}
-          <ChileanSeismicPanel />
-
-          {/* Hydrometric Stations */}
-          <HydrometricStationsPanel />
-
           {/* Activity Timeline */}
           <div>
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Actividad Reciente Regional</h2>
@@ -235,6 +226,15 @@ export default function Dashboard() {
               <ActivityTimeline activities={activities} incidents={incidents} />
             )}
           </div>
+
+          {/* SENAPRED Alerts */}
+          <SenapredAlertsPanel />
+
+          {/* Chilean Seismic Activity */}
+          <ChileanSeismicPanel />
+
+          {/* Hydrometric Stations */}
+          <HydrometricStationsPanel />
         </div>
       </div>
     </div>
