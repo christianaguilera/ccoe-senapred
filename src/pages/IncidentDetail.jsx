@@ -129,9 +129,9 @@ export default function IncidentDetail() {
   const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
 
   // Check if any modal/dialog is open
-  const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 || 
-    showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 || 
-    showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showGeneralReport || showInstitutions || showOperationsBoard;
+  const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 ||
+  showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 ||
+  showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showGeneralReport || showInstitutions || showOperationsBoard;
 
   const queryClient = useQueryClient();
 
@@ -171,13 +171,13 @@ export default function IncidentDetail() {
   const updateMutation = useMutation({
     mutationFn: async (data) => {
       const updated = await base44.entities.Incident.update(incidentId, data);
-      
+
       // Determinar tipo de acción para notificaciones
       const action = data.status && data.status !== incident.status ? 'status_changed' : 'updated';
-      
+
       // Procesar reglas de notificación automáticas
       await processIncidentNotifications({ ...incident, ...data, id: incidentId }, action);
-      
+
       return updated;
     },
     onSuccess: () => {
@@ -278,33 +278,33 @@ export default function IncidentDetail() {
   return (
     <div className="space-y-6">
       {/* Situation Room Alert */}
-      {incident.severity === 'critical' && incident.status === 'active' && (
-        <SituationRoomAlert
-          severity={incident.severity}
-          title="ALERTA DE INCIDENTE CRÍTICO"
-          message={`${incident.name} - ${incident.location}`}
-          details={[
-            { label: 'Tipo', value: typeConfig[incident.type]?.label || incident.type },
-            { label: 'Estado', value: statusConfig[incident.status]?.label || incident.status },
-            { label: 'Recursos', value: resources.length },
-            { label: 'Personal', value: staff.length },
-            { label: 'Instituciones', value: institutions.length }
-          ]}
-        />
-      )}
+      {incident.severity === 'critical' && incident.status === 'active' &&
+      <SituationRoomAlert
+        severity={incident.severity}
+        title="ALERTA DE INCIDENTE CRÍTICO"
+        message={`${incident.name} - ${incident.location}`}
+        details={[
+        { label: 'Tipo', value: typeConfig[incident.type]?.label || incident.type },
+        { label: 'Estado', value: statusConfig[incident.status]?.label || incident.status },
+        { label: 'Recursos', value: resources.length },
+        { label: 'Personal', value: staff.length },
+        { label: 'Instituciones', value: institutions.length }]
+        } />
 
-      {incident.severity === 'high' && incident.status === 'active' && (
-        <SituationRoomAlert
-          severity={incident.severity}
-          title="INCIDENTE DE ALTA PRIORIDAD"
-          message={`${incident.name} - Requiere atención`}
-          details={[
-            { label: 'Ubicación', value: incident.location },
-            { label: 'Recursos', value: resources.length },
-            { label: 'Personal', value: staff.length }
-          ]}
-        />
-      )}
+      }
+
+      {incident.severity === 'high' && incident.status === 'active' &&
+      <SituationRoomAlert
+        severity={incident.severity}
+        title="INCIDENTE DE ALTA PRIORIDAD"
+        message={`${incident.name} - Requiere atención`}
+        details={[
+        { label: 'Ubicación', value: incident.location },
+        { label: 'Recursos', value: resources.length },
+        { label: 'Personal', value: staff.length }]
+        } />
+
+      }
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
@@ -323,12 +323,12 @@ export default function IncidentDetail() {
               <span className={cn("text-sm font-medium", status.text)}>{status.label}</span>
             </div>
             <div className="relative">
-              <h1 className="text-2xl font-bold text-slate-900 pr-48">{incident.name}</h1>
+              <h1 className="text-slate-50 pr-48 text-2xl font-bold">{incident.name}</h1>
               <div className="absolute top-0 right-0">
                 <Select
                   value={incident.status}
-                  onValueChange={(value) => updateMutation.mutate({ status: value })}
-                >
+                  onValueChange={(value) => updateMutation.mutate({ status: value })}>
+
                   <SelectTrigger className="w-auto min-w-[160px] h-10 border-2 border-orange-500 bg-orange-50 hover:bg-orange-100 font-semibold shadow-lg">
                     <SelectValue />
                   </SelectTrigger>
@@ -369,13 +369,13 @@ export default function IncidentDetail() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Map Card */}
-          {!isAnyModalOpen && incident.coordinates?.lat && incident.coordinates?.lng && (
-            <IncidentMap
-              incidents={[incident]}
-              selectedIncident={incident}
-              height="400px"
-              showRadius={true} />
-          )}
+          {!isAnyModalOpen && incident.coordinates?.lat && incident.coordinates?.lng &&
+          <IncidentMap
+            incidents={[incident]}
+            selectedIncident={incident}
+            height="400px"
+            showRadius={true} />
+          }
 
           {/* Info Card */}
           <Card className="p-6">
@@ -429,23 +429,23 @@ export default function IncidentDetail() {
                 <Building2 className="w-5 h-5 text-slate-400" />
                 <div className="flex-1">
                   <p className="text-xs text-slate-400 mb-1">Instituciones Presentes ({institutions.length})</p>
-                  {institutions.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {institutions.map((inst) => (
-                        <span key={inst.id} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200">
+                  {institutions.length > 0 ?
+                  <div className="flex flex-wrap gap-1">
+                      {institutions.map((inst) =>
+                    <span key={inst.id} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200">
                           {inst.nombre}
                         </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="font-medium text-slate-500">Ninguna</p>
-                  )}
+                    )}
+                    </div> :
+
+                  <p className="font-medium text-slate-500">Ninguna</p>
+                  }
                 </div>
               </div>
             </div>
             
             <div className="pt-4 border-t mt-4">
-              <Button 
+              <Button
                 className="w-full bg-indigo-600 hover:bg-indigo-700"
                 onClick={() => setShowInstitutions(true)}>
                 <Building2 className="w-4 h-4 mr-2" />
@@ -858,8 +858,8 @@ export default function IncidentDetail() {
         staff={staff}
         resources={resources}
         institutions={institutions}
-        activities={activities}
-      />
+        activities={activities} />
+
 
       {/* Tablero de Operaciones */}
       <OperationsBoard
@@ -867,8 +867,8 @@ export default function IncidentDetail() {
         onClose={() => setShowOperationsBoard(false)}
         incident={incident}
         staff={staff}
-        resources={resources}
-      />
+        resources={resources} />
+
 
       {/* Institutions Modal */}
       <Dialog open={showInstitutions} onOpenChange={setShowInstitutions}>
@@ -955,63 +955,63 @@ export default function IncidentDetail() {
             {/* Institutions List */}
             <div className="space-y-3">
               <h4 className="font-semibold">Instituciones Registradas ({institutions.length})</h4>
-              {institutions.length === 0 ? (
-                <Card className="p-8 text-center">
+              {institutions.length === 0 ?
+              <Card className="p-8 text-center">
                   <Building2 className="w-10 h-10 text-slate-300 mx-auto mb-3" />
                   <p className="text-slate-500">No hay instituciones registradas</p>
-                </Card>
-              ) : (
-                <div className="space-y-2">
-                  {institutions.map((institution) => (
-                    <Card key={institution.id} className="p-4 group hover:shadow-md transition-shadow">
+                </Card> :
+
+              <div className="space-y-2">
+                  {institutions.map((institution) =>
+                <Card key={institution.id} className="p-4 group hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <p className="font-semibold text-slate-900">{institution.nombre}</p>
-                            {institution.units_deployed > 0 && (
-                              <Badge variant="secondary">
+                            {institution.units_deployed > 0 &&
+                        <Badge variant="secondary">
                                 {institution.units_deployed} unidad(es)
                               </Badge>
-                            )}
+                        }
                           </div>
                           <div className="grid grid-cols-2 gap-2 mt-2 text-sm text-slate-600">
-                            {institution.contact_person && (
-                              <div className="flex items-center gap-1">
+                            {institution.contact_person &&
+                        <div className="flex items-center gap-1">
                                 <User className="w-3 h-3" />
                                 <span>{institution.contact_person}</span>
                               </div>
-                            )}
-                            {institution.phone && (
-                              <div className="flex items-center gap-1">
+                        }
+                            {institution.phone &&
+                        <div className="flex items-center gap-1">
                                 <Radio className="w-3 h-3" />
                                 <span>{institution.phone}</span>
                               </div>
-                            )}
+                        }
                           </div>
-                          {institution.detalle_recursos && (
-                            <div className="mt-2 p-2 bg-slate-50 rounded border border-slate-200">
+                          {institution.detalle_recursos &&
+                      <div className="mt-2 p-2 bg-slate-50 rounded border border-slate-200">
                               <p className="text-xs font-medium text-slate-700 mb-1">Recursos:</p>
                               <p className="text-xs text-slate-600">{institution.detalle_recursos}</p>
                             </div>
-                          )}
-                          {institution.arrival_time && (
-                            <p className="text-xs text-slate-400 mt-2">
+                      }
+                          {institution.arrival_time &&
+                      <p className="text-xs text-slate-400 mt-2">
                               Llegada: {format(new Date(institution.arrival_time), "dd/MM/yyyy HH:mm", { locale: es })}
                             </p>
-                          )}
+                      }
                         </div>
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
-                          onClick={() => deleteInstitutionMutation.mutate(institution.id)}>
+                      variant="ghost"
+                      size="icon"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
+                      onClick={() => deleteInstitutionMutation.mutate(institution.id)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </Card>
-                  ))}
+                )}
                 </div>
-              )}
+              }
             </div>
 
             <div className="flex justify-end pt-4 border-t">
@@ -1024,4 +1024,4 @@ export default function IncidentDetail() {
       </Dialog>
       </div>);
 
-      }
+}
