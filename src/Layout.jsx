@@ -152,9 +152,27 @@ function LayoutContent({ children, currentPageName }) {
                 })}
               </div>
             </div>
-          </nav>
 
-          {/* Footer */}
+            {/* Recomendaciones SENAPRED */}
+            <div className="pt-4 mt-4 border-t">
+              <a
+                href="https://senapred.cl/recomendaciones/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                  isDarkMode
+                  ? "text-slate-400 hover:text-white hover:bg-zinc-800"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                )}
+              >
+                <FileText className="w-5 h-5" />
+                Recomendaciones SENAPRED
+              </a>
+            </div>
+            </nav>
+
+            {/* Footer */}
           <div className={cn(
             "px-6 py-4 border-t",
             isDarkMode ? "border-zinc-800" : "border-slate-200"

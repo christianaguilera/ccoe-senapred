@@ -12,8 +12,7 @@ import {
   ChevronRight,
   Plus,
   Flame,
-  GripVertical,
-  FileText
+  GripVertical
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -232,16 +231,6 @@ export default function Dashboard() {
               isDarkMode ? "text-white" : "text-slate-900"
             )}>{new Date().toLocaleTimeString('es-CL')}</p>
           </div>
-          <a 
-            href="https://senapred.cl/recomendaciones/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-          >
-            <Button variant="outline" className="shadow-lg">
-              <FileText className="w-4 h-4 mr-2" />
-              Recomendaciones SENAPRED
-            </Button>
-          </a>
           <Link to={createPageUrl('Incidents')}>
             <Button className="bg-orange-500 hover:bg-orange-600 shadow-lg">
               <Plus className="w-4 h-4 mr-2" />
