@@ -63,6 +63,7 @@ import FormSCI215A from '../components/reports/FormSCI215A';
 import FormSCI221 from '../components/reports/FormSCI221';
 import FormSCI222 from '../components/reports/FormSCI222';
 import GeneralIncidentReport from '../components/reports/GeneralIncidentReport';
+import OperationsBoard from '../components/operations/OperationsBoard';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -120,6 +121,7 @@ export default function IncidentDetail() {
   const [showSCI222, setShowSCI222] = useState(false);
   const [showGeneralReport, setShowGeneralReport] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
+  const [showOperationsBoard, setShowOperationsBoard] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
   const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
@@ -127,7 +129,7 @@ export default function IncidentDetail() {
   // Check if any modal/dialog is open
   const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 || 
     showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 || 
-    showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showGeneralReport || showInstitutions;
+    showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showGeneralReport || showInstitutions || showOperationsBoard;
 
   const queryClient = useQueryClient();
 
@@ -336,6 +338,12 @@ export default function IncidentDetail() {
           </div>
         </div>
         <div className="flex gap-2">
+          <Button
+            className="bg-orange-600 hover:bg-orange-700 text-white"
+            onClick={() => setShowOperationsBoard(true)}>
+            <FileText className="w-4 h-4 mr-2" />
+            Tablero Operaciones
+          </Button>
           <Button
             className="bg-orange-600 hover:bg-orange-700 text-white"
             onClick={() => setShowGeneralReport(true)}>
@@ -845,6 +853,13 @@ export default function IncidentDetail() {
         resources={resources}
         institutions={institutions}
         activities={activities}
+      />
+
+      {/* Tablero de Operaciones */}
+      <OperationsBoard
+        open={showOperationsBoard}
+        onClose={() => setShowOperationsBoard(false)}
+        incident={incident}
       />
 
       {/* Institutions Modal */}
