@@ -97,7 +97,8 @@ function DrawingTool({ drawMode, onDrawComplete, selectedIcon }) {
 export default function DrawableOperationsMap({ 
   incident,
   drawings = [],
-  onDrawingsChange
+  onDrawingsChange,
+  resources = []
 }) {
   const [mapCenter, setMapCenter] = useState([-33.4489, -70.6693]);
   const [mapZoom, setMapZoom] = useState(13);
@@ -149,6 +150,29 @@ export default function DrawableOperationsMap({
     flood: { icon: '🌊', label: 'Inundación', category: 'Alertas' },
   };
 
+  // Map resource type to icon
+  const getResourceIcon = (type, category) => {
+    if (type === 'vehicle') {
+      if (category?.toLowerCase().includes('bomba')) return 'fire_truck';
+      if (category?.toLowerCase().includes('ambulancia')) return 'ambulance';
+      if (category?.toLowerCase().includes('patrulla') || category?.toLowerCase().includes('policia')) return 'police_car';
+      if (category?.toLowerCase().includes('helicóptero') || category?.toLowerCase().includes('helicoptero')) return 'helicopter';
+      if (category?.toLowerCase().includes('lancha') || category?.toLowerCase().includes('bote')) return 'boat';
+    }
+    if (type === 'personnel') {
+      if (category?.toLowerCase().includes('bombero')) return 'firefighter';
+      if (category?.toLowerCase().includes('médico') || category?.toLowerCase().includes('medico') || category?.toLowerCase().includes('paramédico')) return 'medic';
+      if (category?.toLowerCase().includes('policía') || category?.toLowerCase().includes('policia')) return 'police_officer';
+    }
+    if (type === 'equipment') {
+      if (category?.toLowerCase().includes('extintor')) return 'fire_extinguisher';
+      if (category?.toLowerCase().includes('botiquín') || category?.toLowerCase().includes('medico')) return 'medical_kit';
+      if (category?.toLowerCase().includes('barrera')) return 'barrier';
+      if (category?.toLowerCase().includes('radio') || category?.toLowerCase().includes('comunicación')) return 'radio';
+    }
+    return 'fire_truck';
+  };
+
   useEffect(() => {
     if (incident?.coordinates) {
       setMapCenter([incident.coordinates.lat, incident.coordinates.lng]);
@@ -183,12 +207,21 @@ export default function DrawableOperationsMap({
       // Add new drawing
       const newDrawing = {
         ...currentDrawing,
-        ...metadata
+        ...metadata,
+        resourceId: metadata.resourceId || null
       };
       onDrawingsChange([...drawings, newDrawing]);
       setCurrentDrawing(null);
     }
     setShowMetadataDialog(false);
+    setMetadata({
+      name: '',
+      type: 'hazard_zone',
+      description: '',
+      resources: '',
+      priority: 'medium',
+      resourceId: null
+    });
   };
 
   const handleEdit = (drawing) => {
@@ -260,6 +293,8 @@ export default function DrawableOperationsMap({
     
     if (drawing.geometry.type === 'icon') {
       const iconData = emergencyIcons[drawing.geometry.iconType];
+      const linkedResource = drawing.resourceId ? resources.find(r => r.id === drawing.resourceId) : null;
+      
       return (
         <Marker 
           key={drawing.id}
@@ -273,7 +308,7 @@ export default function DrawableOperationsMap({
                 width: 45px;
                 height: 45px;
                 border-radius: 50%;
-                border: 3px solid #2563eb;
+                border: 3px solid ${linkedResource ? '#22c55e' : '#2563eb'};
                 box-shadow: 0 3px 8px rgba(0,0,0,0.3);
                 display: flex;
                 align-items: center;
@@ -306,8 +341,14 @@ export default function DrawableOperationsMap({
                   <p className="text-xs text-slate-500">{iconData?.category}</p>
                 </div>
               </div>
+              {linkedResource && (
+                <div className="mb-2 p-2 bg-green-50 border border-green-200 rounded">
+                  <p className="text-xs text-green-700 font-semibold">🔗 Recurso: {linkedResource.name}</p>
+                  <p className="text-xs text-green-600">{linkedResource.category}</p>
+                </div>
+              )}
               {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
-              {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
+              {drawing.resources && <p className="text-xs text-blue-600 mb-1">Info: {drawing.resources}</p>}
               {isEditing ? (
                 <div className="flex gap-1 mt-2">
                   <Button size="sm" className="h-6 px-2 bg-green-600 hover:bg-green-700" onClick={handleSaveEditedPoints}>
@@ -827,9 +868,59 @@ export default function DrawableOperationsMap({
 
         {/* Icon Picker */}
         {showIconPicker && (
-          <div className="mt-3 p-3 bg-slate-50 rounded-lg border">
-            <div className="text-xs font-semibold mb-2">Selecciona un icono:</div>
-            <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+          <div className="mt-3 p-3 bg-slate-50 rounded-lg border max-h-96 overflow-y-auto">
+            {/* Resources Section */}
+            {resources.length > 0 && (
+              <div className="mb-4 pb-3 border-b">
+                <div className="text-xs font-semibold mb-2 text-orange-600">📦 Recursos del Incidente:</div>
+                <div className="space-y-1">
+                  {resources.filter(r => r.status === 'deployed' || r.status === 'available').map((resource) => {
+                    const iconKey = getResourceIcon(resource.type, resource.category);
+                    const iconData = emergencyIcons[iconKey];
+                    const existingDrawing = drawings.find(d => d.resourceId === resource.id);
+                    
+                    return (
+                      <Button
+                        key={resource.id}
+                        size="sm"
+                        variant={existingDrawing ? 'default' : 'outline'}
+                        onClick={() => {
+                          if (existingDrawing) {
+                            // Already on map, center on it
+                            setMapCenter([existingDrawing.geometry.coordinates[0], existingDrawing.geometry.coordinates[1]]);
+                          } else {
+                            // Add to map
+                            setSelectedIcon(iconKey);
+                            setDrawMode('icon');
+                            setMetadata({
+                              ...metadata,
+                              name: resource.name,
+                              resourceId: resource.id
+                            });
+                          }
+                        }}
+                        className="w-full justify-start gap-2 h-auto py-2"
+                      >
+                        <span className="text-lg">{iconData.icon}</span>
+                        <div className="text-left flex-1">
+                          <div className="text-xs font-semibold">{resource.name}</div>
+                          <div className="text-[10px] text-slate-500">{resource.category}</div>
+                        </div>
+                        {existingDrawing ? (
+                          <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded">En Mapa</span>
+                        ) : (
+                          <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Ubicar</span>
+                        )}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Icons Section */}
+            <div className="text-xs font-semibold mb-2">🎨 Iconos Generales:</div>
+            <div className="grid grid-cols-4 gap-2">
               {Object.entries(emergencyIcons).map(([key, data]) => (
                 <Button
                   key={key}
@@ -838,6 +929,10 @@ export default function DrawableOperationsMap({
                   onClick={() => {
                     setSelectedIcon(key);
                     setDrawMode('icon');
+                    setMetadata({
+                      ...metadata,
+                      resourceId: null
+                    });
                   }}
                   className="flex flex-col items-center gap-1 h-auto py-2"
                   title={data.label}

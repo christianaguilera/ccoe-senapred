@@ -15,7 +15,7 @@ import ICSStructureView from '../incidents/ICSStructureView';
 import IncidentMap from '../maps/IncidentMap';
 import DrawableOperationsMap from '../maps/DrawableOperationsMap';
 
-export default function OperationsBoard({ open, onClose, incident, staff = [] }) {
+export default function OperationsBoard({ open, onClose, incident, staff = [], resources = [] }) {
   const boardRef = useRef(null);
   const [boardData, setBoardData] = useState({
     tipo_emergencia: incident?.name || '',
@@ -757,7 +757,8 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                     <DrawableOperationsMap
                       incident={incident}
                       drawings={boardData.mapDrawings}
-                      onDrawingsChange={(newDrawings) => setBoardData({ ...boardData, mapDrawings: newDrawings })} /> :
+                      onDrawingsChange={(newDrawings) => setBoardData({ ...boardData, mapDrawings: newDrawings })}
+                      resources={resources} /> :
 
 
                     <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 min-h-[400px] bg-slate-50 flex flex-col items-center justify-center">
