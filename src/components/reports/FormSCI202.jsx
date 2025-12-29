@@ -11,9 +11,19 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import ICSStructureView from '../incidents/ICSStructureView';
 
 export default function FormSCI202({ open, onClose, incident }) {
   const formRef = useRef(null);
+  
+  const { data: staff = [] } = useQuery({
+    queryKey: ['staff', incident?.id],
+    queryFn: () => base44.entities.CommandStaff.filter({ incident_id: incident?.id }),
+    enabled: !!incident?.id && open
+  });
+  
   const [formData, setFormData] = useState({
     nombre_incidente: incident?.name || '',
     fecha_preparacion: format(new Date(), "dd/MM/yyyy HH:mm"),
@@ -356,12 +366,7 @@ export default function FormSCI202({ open, onClose, incident }) {
               <Card className="p-6">
                 <div className="space-y-4">
                   <Label className="font-semibold text-base">15. Organigrama para el Periodo Operacional:</Label>
-                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 min-h-[500px] bg-slate-50 flex items-center justify-center">
-                    <p className="text-slate-400 text-center">
-                      Espacio para organigrama del periodo operacional<br />
-                      <span className="text-xs">Use herramientas de dibujo o pegue una imagen</span>
-                    </p>
-                  </div>
+                  <ICSStructureView staff={staff} />
 
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                     <div className="space-y-2">
