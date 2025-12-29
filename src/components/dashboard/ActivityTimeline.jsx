@@ -31,7 +31,7 @@ export default function ActivityTimeline({ activities, incidents = [] }) {
 
   return (
     <Card className="p-6 border-slate-200">
-      <h3 className="font-semibold text-slate-900 mb-6">Actividad Reciente</h3>
+      <h3 className="font-semibold text-slate-900 mb-6">Actividad Reciente Regional</h3>
       
       <div className="space-y-4">
         {activities.map((activity, index) => {
