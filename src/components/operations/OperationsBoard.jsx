@@ -13,6 +13,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import ICSStructureView from '../incidents/ICSStructureView';
 import IncidentMap from '../maps/IncidentMap';
+import DrawableOperationsMap from '../maps/DrawableOperationsMap';
 
 export default function OperationsBoard({ open, onClose, incident, staff = [] }) {
   const boardRef = useRef(null);
@@ -80,7 +81,8 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
     ],
     asignaciones: [
       { unidad: '', personal: '', sector: '', tarea: '' }
-    ]
+    ],
+    mapDrawings: []
   });
 
   const handleAddItem = (field) => {
@@ -750,15 +752,12 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                       ))}
                     </div>
 
-                    {/* Mapa del escenario */}
+                    {/* Mapa del escenario con capacidad de dibujo */}
                     {incident?.coordinates?.lat && incident?.coordinates?.lng ? (
-                      <IncidentMap
-                        incidents={[incident]}
-                        selectedIncident={incident}
-                        height="450px"
-                        showRadius={true}
-                        incidentId={incident.id}
-                        enablePOI={true}
+                      <DrawableOperationsMap
+                        incident={incident}
+                        drawings={boardData.mapDrawings}
+                        onDrawingsChange={(newDrawings) => setBoardData({ ...boardData, mapDrawings: newDrawings })}
                       />
                     ) : (
                       <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 min-h-[400px] bg-slate-50 flex flex-col items-center justify-center">
