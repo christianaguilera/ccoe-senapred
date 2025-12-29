@@ -350,59 +350,59 @@ export default function DrawableOperationsMap({
 
   return (
     <>
-      <Card className="overflow-hidden">
-        {/* Drawing Tools */}
-        <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-lg p-2 space-y-2">
-          <div className="text-xs font-semibold mb-2">Herramientas de Dibujo</div>
-          <div className="flex flex-col gap-2">
+      <Card className="overflow-hidden relative">
+        {/* Drawing Tools - Bottom */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white rounded-lg shadow-lg p-3">
+          <div className="text-xs font-semibold mb-2 text-center">Herramientas de Dibujo</div>
+          <div className="grid grid-cols-3 gap-2">
             <Button
               size="sm"
               variant={drawMode === 'marker' ? 'default' : 'outline'}
               onClick={() => setDrawMode(drawMode === 'marker' ? null : 'marker')}
-              className="w-full justify-start"
+              className="flex flex-col items-center gap-1 h-auto py-2"
             >
-              <MapPin className="w-4 h-4 mr-2" />
-              Marcador
+              <MapPin className="w-4 h-4" />
+              <span className="text-xs">Marcador</span>
             </Button>
             <Button
               size="sm"
               variant={drawMode === 'circle' ? 'default' : 'outline'}
               onClick={() => setDrawMode(drawMode === 'circle' ? null : 'circle')}
-              className="w-full justify-start"
+              className="flex flex-col items-center gap-1 h-auto py-2"
             >
-              <CircleIcon className="w-4 h-4 mr-2" />
-              Círculo
+              <CircleIcon className="w-4 h-4" />
+              <span className="text-xs">Círculo</span>
             </Button>
             <Button
               size="sm"
               variant={drawMode === 'polygon' ? 'default' : 'outline'}
               onClick={() => setDrawMode(drawMode === 'polygon' ? null : 'polygon')}
-              className="w-full justify-start"
+              className="flex flex-col items-center gap-1 h-auto py-2"
             >
-              <Square className="w-4 h-4 mr-2" />
-              Polígono
+              <Square className="w-4 h-4" />
+              <span className="text-xs">Polígono</span>
             </Button>
             <Button
               size="sm"
               variant={drawMode === 'polyline' ? 'default' : 'outline'}
               onClick={() => setDrawMode(drawMode === 'polyline' ? null : 'polyline')}
-              className="w-full justify-start"
+              className="flex flex-col items-center gap-1 h-auto py-2"
             >
-              <Minus className="w-4 h-4 mr-2" />
-              Línea
+              <Minus className="w-4 h-4" />
+              <span className="text-xs">Línea</span>
             </Button>
             <Button
               size="sm"
               variant={drawMode === 'rectangle' ? 'default' : 'outline'}
               onClick={() => setDrawMode(drawMode === 'rectangle' ? null : 'rectangle')}
-              className="w-full justify-start"
+              className="flex flex-col items-center gap-1 h-auto py-2 col-span-2"
             >
-              <Square className="w-4 h-4 mr-2" />
-              Rectángulo
+              <Square className="w-4 h-4" />
+              <span className="text-xs">Rectángulo</span>
             </Button>
           </div>
           {drawMode && (
-            <div className="text-xs text-slate-500 mt-2 p-2 bg-blue-50 rounded">
+            <div className="text-xs text-slate-500 mt-2 p-2 bg-blue-50 rounded text-center">
               {drawMode === 'marker' && 'Click en el mapa para colocar marcador'}
               {drawMode === 'circle' && 'Click para centro, luego click para radio'}
               {drawMode === 'polygon' && 'Click para puntos, doble-click para finalizar'}
