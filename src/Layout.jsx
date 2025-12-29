@@ -41,7 +41,7 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className={cn(
       "min-h-screen transition-colors duration-300",
-      isDarkMode ? "bg-slate-950" : "bg-slate-50"
+      isDarkMode ? "bg-zinc-950" : "bg-slate-50"
     )}>
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
@@ -54,14 +54,14 @@ function LayoutContent({ children, currentPageName }) {
       {/* Sidebar */}
       <aside className={cn(
         "fixed top-0 left-0 z-50 h-full w-72 transform transition-all duration-300 ease-out lg:translate-x-0",
-        isDarkMode ? "bg-slate-900" : "bg-white border-r border-slate-200",
+        isDarkMode ? "bg-zinc-900" : "bg-white border-r border-slate-200",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className={cn(
             "flex items-center gap-3 px-6 py-6 border-b",
-            isDarkMode ? "border-slate-800" : "border-slate-200"
+            isDarkMode ? "border-zinc-800" : "border-slate-200"
           )}>
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/694ed54b1d1364757e1b5450/b5ac78cc1_LogoSENAPRED.png" 
@@ -106,7 +106,7 @@ function LayoutContent({ children, currentPageName }) {
                       isActive 
                         ? "bg-orange-500/10 text-orange-400 border border-orange-500/20" 
                         : isDarkMode
-                        ? "text-slate-400 hover:text-white hover:bg-slate-800"
+                        ? "text-slate-400 hover:text-white hover:bg-zinc-800"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     )}
                   >
@@ -120,7 +120,7 @@ function LayoutContent({ children, currentPageName }) {
             {/* Archive Section */}
             <div className={cn(
               "pt-4 mt-4 border-t",
-              isDarkMode ? "border-slate-800" : "border-slate-200"
+              isDarkMode ? "border-zinc-800" : "border-slate-200"
             )}>
               <p className={cn(
                 "text-xs font-semibold uppercase tracking-wider px-4 mb-2",
@@ -141,7 +141,7 @@ function LayoutContent({ children, currentPageName }) {
                         isActive 
                           ? "bg-orange-500/10 text-orange-400 border border-orange-500/20" 
                           : isDarkMode
-                          ? "text-slate-400 hover:text-white hover:bg-slate-800"
+                          ? "text-slate-400 hover:text-white hover:bg-zinc-800"
                           : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       )}
                     >
@@ -157,7 +157,7 @@ function LayoutContent({ children, currentPageName }) {
           {/* Footer */}
           <div className={cn(
             "px-6 py-4 border-t",
-            isDarkMode ? "border-slate-800" : "border-slate-200"
+            isDarkMode ? "border-zinc-800" : "border-slate-200"
           )}>
             <p className="text-xs text-slate-500">v1.0 · ICS Protocol</p>
           </div>
@@ -170,7 +170,7 @@ function LayoutContent({ children, currentPageName }) {
         <header className={cn(
           "sticky top-0 z-30 backdrop-blur-xl border-b transition-colors duration-300",
           isDarkMode 
-            ? "bg-slate-900/80 border-slate-800" 
+            ? "bg-zinc-900/80 border-zinc-800" 
             : "bg-white/80 border-slate-200/50"
         )}>
           <div className="flex items-center justify-between px-4 lg:px-8 py-4">
