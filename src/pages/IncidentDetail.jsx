@@ -65,6 +65,7 @@ import FormSCI221 from '../components/reports/FormSCI221';
 import FormSCI222 from '../components/reports/FormSCI222';
 import GeneralIncidentReport from '../components/reports/GeneralIncidentReport';
 import OperationsBoard from '../components/operations/OperationsBoard';
+import SituationRoomAlert from '../components/alerts/SituationRoomAlert';
 
 const typeConfig = {
   fire: { icon: Flame, label: 'Incendio', color: 'bg-red-500' },
@@ -276,6 +277,35 @@ export default function IncidentDetail() {
 
   return (
     <div className="space-y-6">
+      {/* Situation Room Alert */}
+      {incident.severity === 'critical' && incident.status === 'active' && (
+        <SituationRoomAlert
+          severity={incident.severity}
+          title="ALERTA DE INCIDENTE CRÍTICO"
+          message={`${incident.name} - ${incident.location}`}
+          details={[
+            { label: 'Tipo', value: typeConfig[incident.type]?.label || incident.type },
+            { label: 'Estado', value: statusConfig[incident.status]?.label || incident.status },
+            { label: 'Recursos', value: resources.length },
+            { label: 'Personal', value: staff.length },
+            { label: 'Instituciones', value: institutions.length }
+          ]}
+        />
+      )}
+
+      {incident.severity === 'high' && incident.status === 'active' && (
+        <SituationRoomAlert
+          severity={incident.severity}
+          title="INCIDENTE DE ALTA PRIORIDAD"
+          message={`${incident.name} - Requiere atención`}
+          details={[
+            { label: 'Ubicación', value: incident.location },
+            { label: 'Recursos', value: resources.length },
+            { label: 'Personal', value: staff.length }
+          ]}
+        />
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="flex items-start gap-4 flex-1">
