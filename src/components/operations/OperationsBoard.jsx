@@ -266,18 +266,54 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
 
                   <Card className="p-4 bg-orange-500 text-white">
                     <h3 className="font-bold mb-2">INSTITUCIONES</h3>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
                       <label className="flex items-center gap-2 text-white">
                         <input
                           type="checkbox"
-                          checked={boardData.instituciones.samu}
+                          checked={boardData.instituciones.cogrid_comunal}
                           onChange={(e) => setBoardData({
                             ...boardData,
-                            instituciones: { ...boardData.instituciones, samu: e.target.checked }
+                            instituciones: { ...boardData.instituciones, cogrid_comunal: e.target.checked }
                           })}
                           className="w-4 h-4"
                         />
-                        <span className="text-sm font-medium">SAMU</span>
+                        <span className="text-sm font-medium">COGRID Comunal</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.cogrid_provincial}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, cogrid_provincial: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">COGRID Provincial</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.cogrid_regional}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, cogrid_regional: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">COGRID Regional</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.senapred}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, senapred: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">SENAPRED</span>
                       </label>
                       <label className="flex items-center gap-2 text-white">
                         <input
@@ -302,6 +338,18 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                           className="w-4 h-4"
                         />
                         <span className="text-sm font-medium">Carabineros</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-white">
+                        <input
+                          type="checkbox"
+                          checked={boardData.instituciones.samu}
+                          onChange={(e) => setBoardData({
+                            ...boardData,
+                            instituciones: { ...boardData.instituciones, samu: e.target.checked }
+                          })}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm font-medium">SAMU</span>
                       </label>
                       <label className="flex items-center gap-2 text-white">
                         <input
@@ -386,54 +434,6 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                           className="w-4 h-4"
                         />
                         <span className="text-sm font-medium">FACH</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-white">
-                        <input
-                          type="checkbox"
-                          checked={boardData.instituciones.senapred}
-                          onChange={(e) => setBoardData({
-                            ...boardData,
-                            instituciones: { ...boardData.instituciones, senapred: e.target.checked }
-                          })}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-sm font-medium">SENAPRED</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-white">
-                        <input
-                          type="checkbox"
-                          checked={boardData.instituciones.cogrid_comunal}
-                          onChange={(e) => setBoardData({
-                            ...boardData,
-                            instituciones: { ...boardData.instituciones, cogrid_comunal: e.target.checked }
-                          })}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-sm font-medium">COGRID Comunal</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-white">
-                        <input
-                          type="checkbox"
-                          checked={boardData.instituciones.cogrid_provincial}
-                          onChange={(e) => setBoardData({
-                            ...boardData,
-                            instituciones: { ...boardData.instituciones, cogrid_provincial: e.target.checked }
-                          })}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-sm font-medium">COGRID Provincial</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-white">
-                        <input
-                          type="checkbox"
-                          checked={boardData.instituciones.cogrid_regional}
-                          onChange={(e) => setBoardData({
-                            ...boardData,
-                            instituciones: { ...boardData.instituciones, cogrid_regional: e.target.checked }
-                          })}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-sm font-medium">COGRID Regional</span>
                       </label>
                     </div>
                   </Card>
