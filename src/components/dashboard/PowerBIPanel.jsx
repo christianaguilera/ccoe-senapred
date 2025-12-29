@@ -22,7 +22,7 @@ export default function PowerBIPanel() {
             <h2 className={cn(
               "text-lg font-semibold",
               isDarkMode ? "text-white" : "text-slate-900"
-            )}>Dashboard Power BI</h2>
+            )}>Incendios Forestales</h2>
             <p className={cn(
               "text-xs",
               isDarkMode ? "text-slate-400" : "text-slate-500"
