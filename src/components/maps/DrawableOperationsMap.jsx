@@ -304,23 +304,26 @@ export default function DrawableOperationsMap({
             className: 'custom-emergency-icon',
             html: `
               <div style="
-                background-color: white;
-                width: 45px;
-                height: 45px;
-                border-radius: 50%;
-                border: 3px solid ${linkedResource ? '#22c55e' : '#2563eb'};
+                background-color: #f97316;
+                width: 50px;
+                height: 40px;
+                border-radius: 6px;
+                border: 2px solid white;
                 box-shadow: 0 3px 8px rgba(0,0,0,0.3);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 24px;
+                font-size: 18px;
+                font-weight: bold;
+                color: white;
+                font-family: Arial, sans-serif;
               ">
-                ${iconData?.icon || '📍'}
+                PC
               </div>
             `,
-            iconSize: [45, 45],
-            iconAnchor: [22, 22],
-            popupAnchor: [0, -22]
+            iconSize: [50, 40],
+            iconAnchor: [25, 20],
+            popupAnchor: [0, -20]
           })}
           eventHandlers={isEditing ? {
             dragend: (e) => {
