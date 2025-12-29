@@ -74,6 +74,9 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
     ],
     escenario_imagen: '',
     sectores: [
+      { sector: '', oficial: '' },
+      { sector: '', oficial: '' },
+      { sector: '', oficial: '' },
       { sector: '', oficial: '' }
     ],
     asignaciones: [
@@ -703,21 +706,14 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                     
                     {/* Sectores */}
                     <div className="grid grid-cols-4 gap-2 mb-4">
-                      {boardData.sectores.map((sector, idx) => (
+                      {boardData.sectores.slice(0, 4).map((sector, idx) => (
                         <div key={idx} className="space-y-1">
-                          <div className="flex items-center gap-1">
-                            <Label className="text-xs">SECTOR:</Label>
-                            {idx > 0 && (
-                              <Button variant="ghost" size="sm" className="h-4 w-4 p-0" onClick={() => handleRemoveItem('sectores', idx)}>
-                                <X className="w-3 h-3" />
-                              </Button>
-                            )}
-                          </div>
+                          <Label className="text-xs">SECTOR:</Label>
                           <Input
                             value={sector.sector}
                             onChange={(e) => handleNestedChange('sectores', idx, 'sector', e.target.value)}
                             className="h-7 text-xs text-center font-bold"
-                            placeholder="A"
+                            placeholder={String.fromCharCode(65 + idx)}
                           />
                           <Label className="text-xs">OFICIAL:</Label>
                           <Input
@@ -727,10 +723,6 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                           />
                         </div>
                       ))}
-                      <Button variant="outline" size="sm" onClick={() => handleAddItem('sectores')} className="h-7">
-                        <Plus className="w-3 h-3 mr-1" />
-                        Sector
-                      </Button>
                     </div>
 
                     {/* Mapa del escenario */}
