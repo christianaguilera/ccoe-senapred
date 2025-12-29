@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, useMap, LayersControl, FeatureGroup, Marker, Circle, Polygon, Polyline, Rectangle, Popup } from 'react-leaflet';
-import { EditControl } from 'react-leaflet-draw';
+import { MapContainer, TileLayer, useMap, LayersControl, Marker, Circle, Polygon, Polyline, Rectangle, Popup, useMapEvents } from 'react-leaflet';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,10 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Trash2, Edit2, X } from 'lucide-react';
+import { Trash2, Edit2, MapPin, Circle as CircleIcon, Square, Minus } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-draw/dist/leaflet.draw.css';
 
 const { BaseLayer } = LayersControl;
 
@@ -35,6 +33,61 @@ function MapController({ center, zoom }) {
   return null;
 }
 
+function DrawingTool({ drawMode, onDrawComplete }) {
+  const [tempPoints, setTempPoints] = useState([]);
+  
+  useMapEvents({
+    click(e) {
+      if (!drawMode) return;
+      
+      const { lat, lng } = e.latlng;
+      
+      if (drawMode === 'marker') {
+        onDrawComplete({
+          type: 'marker',
+          coordinates: [lat, lng]
+        });
+      } else if (drawMode === 'circle') {
+        if (tempPoints.length === 0) {
+          setTempPoints([[lat, lng]]);
+        } else {
+          const center = tempPoints[0];
+          const radius = e.latlng.distanceTo(center);
+          onDrawComplete({
+            type: 'circle',
+            center: center,
+            radius: radius
+          });
+          setTempPoints([]);
+        }
+      } else if (drawMode === 'polygon' || drawMode === 'polyline') {
+        setTempPoints([...tempPoints, [lat, lng]]);
+      } else if (drawMode === 'rectangle') {
+        if (tempPoints.length === 0) {
+          setTempPoints([[lat, lng]]);
+        } else {
+          onDrawComplete({
+            type: 'rectangle',
+            coordinates: [tempPoints[0], [lat, lng]]
+          });
+          setTempPoints([]);
+        }
+      }
+    },
+    dblclick(e) {
+      if ((drawMode === 'polygon' || drawMode === 'polyline') && tempPoints.length >= 2) {
+        onDrawComplete({
+          type: drawMode,
+          coordinates: tempPoints
+        });
+        setTempPoints([]);
+      }
+    }
+  });
+  
+  return null;
+}
+
 export default function DrawableOperationsMap({ 
   incident,
   drawings = [],
@@ -45,6 +98,7 @@ export default function DrawableOperationsMap({
   const [showMetadataDialog, setShowMetadataDialog] = useState(false);
   const [currentDrawing, setCurrentDrawing] = useState(null);
   const [editingDrawing, setEditingDrawing] = useState(null);
+  const [drawMode, setDrawMode] = useState(null);
   const [metadata, setMetadata] = useState({
     name: '',
     type: 'hazard_zone',
@@ -60,34 +114,8 @@ export default function DrawableOperationsMap({
     }
   }, [incident]);
 
-  const handleCreated = (e) => {
-    const { layer, layerType } = e;
-    let geometry = null;
-
-    if (layerType === 'marker') {
-      const latlng = layer.getLatLng();
-      geometry = { type: 'marker', coordinates: [latlng.lat, latlng.lng] };
-    } else if (layerType === 'circle') {
-      const latlng = layer.getLatLng();
-      const radius = layer.getRadius();
-      geometry = { type: 'circle', center: [latlng.lat, latlng.lng], radius };
-    } else if (layerType === 'polygon') {
-      const latlngs = layer.getLatLngs()[0];
-      geometry = { type: 'polygon', coordinates: latlngs.map(ll => [ll.lat, ll.lng]) };
-    } else if (layerType === 'polyline') {
-      const latlngs = layer.getLatLngs();
-      geometry = { type: 'polyline', coordinates: latlngs.map(ll => [ll.lat, ll.lng]) };
-    } else if (layerType === 'rectangle') {
-      const bounds = layer.getBounds();
-      geometry = { 
-        type: 'rectangle', 
-        coordinates: [
-          [bounds.getSouthWest().lat, bounds.getSouthWest().lng],
-          [bounds.getNorthEast().lat, bounds.getNorthEast().lng]
-        ]
-      };
-    }
-
+  const handleDrawComplete = (geometry) => {
+    setDrawMode(null);
     setCurrentDrawing({ geometry, id: Date.now() });
     setMetadata({
       name: '',
@@ -323,6 +351,67 @@ export default function DrawableOperationsMap({
   return (
     <>
       <Card className="overflow-hidden">
+        {/* Drawing Tools */}
+        <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-lg p-2 space-y-2">
+          <div className="text-xs font-semibold mb-2">Herramientas de Dibujo</div>
+          <div className="flex flex-col gap-2">
+            <Button
+              size="sm"
+              variant={drawMode === 'marker' ? 'default' : 'outline'}
+              onClick={() => setDrawMode(drawMode === 'marker' ? null : 'marker')}
+              className="w-full justify-start"
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              Marcador
+            </Button>
+            <Button
+              size="sm"
+              variant={drawMode === 'circle' ? 'default' : 'outline'}
+              onClick={() => setDrawMode(drawMode === 'circle' ? null : 'circle')}
+              className="w-full justify-start"
+            >
+              <CircleIcon className="w-4 h-4 mr-2" />
+              Círculo
+            </Button>
+            <Button
+              size="sm"
+              variant={drawMode === 'polygon' ? 'default' : 'outline'}
+              onClick={() => setDrawMode(drawMode === 'polygon' ? null : 'polygon')}
+              className="w-full justify-start"
+            >
+              <Square className="w-4 h-4 mr-2" />
+              Polígono
+            </Button>
+            <Button
+              size="sm"
+              variant={drawMode === 'polyline' ? 'default' : 'outline'}
+              onClick={() => setDrawMode(drawMode === 'polyline' ? null : 'polyline')}
+              className="w-full justify-start"
+            >
+              <Minus className="w-4 h-4 mr-2" />
+              Línea
+            </Button>
+            <Button
+              size="sm"
+              variant={drawMode === 'rectangle' ? 'default' : 'outline'}
+              onClick={() => setDrawMode(drawMode === 'rectangle' ? null : 'rectangle')}
+              className="w-full justify-start"
+            >
+              <Square className="w-4 h-4 mr-2" />
+              Rectángulo
+            </Button>
+          </div>
+          {drawMode && (
+            <div className="text-xs text-slate-500 mt-2 p-2 bg-blue-50 rounded">
+              {drawMode === 'marker' && 'Click en el mapa para colocar marcador'}
+              {drawMode === 'circle' && 'Click para centro, luego click para radio'}
+              {drawMode === 'polygon' && 'Click para puntos, doble-click para finalizar'}
+              {drawMode === 'polyline' && 'Click para puntos, doble-click para finalizar'}
+              {drawMode === 'rectangle' && 'Click para esquina, luego click para finalizar'}
+            </div>
+          )}
+        </div>
+        
         <div style={{ height: '450px', width: '100%' }}>
           <MapContainer
             center={mapCenter}
@@ -331,6 +420,7 @@ export default function DrawableOperationsMap({
             scrollWheelZoom={true}
           >
             <MapController center={mapCenter} zoom={mapZoom} />
+            <DrawingTool drawMode={drawMode} onDrawComplete={handleDrawComplete} />
             
             <LayersControl position="topright">
               <BaseLayer checked name="Mapa Estándar">
@@ -352,25 +442,6 @@ export default function DrawableOperationsMap({
                 />
               </BaseLayer>
             </LayersControl>
-
-            <FeatureGroup>
-              <EditControl
-                position="topleft"
-                onCreated={handleCreated}
-                draw={{
-                  rectangle: true,
-                  circle: true,
-                  circlemarker: false,
-                  marker: true,
-                  polyline: true,
-                  polygon: true
-                }}
-                edit={{
-                  edit: false,
-                  remove: false
-                }}
-              />
-            </FeatureGroup>
 
             {/* Render existing drawings */}
             {drawings.map(drawing => renderDrawing(drawing))}
