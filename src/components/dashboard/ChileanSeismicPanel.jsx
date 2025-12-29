@@ -71,6 +71,12 @@ export default function ChileanSeismicPanel() {
 
   useEffect(() => {
     fetchEarthquakes();
+    
+    const interval = setInterval(() => {
+      fetchEarthquakes();
+    }, 120000); // 2 minutos
+
+    return () => clearInterval(interval);
   }, []);
 
   const getMagnitudeColor = (magnitude) => {

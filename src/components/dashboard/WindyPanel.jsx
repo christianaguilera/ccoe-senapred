@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Cloud, ExternalLink, Navigation } from 'lucide-react';
@@ -7,6 +7,15 @@ import { toast } from 'sonner';
 export default function WindyPanel() {
   const [userLocation, setUserLocation] = useState({ lat: -41.910, lng: -72.684 });
   const [locating, setLocating] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRefreshKey(prev => prev + 1);
+    }, 120000); // 2 minutos
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleGeolocation = () => {
     if (!navigator.geolocation) {
@@ -50,6 +59,7 @@ export default function WindyPanel() {
       <div className="relative">
         <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '400px', width: '100%' }}>
           <iframe 
+            key={refreshKey}
             src={`https://embed.windy.com/embed2.html?lat=${userLocation.lat}&lon=${userLocation.lng}&detailLat=${userLocation.lat}&detailLon=${userLocation.lng}&width=650&height=450&zoom=8&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1`}
             style={{ width: '100%', height: '100%', border: 'none' }}
             title="Windy Weather Map"

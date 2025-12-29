@@ -83,6 +83,12 @@ export default function HydrometricStationsPanel() {
 
   useEffect(() => {
     fetchStations();
+    
+    const interval = setInterval(() => {
+      fetchStations();
+    }, 120000); // 2 minutos
+
+    return () => clearInterval(interval);
   }, []);
 
   const getAlertColor = (alerta) => {

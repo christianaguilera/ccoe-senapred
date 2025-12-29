@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { BarChart3, ExternalLink } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -6,7 +6,16 @@ import { cn } from "@/lib/utils";
 
 export default function PowerBIPanel() {
   const { isDarkMode } = useTheme();
+  const [refreshKey, setRefreshKey] = useState(0);
   const powerBIUrl = "https://app.powerbi.com/view?r=eyJrIjoiZDZjZTExZTctM2MwMC00Mzk5LTkzYzAtODNlOTk0NDAzMWY5IiwidCI6IjZlMTA2YmFkLTk5NTAtNDcxNC1iY2JhLWZlYTUwMDNlNTY4OCIsImMiOjR9";
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRefreshKey(prev => prev + 1);
+    }, 120000); // 2 minutos
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Card className={cn(
@@ -33,6 +42,7 @@ export default function PowerBIPanel() {
 
       <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '500px', width: '100%' }}>
         <iframe 
+          key={refreshKey}
           src={powerBIUrl}
           style={{ width: '100%', height: '100%', border: 'none' }}
           title="Power BI Dashboard"
