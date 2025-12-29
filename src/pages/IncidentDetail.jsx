@@ -513,7 +513,10 @@ export default function IncidentDetail() {
                           <p className="text-xs text-orange-600 font-medium mb-1">
                             {roleLabels[member.role] || member.role}
                           </p>
-                          <p className="font-semibold text-slate-900">{member.name}</p>
+                          <p className={cn(
+                            "font-semibold",
+                            isDarkMode ? "text-white" : "text-slate-900"
+                          )}>{member.name}</p>
                           {member.contact &&
                       <p className="text-sm text-slate-500 mt-1">{member.contact}</p>
                       }
@@ -564,7 +567,10 @@ export default function IncidentDetail() {
                 <Card key={resource.id} className="p-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-semibold text-slate-900">{resource.name}</p>
+                          <p className={cn(
+                            "font-semibold",
+                            isDarkMode ? "text-white" : "text-slate-900"
+                          )}>{resource.name}</p>
                           <p className="text-sm text-slate-500">{resource.category}</p>
                         </div>
                         <Badge variant={resource.status === 'deployed' ? 'default' : 'secondary'}>
