@@ -23,15 +23,15 @@ const categoryConfig = {
 export default function ActivityTimeline({ activities, incidents = [] }) {
   if (!activities || activities.length === 0) {
     return (
-      <Card className="p-6 border-slate-200">
-        <p className="text-center text-slate-500 text-sm">No hay actividades recientes</p>
-      </Card>
+      <div className="bg-slate-900 border-2 border-slate-800 rounded-lg p-6">
+        <p className="text-center text-slate-400 text-sm">No hay actividades recientes</p>
+      </div>
     );
   }
 
   return (
-    <Card className="p-6 border-slate-200">
-      <h3 className="font-semibold text-slate-900 mb-6">Actividad Reciente Regional</h3>
+    <div className="bg-slate-900 border-2 border-slate-800 rounded-lg p-6">
+      <h3 className="font-bold text-white mb-6 tracking-wide">ACTIVIDAD RECIENTE REGIONAL</h3>
       
       <div className="space-y-4">
         {activities.map((activity, index) => {
@@ -41,43 +41,43 @@ export default function ActivityTimeline({ activities, incidents = [] }) {
             <div key={activity.id || index} className="flex gap-4">
               {/* Timeline dot */}
               <div className="flex flex-col items-center">
-                <div className={cn("w-3 h-3 rounded-full mt-1.5", priority.dot)} />
+                <div className={cn("w-3 h-3 rounded-full mt-1.5 shadow-lg", priority.dot)} />
                 {index !== activities.length - 1 && (
-                  <div className="w-0.5 flex-1 bg-slate-200 mt-2" />
+                  <div className="w-0.5 flex-1 bg-slate-700 mt-2" />
                 )}
               </div>
 
               {/* Content */}
               <div className="flex-1 pb-4">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <Badge variant="outline" className={priority.color}>
+                  <Badge className={cn("font-bold", priority.color)}>
                     {categoryConfig[activity.category] || 'General'}
                   </Badge>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500 font-mono">
                     {activity.timestamp 
                       ? format(new Date(activity.timestamp), "dd/MM/yyyy HH:mm", { locale: es })
                       : format(new Date(activity.created_date), "dd/MM/yyyy HH:mm", { locale: es })
                     }
                   </span>
                 </div>
-                <p className="text-sm text-slate-700">{activity.action}</p>
+                <p className="text-sm text-slate-300 font-medium">{activity.action}</p>
                 {(() => {
                   const incident = incidents.find(inc => inc.id === activity.incident_id);
                   return incident && (
-                    <div className="text-xs text-slate-500 mt-2 space-y-0.5">
+                    <div className="text-xs text-slate-500 mt-2 space-y-0.5 font-medium">
                       {incident.region && <p>📍 Región: {incident.region}</p>}
                       {incident.comuna && <p>🏘️ Comuna: {incident.comuna}</p>}
                     </div>
                   );
                 })()}
                 {activity.reported_by && (
-                  <p className="text-xs text-slate-400 mt-1">Por: {activity.reported_by}</p>
+                  <p className="text-xs text-slate-500 mt-1">Por: {activity.reported_by}</p>
                 )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </Card>
+                </div>
+                </div>
+                );
+                })}
+                </div>
+                </div>
   );
 }

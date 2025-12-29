@@ -106,7 +106,10 @@ export default function Dashboard() {
   const panels = {
     activity: (
       <div>
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">Monitoreo Tecnico Regional</h2>
+        <div className="flex items-center gap-2 pb-3 border-b border-slate-800 mb-4">
+          <div className="w-1 h-6 bg-blue-500"></div>
+          <h2 className="text-lg font-bold text-white tracking-wider">MONITOREO TÉCNICO REGIONAL</h2>
+        </div>
         {loadingActivities ? (
           <Card className="p-6">
             <div className="space-y-4">
@@ -168,94 +171,114 @@ export default function Dashboard() {
   }, [criticalIncidents.length, loadingIncidents]);
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="min-h-screen bg-slate-950 -m-8 p-8 space-y-6">
+      {/* Header - Command Center Style */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Panel de Mando y Monitoreo</h1>
-          <p className="text-slate-500 mt-1">Resumen del sistema de comando de incidentes</p>
-        </div>
-        <Link to={createPageUrl('Incidents')}>
-          <Button className="bg-orange-500 hover:bg-orange-600">
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Incidente
-          </Button>
-        </Link>
-      </div>
-
-      {/* Critical Alert */}
-      {criticalIncidents.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center animate-pulse">
-            <AlertTriangle className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+            <h1 className="text-3xl font-bold text-white tracking-tight">CENTRO DE CONTROL DE EMERGENCIAS</h1>
           </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-red-900">
-              {criticalIncidents.length} Incidente{criticalIncidents.length > 1 ? 's' : ''} Crítico{criticalIncidents.length > 1 ? 's' : ''} Activo{criticalIncidents.length > 1 ? 's' : ''}
-            </h3>
-            <p className="text-sm text-red-700">Requiere atención inmediata</p>
+          <p className="text-slate-400 text-sm">Panel de Mando y Monitoreo | Sistema ICS</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <p className="text-xs text-slate-500">FECHA</p>
+            <p className="text-sm font-mono text-white">{new Date().toLocaleDateString('es-CL')}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-slate-500">HORA</p>
+            <p className="text-sm font-mono text-white">{new Date().toLocaleTimeString('es-CL')}</p>
           </div>
           <Link to={createPageUrl('Incidents')}>
-            <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100">
-              Ver Detalles
+            <Button className="bg-orange-500 hover:bg-orange-600 shadow-lg">
+              <Plus className="w-4 h-4 mr-2" />
+              Nuevo Incidente
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Critical Alert - Command Center Style */}
+      {criticalIncidents.length > 0 && (
+        <div className="bg-gradient-to-r from-red-950 to-red-900 border-2 border-red-500 rounded-lg p-4 flex items-center gap-4 shadow-2xl shadow-red-500/20">
+          <div className="w-14 h-14 rounded-lg bg-red-500 flex items-center justify-center animate-pulse shadow-lg">
+            <AlertTriangle className="w-7 h-7 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-white text-lg">
+              ⚠️ {criticalIncidents.length} INCIDENTE{criticalIncidents.length > 1 ? 'S' : ''} CRÍTICO{criticalIncidents.length > 1 ? 'S' : ''} ACTIVO{criticalIncidents.length > 1 ? 'S' : ''}
+            </h3>
+            <p className="text-sm text-red-200 font-medium">REQUIERE ATENCIÓN INMEDIATA</p>
+          </div>
+          <Link to={createPageUrl('Incidents')}>
+            <Button className="bg-white text-red-600 hover:bg-red-50 font-bold shadow-lg">
+              VER DETALLES
               <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </div>
       )}
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Command Center Style */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {loadingIncidents ? (
           <>
             {[1, 2, 3, 4].map(i => (
-              <Card key={i} className="p-6">
-                <Skeleton className="h-4 w-24 mb-3" />
-                <Skeleton className="h-8 w-16" />
-              </Card>
+              <div key={i} className="bg-slate-900 border border-slate-800 rounded-lg p-6">
+                <Skeleton className="h-4 w-24 mb-3 bg-slate-800" />
+                <Skeleton className="h-8 w-16 bg-slate-800" />
+              </div>
             ))}
           </>
         ) : (
           <>
-            <StatsCard 
-              title="Incidentes Activos" 
-              value={activeIncidents.length}
-              icon={Flame}
-              color="bg-red-500"
-            />
-            <StatsCard 
-              title="Recursos Desplegados" 
-              value={deployedResources.length}
-              icon={Package}
-              color="bg-blue-500"
-            />
-            <StatsCard 
-              title="Total Recursos" 
-              value={resources.length}
-              icon={Users}
-              color="bg-emerald-500"
-            />
-            <StatsCard 
-              title="Incidentes Hoy" 
-              value={incidents.filter(i => {
+            <div className="bg-gradient-to-br from-red-950 to-slate-900 border-2 border-red-500/50 rounded-lg p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-red-300 tracking-wider">INCIDENTES ACTIVOS</p>
+                <Flame className="w-5 h-5 text-red-400" />
+              </div>
+              <p className="text-4xl font-bold text-white">{activeIncidents.length}</p>
+            </div>
+            <div className="bg-gradient-to-br from-blue-950 to-slate-900 border-2 border-blue-500/50 rounded-lg p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-blue-300 tracking-wider">RECURSOS DESPLEGADOS</p>
+                <Package className="w-5 h-5 text-blue-400" />
+              </div>
+              <p className="text-4xl font-bold text-white">{deployedResources.length}</p>
+            </div>
+            <div className="bg-gradient-to-br from-emerald-950 to-slate-900 border-2 border-emerald-500/50 rounded-lg p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-emerald-300 tracking-wider">TOTAL RECURSOS</p>
+                <Users className="w-5 h-5 text-emerald-400" />
+              </div>
+              <p className="text-4xl font-bold text-white">{resources.length}</p>
+            </div>
+            <div className="bg-gradient-to-br from-purple-950 to-slate-900 border-2 border-purple-500/50 rounded-lg p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-purple-300 tracking-wider">INCIDENTES HOY</p>
+                <Clock className="w-5 h-5 text-purple-400" />
+              </div>
+              <p className="text-4xl font-bold text-white">{incidents.filter(i => {
                 const today = new Date().toDateString();
                 return new Date(i.created_date).toDateString() === today;
-              }).length}
-              icon={Clock}
-              color="bg-purple-500"
-            />
+              }).length}</p>
+            </div>
           </>
         )}
       </div>
 
-      {/* Main Content Grid */}
+      {/* Main Content Grid - Command Center Style */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Active Incidents */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">Incidentes Activos</h2>
-            <Link to={createPageUrl('Incidents')} className="text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1">
-              Ver todos
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h2 className="text-lg font-bold text-white tracking-wider flex items-center gap-2">
+              <div className="w-1 h-6 bg-orange-500"></div>
+              INCIDENTES ACTIVOS
+            </h2>
+            <Link to={createPageUrl('Incidents')} className="text-sm text-orange-400 hover:text-orange-300 font-bold flex items-center gap-1">
+              VER TODOS
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -263,26 +286,26 @@ export default function Dashboard() {
           {loadingIncidents ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
-                <Card key={i} className="p-5">
+                <div key={i} className="bg-slate-900 border border-slate-800 rounded-lg p-5">
                   <div className="flex gap-4">
-                    <Skeleton className="w-12 h-12 rounded-xl" />
+                    <Skeleton className="w-12 h-12 rounded-xl bg-slate-800" />
                     <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-5 w-full" />
-                      <Skeleton className="h-4 w-48" />
+                      <Skeleton className="h-4 w-32 bg-slate-800" />
+                      <Skeleton className="h-5 w-full bg-slate-800" />
+                      <Skeleton className="h-4 w-48 bg-slate-800" />
                     </div>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           ) : activeIncidents.length === 0 ? (
-            <Card className="p-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-8 h-8 text-emerald-600" />
+            <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-emerald-900/50 border-2 border-emerald-500 flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-8 h-8 text-emerald-400" />
               </div>
-              <h3 className="font-semibold text-slate-900">Sin Incidentes Activos</h3>
-              <p className="text-slate-500 text-sm mt-1">Todos los incidentes han sido resueltos</p>
-            </Card>
+              <h3 className="font-semibold text-white">SIN INCIDENTES ACTIVOS</h3>
+              <p className="text-slate-400 text-sm mt-1">Todos los incidentes han sido resueltos</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {activeIncidents.slice(0, 5).map((incident) => (
