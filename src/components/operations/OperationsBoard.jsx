@@ -587,7 +587,12 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                 {/* Columna Derecha - Condiciones y Evacuaciones */}
                 <div className="col-span-4 space-y-4">
                   <Card className="p-4 bg-orange-500 text-white">
-                    <h3 className="font-bold mb-3">CONDICIONES CLIMÁTICAS</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-bold">CONDICIONES CLIMÁTICAS</h3>
+                      <Button size="sm" variant="ghost" className="text-white h-6">
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
                     <div className="space-y-2">
                       <div className="grid grid-cols-3 gap-2">
                         <div>
