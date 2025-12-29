@@ -6,6 +6,7 @@ import IncidentMap from './pages/IncidentMap';
 import Incidents from './pages/Incidents';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
+import NotificationRules from './pages/NotificationRules';
 import __Layout from './Layout.jsx';
 
 
@@ -18,6 +19,7 @@ export const PAGES = {
     "Incidents": Incidents,
     "Reports": Reports,
     "Resources": Resources,
+    "NotificationRules": NotificationRules,
 }
 
 export const pagesConfig = {

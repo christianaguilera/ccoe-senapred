@@ -28,6 +28,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Estructura ICS', href: createPageUrl('ICSStructure'), icon: Users, page: 'ICSStructure' },
     { name: 'Recursos', href: createPageUrl('Resources'), icon: Package, page: 'Resources' },
     { name: 'Reportes', href: createPageUrl('Reports'), icon: FileText, page: 'Reports' },
+    { name: 'Notificaciones', href: createPageUrl('NotificationRules'), icon: Bell, page: 'NotificationRules' },
   ];
 
   const archiveNavigation = [

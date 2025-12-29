@@ -50,6 +50,7 @@ import IncidentForm from '../components/incidents/IncidentForm';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
 import IncidentMap from '../components/maps/IncidentMap';
 import ICSStructureView from '../components/incidents/ICSStructureView';
+import { processIncidentNotifications } from '../components/notifications/NotificationEngine';
 import FormSCI201 from '../components/reports/FormSCI201';
 import FormSCI202 from '../components/reports/FormSCI202';
 import FormSCI203 from '../components/reports/FormSCI203';
@@ -170,36 +171,11 @@ export default function IncidentDetail() {
     mutationFn: async (data) => {
       const updated = await base44.entities.Incident.update(incidentId, data);
       
-      // Crear notificación si cambió a crítico o se actualizó un incidente crítico
-      if (data.severity === 'critical' || incident.severity === 'critical') {
-        const user = await base44.auth.me();
-        await base44.entities.Notification.create({
-          title: `Incidente actualizado: ${data.severity === 'critical' ? 'CRÍTICO' : incident.name}`,
-          message: `${data.name || incident.name} ha sido actualizado`,
-          type: 'incident_updated',
-          priority: data.severity || incident.severity,
-          related_incident_id: incidentId,
-          user_email: user.email,
-          read: false
-        });
-
-        // Enviar email si es crítico
-        if (data.severity === 'critical') {
-          await base44.integrations.Core.SendEmail({
-            to: user.email,
-            subject: `🚨 Actualización de Incidente Crítico: ${data.name || incident.name}`,
-            body: `
-              <h2>Incidente Crítico Actualizado</h2>
-              <p><strong>Incidente:</strong> ${data.name || incident.name}</p>
-              <p><strong>Número:</strong> #${incident.incident_number}</p>
-              <p><strong>Estado:</strong> ${data.status || incident.status}</p>
-              <p><strong>Severidad:</strong> ${data.severity || incident.severity}</p>
-              <br>
-              <p>El incidente ha sido modificado. Por favor, revise los cambios.</p>
-            `
-          });
-        }
-      }
+      // Determinar tipo de acción para notificaciones
+      const action = data.status && data.status !== incident.status ? 'status_changed' : 'updated';
+      
+      // Procesar reglas de notificación automáticas
+      await processIncidentNotifications({ ...incident, ...data, id: incidentId }, action);
       
       return updated;
     },
