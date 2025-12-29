@@ -25,6 +25,7 @@ import SenapredAlertsPanel from '../components/dashboard/SenapredAlertsPanel';
 import ChileanSeismicPanel from '../components/dashboard/ChileanSeismicPanel';
 import HydrometricStationsPanel from '../components/dashboard/HydrometricStationsPanel';
 import WindyPanel from '../components/dashboard/WindyPanel';
+import DirectemarPanel from '../components/dashboard/DirectemarPanel';
 import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
@@ -32,7 +33,7 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy'];
+    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'directemar'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -153,7 +154,8 @@ export default function Dashboard() {
     senapred: <SenapredAlertsPanel />,
     seismic: <ChileanSeismicPanel />,
     hydrometric: <HydrometricStationsPanel />,
-    windy: <WindyPanel />
+    windy: <WindyPanel />,
+    directemar: <DirectemarPanel />
   };
 
   // Notificar sobre incidentes críticos activos al cargar
