@@ -564,7 +564,10 @@ export default function IncidentDetail() {
 
               <div className="grid sm:grid-cols-2 gap-3">
                   {resources.map((resource) =>
-                <Card key={resource.id} className="p-4">
+                <Card key={resource.id} className={cn(
+                  "p-4",
+                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+                )}>
                       <div className="flex justify-between items-start">
                         <div>
                           <p className={cn(
