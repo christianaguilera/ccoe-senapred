@@ -51,12 +51,9 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
       ubicacion: '',
       oficial: incident?.incident_commander || ''
     },
-    perimetros: {
-      ubicacion_seguridad: '',
-      institucion_seguridad: '',
-      ubicacion_otro: '',
-      institucion_otro: ''
-    },
+    perimetros: [
+      { ubicacion: '', institucion: '' }
+    ],
     condiciones: {
       hora: format(new Date(), "HH:mm"),
       temperatura: '',
@@ -90,6 +87,7 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
       [field]: [...boardData[field], field === 'objetivos' || field === 'estrategias' || field === 'tacticas' ? '' : 
         field === 'evacuaciones' ? { localidad: '', sae: '', activacion_sirenas: '', asistida: '' } :
         field === 'sectores' ? { sector: '', oficial: '' } :
+        field === 'perimetros' ? { ubicacion: '', institucion: '' } :
         { unidad: '', personal: '', sector: '', tarea: '' }]
     });
   };
@@ -551,30 +549,40 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                   </Card>
 
                   <Card className="p-4 bg-orange-500 text-white">
-                    <h3 className="font-bold mb-3">PERÍMETROS DE SEGURIDAD</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label className="text-white text-xs">UBICACIÓN:</Label>
-                        <Input
-                          value={boardData.perimetros.ubicacion_seguridad}
-                          onChange={(e) => setBoardData({
-                            ...boardData,
-                            perimetros: { ...boardData.perimetros, ubicacion_seguridad: e.target.value }
-                          })}
-                          className="bg-white text-slate-900"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-white text-xs">INSTITUCIÓN:</Label>
-                        <Input
-                          value={boardData.perimetros.institucion_seguridad}
-                          onChange={(e) => setBoardData({
-                            ...boardData,
-                            perimetros: { ...boardData.perimetros, institucion_seguridad: e.target.value }
-                          })}
-                          className="bg-white text-slate-900"
-                        />
-                      </div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-bold">PERÍMETROS DE SEGURIDAD</h3>
+                      <Button size="sm" variant="ghost" className="text-white h-6" onClick={() => handleAddItem('perimetros')}>
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {boardData.perimetros.map((perimetro, idx) => (
+                        <div key={idx} className="border border-white/30 rounded p-2">
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <Label className="text-white text-xs">UBICACIÓN:</Label>
+                              <Input
+                                value={perimetro.ubicacion}
+                                onChange={(e) => handleNestedChange('perimetros', idx, 'ubicacion', e.target.value)}
+                                className="bg-white text-slate-900 h-7"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-white text-xs">INSTITUCIÓN:</Label>
+                              <Input
+                                value={perimetro.institucion}
+                                onChange={(e) => handleNestedChange('perimetros', idx, 'institucion', e.target.value)}
+                                className="bg-white text-slate-900 h-7"
+                              />
+                            </div>
+                          </div>
+                          {idx > 0 && (
+                            <Button variant="ghost" size="sm" className="text-white h-5 w-full mt-1" onClick={() => handleRemoveItem('perimetros', idx)}>
+                              <X className="w-3 h-3" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </Card>
 
