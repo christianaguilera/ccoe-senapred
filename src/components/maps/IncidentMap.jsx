@@ -67,6 +67,20 @@ const createPOIIcon = (type) => {
     hazard_zone: '☢️',
     evacuation_point: '🚪',
     supply_depot: '🏪',
+    firefighters: '🚒',
+    ambulance: '🚑',
+    police: '🚓',
+    rescue_team: '🦺',
+    shelter: '🏠',
+    food_distribution: '🍽️',
+    water_distribution: '🚰',
+    generator: '⚡',
+    communications: '📡',
+    roadblock: '🚧',
+    debris: '💥',
+    field_hospital: '⛺',
+    military: '🪖',
+    volunteers: '🤝',
     other: '📍'
   };
 
@@ -80,6 +94,20 @@ const createPOIIcon = (type) => {
     hazard_zone: '#dc2626',
     evacuation_point: '#10b981',
     supply_depot: '#6366f1',
+    firefighters: '#dc2626',
+    ambulance: '#f59e0b',
+    police: '#3b82f6',
+    rescue_team: '#f97316',
+    shelter: '#8b5cf6',
+    food_distribution: '#10b981',
+    water_distribution: '#06b6d4',
+    generator: '#eab308',
+    communications: '#6366f1',
+    roadblock: '#ef4444',
+    debris: '#991b1b',
+    field_hospital: '#ec4899',
+    military: '#059669',
+    volunteers: '#14b8a6',
     other: '#64748b'
   };
 
@@ -231,6 +259,20 @@ export default function IncidentMap({
       hazard_zone: 'Zona de Peligro',
       evacuation_point: 'Punto de Evacuación',
       supply_depot: 'Depósito de Suministros',
+      firefighters: 'Bomberos',
+      ambulance: 'Ambulancia',
+      police: 'Policía',
+      rescue_team: 'Equipo de Rescate',
+      shelter: 'Refugio',
+      food_distribution: 'Distribución de Alimentos',
+      water_distribution: 'Distribución de Agua',
+      generator: 'Generador',
+      communications: 'Comunicaciones',
+      roadblock: 'Bloqueo de Ruta',
+      debris: 'Escombros',
+      field_hospital: 'Hospital de Campaña',
+      military: 'Militar',
+      volunteers: 'Voluntarios',
       other: 'Otro'
     };
     return labels[type] || type;
