@@ -22,8 +22,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import IncidentCard from '../components/incidents/IncidentCard';
 import IncidentForm from '../components/incidents/IncidentForm';
 import { processIncidentNotifications } from '../components/notifications/NotificationEngine';
+import { useTheme } from '../components/contexts/ThemeContext';
+import { cn } from "@/lib/utils";
 
 export default function Incidents() {
+  const { isDarkMode } = useTheme();
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -80,7 +83,10 @@ export default function Incidents() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Incidentes</h1>
+          <h1 className={cn(
+            "text-2xl font-bold",
+            isDarkMode ? "text-white" : "text-slate-900"
+          )}>Incidentes</h1>
           <p className="text-slate-500 mt-1">Gestiona todos los incidentes del sistema</p>
         </div>
         <Button 
