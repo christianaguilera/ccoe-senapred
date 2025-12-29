@@ -31,6 +31,10 @@ export default function Dashboard() {
     const saved = localStorage.getItem('dashboardPanelOrder');
     return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy'];
   });
+  const [pressTimer, setPressTimer] = useState(null);
+  const [dragEnabled, setDragEnabled] = useState(false);
+  const [pressingPanel, setPressingPanel] = useState(null);
+  const [pressProgress, setPressProgress] = useState(0);
 
   const { data: incidents = [], isLoading: loadingIncidents } = useQuery({
     queryKey: ['incidents'],
@@ -60,6 +64,43 @@ export default function Dashboard() {
 
     setPanelOrder(items);
     localStorage.setItem('dashboardPanelOrder', JSON.stringify(items));
+    setDragEnabled(false);
+    setPressingPanel(null);
+    setPressProgress(0);
+  };
+
+  const handlePressStart = (panelId) => {
+    setPressingPanel(panelId);
+    setPressProgress(0);
+    
+    const interval = setInterval(() => {
+      setPressProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setDragEnabled(true);
+          return 100;
+        }
+        return prev + (100 / 30); // 30 steps in 3 seconds
+      });
+    }, 100);
+
+    const timer = setTimeout(() => {
+      clearInterval(interval);
+      setDragEnabled(true);
+    }, 3000);
+
+    setPressTimer({ timer, interval });
+  };
+
+  const handlePressEnd = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer.timer);
+      clearInterval(pressTimer.interval);
+    }
+    if (!dragEnabled) {
+      setPressingPanel(null);
+      setPressProgress(0);
+    }
   };
 
   const panels = {
@@ -253,7 +294,7 @@ export default function Dashboard() {
 
         {/* Right Sidebar */}
         <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="dashboard-panels">
+          <Droppable droppableId="dashboard-panels" isDropDisabled={!dragEnabled}>
             {(provided) => (
               <div 
                 {...provided.droppableProps}
@@ -261,21 +302,63 @@ export default function Dashboard() {
                 className="space-y-4"
               >
                 {panelOrder.map((panelId, index) => (
-                  <Draggable key={panelId} draggableId={panelId} index={index}>
+                  <Draggable 
+                    key={panelId} 
+                    draggableId={panelId} 
+                    index={index}
+                    isDragDisabled={!dragEnabled || pressingPanel !== panelId}
+                  >
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`relative touch-none ${snapshot.isDragging ? 'z-50 opacity-90 scale-105 shadow-2xl' : ''} transition-all duration-200`}
+                        onMouseDown={() => handlePressStart(panelId)}
+                        onMouseUp={handlePressEnd}
+                        onMouseLeave={handlePressEnd}
+                        onTouchStart={() => handlePressStart(panelId)}
+                        onTouchEnd={handlePressEnd}
+                        className={`relative touch-none ${snapshot.isDragging ? 'z-50 opacity-90 scale-105 shadow-2xl' : ''} ${pressingPanel === panelId && !dragEnabled ? 'ring-4 ring-orange-400 ring-opacity-50' : ''} transition-all duration-200`}
                         style={{
                           ...provided.draggableProps.style,
-                          cursor: snapshot.isDragging ? 'grabbing' : 'grab'
+                          cursor: dragEnabled && pressingPanel === panelId ? 'grab' : 'default'
                         }}
                       >
+                        {pressingPanel === panelId && !dragEnabled && (
+                          <div className="absolute inset-0 bg-orange-500/10 rounded-lg pointer-events-none z-10 flex items-center justify-center">
+                            <div className="bg-white rounded-full p-4 shadow-lg">
+                              <div className="relative w-16 h-16">
+                                <svg className="transform -rotate-90 w-16 h-16">
+                                  <circle
+                                    cx="32"
+                                    cy="32"
+                                    r="28"
+                                    stroke="#e5e7eb"
+                                    strokeWidth="4"
+                                    fill="none"
+                                  />
+                                  <circle
+                                    cx="32"
+                                    cy="32"
+                                    r="28"
+                                    stroke="#f97316"
+                                    strokeWidth="4"
+                                    fill="none"
+                                    strokeDasharray={`${2 * Math.PI * 28}`}
+                                    strokeDashoffset={`${2 * Math.PI * 28 * (1 - pressProgress / 100)}`}
+                                    className="transition-all duration-100"
+                                  />
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center text-orange-600 font-bold text-sm">
+                                  {Math.round(pressProgress)}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         {snapshot.isDragging && (
-                          <div className="absolute -top-2 -left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
-                            Moviendo...
+                          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs px-3 py-1 rounded-full shadow-lg whitespace-nowrap">
+                            📍 Suelta para fijar posición
                           </div>
                         )}
                         {panels[panelId]}
