@@ -135,7 +135,7 @@ export default function DrawableOperationsMap({
     fire_extinguisher: { icon: '🧯', label: 'Extintor', category: 'Equipamiento' },
     medical_kit: { icon: '🏥', label: 'Botiquín', category: 'Equipamiento' },
     barrier: { icon: '🚧', label: 'Barrera', category: 'Equipamiento' },
-    radio: { icon: '📻', label: 'Radio', category: 'Comunicaciones' },
+    radio: { icon: '📡', label: 'Puesto de Comunicaciones', category: 'Comunicaciones' },
     
     // Instalaciones
     hospital: { icon: '🏥', label: 'Hospital', category: 'Instalaciones' },
