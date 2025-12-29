@@ -54,19 +54,45 @@ export default function FormSCI202({ open, onClose, incident }) {
   };
 
   const handleDownloadPDF = async () => {
-    const element = formRef.current;
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      logging: false
-    });
-    
-    const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pdfHeight = pdf.internal.pageSize.getHeight();
     
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    // Capturar todas las páginas del documento
+    const pages = formRef.current.querySelectorAll('[role="tabpanel"]');
+    
+    for (let i = 0; i < pages.length; i++) {
+      const page = pages[i];
+      
+      // Hacer visible la página temporalmente para capturarla
+      const originalDisplay = page.style.display;
+      page.style.display = 'block';
+      page.setAttribute('data-state', 'active');
+      
+      const canvas = await html2canvas(page, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: page.scrollWidth,
+        windowHeight: page.scrollHeight
+      });
+      
+      // Restaurar el estado original
+      page.style.display = originalDisplay;
+      if (i !== 0) page.setAttribute('data-state', 'inactive');
+      
+      const imgData = canvas.toDataURL('image/png');
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      // Agregar nueva página si no es la primera
+      if (i > 0) {
+        pdf.addPage();
+      }
+      
+      // Agregar imagen de la página
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, Math.min(imgHeight, pdfHeight));
+    }
+    
     pdf.save(`SCI-202-${incident?.incident_number || 'formulario'}.pdf`);
   };
 
