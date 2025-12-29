@@ -22,6 +22,7 @@ import IncidentCard from '../components/incidents/IncidentCard';
 import SenapredAlertsPanel from '../components/dashboard/SenapredAlertsPanel';
 import ChileanSeismicPanel from '../components/dashboard/ChileanSeismicPanel';
 import HydrometricStationsPanel from '../components/dashboard/HydrometricStationsPanel';
+import WindyPanel from '../components/dashboard/WindyPanel';
 
 export default function Dashboard() {
   const { data: incidents = [], isLoading: loadingIncidents } = useQuery({
@@ -235,6 +236,9 @@ export default function Dashboard() {
 
           {/* Hydrometric Stations */}
           <HydrometricStationsPanel />
+
+          {/* Windy Weather Map */}
+          <WindyPanel />
         </div>
       </div>
     </div>
