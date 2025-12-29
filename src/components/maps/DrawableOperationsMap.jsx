@@ -33,7 +33,7 @@ function MapController({ center, zoom }) {
   return null;
 }
 
-function DrawingTool({ drawMode, onDrawComplete }) {
+function DrawingTool({ drawMode, onDrawComplete, selectedIcon }) {
   const [tempPoints, setTempPoints] = useState([]);
   
   useMapEvents({
@@ -46,6 +46,12 @@ function DrawingTool({ drawMode, onDrawComplete }) {
         onDrawComplete({
           type: 'marker',
           coordinates: [lat, lng]
+        });
+      } else if (drawMode === 'icon' && selectedIcon) {
+        onDrawComplete({
+          type: 'icon',
+          coordinates: [lat, lng],
+          iconType: selectedIcon
         });
       } else if (drawMode === 'circle') {
         if (tempPoints.length === 0) {
@@ -100,6 +106,8 @@ export default function DrawableOperationsMap({
   const [editingDrawing, setEditingDrawing] = useState(null);
   const [drawMode, setDrawMode] = useState(null);
   const [editingPoints, setEditingPoints] = useState(null);
+  const [showIconPicker, setShowIconPicker] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState(null);
   const [metadata, setMetadata] = useState({
     name: '',
     type: 'hazard_zone',
@@ -107,6 +115,39 @@ export default function DrawableOperationsMap({
     resources: '',
     priority: 'medium'
   });
+
+  // Emergency icons kit
+  const emergencyIcons = {
+    // Vehículos de emergencia
+    fire_truck: { icon: '🚒', label: 'Carro Bomba', category: 'Bomberos' },
+    ambulance: { icon: '🚑', label: 'Ambulancia', category: 'Médico' },
+    police_car: { icon: '🚓', label: 'Patrulla', category: 'Policía' },
+    helicopter: { icon: '🚁', label: 'Helicóptero', category: 'Aéreo' },
+    boat: { icon: '🚤', label: 'Lancha', category: 'Acuático' },
+    
+    // Personal
+    firefighter: { icon: '👨‍🚒', label: 'Bombero', category: 'Personal' },
+    medic: { icon: '👨‍⚕️', label: 'Paramédico', category: 'Personal' },
+    police_officer: { icon: '👮', label: 'Policía', category: 'Personal' },
+    
+    // Equipamiento
+    fire_extinguisher: { icon: '🧯', label: 'Extintor', category: 'Equipamiento' },
+    medical_kit: { icon: '🏥', label: 'Botiquín', category: 'Equipamiento' },
+    barrier: { icon: '🚧', label: 'Barrera', category: 'Equipamiento' },
+    radio: { icon: '📻', label: 'Radio', category: 'Comunicaciones' },
+    
+    // Instalaciones
+    hospital: { icon: '🏥', label: 'Hospital', category: 'Instalaciones' },
+    command_post: { icon: '🏢', label: 'Puesto Comando', category: 'Instalaciones' },
+    shelter: { icon: '🏠', label: 'Albergue', category: 'Instalaciones' },
+    water_tank: { icon: '💧', label: 'Tanque Agua', category: 'Instalaciones' },
+    
+    // Alertas
+    fire: { icon: '🔥', label: 'Incendio', category: 'Alertas' },
+    hazard: { icon: '☢️', label: 'Peligro', category: 'Alertas' },
+    explosion: { icon: '💥', label: 'Explosión', category: 'Alertas' },
+    flood: { icon: '🌊', label: 'Inundación', category: 'Alertas' },
+  };
 
   useEffect(() => {
     if (incident?.coordinates) {
@@ -217,7 +258,84 @@ export default function DrawableOperationsMap({
     const color = getDrawingColor(drawing.type);
     const isEditing = editingPoints?.id === drawing.id;
     
-    if (drawing.geometry.type === 'marker') {
+    if (drawing.geometry.type === 'icon') {
+      const iconData = emergencyIcons[drawing.geometry.iconType];
+      return (
+        <Marker 
+          key={drawing.id}
+          position={isEditing ? editingPoints.geometry.coordinates : drawing.geometry.coordinates}
+          draggable={isEditing}
+          icon={L.divIcon({
+            className: 'custom-emergency-icon',
+            html: `
+              <div style="
+                background-color: white;
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                border: 3px solid #2563eb;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+              ">
+                ${iconData?.icon || '📍'}
+              </div>
+            `,
+            iconSize: [45, 45],
+            iconAnchor: [22, 22],
+            popupAnchor: [0, -22]
+          })}
+          eventHandlers={isEditing ? {
+            dragend: (e) => {
+              const { lat, lng } = e.target.getLatLng();
+              setEditingPoints({
+                ...editingPoints,
+                geometry: { ...editingPoints.geometry, coordinates: [lat, lng] }
+              });
+            }
+          } : {}}
+        >
+          <Popup>
+            <div className="p-2">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">{iconData?.icon}</span>
+                <div>
+                  <h3 className="font-bold text-sm">{drawing.name || iconData?.label}</h3>
+                  <p className="text-xs text-slate-500">{iconData?.category}</p>
+                </div>
+              </div>
+              {drawing.description && <p className="text-xs mb-1">{drawing.description}</p>}
+              {drawing.resources && <p className="text-xs text-blue-600 mb-1">Recursos: {drawing.resources}</p>}
+              {isEditing ? (
+                <div className="flex gap-1 mt-2">
+                  <Button size="sm" className="h-6 px-2 bg-green-600 hover:bg-green-700" onClick={handleSaveEditedPoints}>
+                    Guardar
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => setEditingPoints(null)}>
+                    Cancelar
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-1 mt-2">
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEditPoints(drawing)}>
+                    <Edit2 className="w-3 h-3 mr-1" />
+                    Mover
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2" onClick={() => handleEdit(drawing)}>
+                    Editar
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2 text-red-600" onClick={() => handleDelete(drawing.id)}>
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Popup>
+        </Marker>
+      );
+    } else if (drawing.geometry.type === 'marker') {
       return (
         <Marker 
           key={drawing.id}
@@ -550,7 +668,7 @@ export default function DrawableOperationsMap({
             scrollWheelZoom={true}
           >
             <MapController center={mapCenter} zoom={mapZoom} />
-            <DrawingTool drawMode={drawMode} onDrawComplete={handleDrawComplete} />
+            <DrawingTool drawMode={drawMode} onDrawComplete={handleDrawComplete} selectedIcon={selectedIcon} />
             
             <LayersControl position="topright">
               <BaseLayer checked name="Mapa Estándar">
@@ -635,8 +753,23 @@ export default function DrawableOperationsMap({
         <div className="grid grid-cols-3 gap-2">
           <Button
             size="sm"
+            variant={showIconPicker ? 'default' : 'outline'}
+            onClick={() => {
+              setShowIconPicker(!showIconPicker);
+              setDrawMode(null);
+            }}
+            className="flex flex-col items-center gap-1 h-auto py-2 col-span-3 bg-orange-50 hover:bg-orange-100 border-orange-300"
+          >
+            <span className="text-lg">🚒</span>
+            <span className="text-xs font-semibold">Iconos de Emergencia</span>
+          </Button>
+          <Button
+            size="sm"
             variant={drawMode === 'marker' ? 'default' : 'outline'}
-            onClick={() => setDrawMode(drawMode === 'marker' ? null : 'marker')}
+            onClick={() => {
+              setDrawMode(drawMode === 'marker' ? null : 'marker');
+              setShowIconPicker(false);
+            }}
             className="flex flex-col items-center gap-1 h-auto py-2"
           >
             <MapPin className="w-4 h-4" />
@@ -645,7 +778,10 @@ export default function DrawableOperationsMap({
           <Button
             size="sm"
             variant={drawMode === 'circle' ? 'default' : 'outline'}
-            onClick={() => setDrawMode(drawMode === 'circle' ? null : 'circle')}
+            onClick={() => {
+              setDrawMode(drawMode === 'circle' ? null : 'circle');
+              setShowIconPicker(false);
+            }}
             className="flex flex-col items-center gap-1 h-auto py-2"
           >
             <CircleIcon className="w-4 h-4" />
@@ -654,7 +790,10 @@ export default function DrawableOperationsMap({
           <Button
             size="sm"
             variant={drawMode === 'polygon' ? 'default' : 'outline'}
-            onClick={() => setDrawMode(drawMode === 'polygon' ? null : 'polygon')}
+            onClick={() => {
+              setDrawMode(drawMode === 'polygon' ? null : 'polygon');
+              setShowIconPicker(false);
+            }}
             className="flex flex-col items-center gap-1 h-auto py-2"
           >
             <Square className="w-4 h-4" />
@@ -663,7 +802,10 @@ export default function DrawableOperationsMap({
           <Button
             size="sm"
             variant={drawMode === 'polyline' ? 'default' : 'outline'}
-            onClick={() => setDrawMode(drawMode === 'polyline' ? null : 'polyline')}
+            onClick={() => {
+              setDrawMode(drawMode === 'polyline' ? null : 'polyline');
+              setShowIconPicker(false);
+            }}
             className="flex flex-col items-center gap-1 h-auto py-2"
           >
             <Minus className="w-4 h-4" />
@@ -672,14 +814,48 @@ export default function DrawableOperationsMap({
           <Button
             size="sm"
             variant={drawMode === 'rectangle' ? 'default' : 'outline'}
-            onClick={() => setDrawMode(drawMode === 'rectangle' ? null : 'rectangle')}
+            onClick={() => {
+              setDrawMode(drawMode === 'rectangle' ? null : 'rectangle');
+              setShowIconPicker(false);
+            }}
             className="flex flex-col items-center gap-1 h-auto py-2 col-span-2"
           >
             <Square className="w-4 h-4" />
             <span className="text-xs">Rectángulo</span>
           </Button>
         </div>
-        {drawMode && (
+
+        {/* Icon Picker */}
+        {showIconPicker && (
+          <div className="mt-3 p-3 bg-slate-50 rounded-lg border">
+            <div className="text-xs font-semibold mb-2">Selecciona un icono:</div>
+            <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+              {Object.entries(emergencyIcons).map(([key, data]) => (
+                <Button
+                  key={key}
+                  size="sm"
+                  variant={selectedIcon === key ? 'default' : 'outline'}
+                  onClick={() => {
+                    setSelectedIcon(key);
+                    setDrawMode('icon');
+                  }}
+                  className="flex flex-col items-center gap-1 h-auto py-2"
+                  title={data.label}
+                >
+                  <span className="text-xl">{data.icon}</span>
+                  <span className="text-[10px] text-center leading-tight">{data.label}</span>
+                </Button>
+              ))}
+            </div>
+            {selectedIcon && (
+              <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-center">
+                Click en el mapa para colocar: {emergencyIcons[selectedIcon].label}
+              </div>
+            )}
+          </div>
+        )}
+
+        {drawMode && drawMode !== 'icon' && (
           <div className="text-xs text-slate-500 mt-2 p-2 bg-blue-50 rounded text-center">
             {drawMode === 'marker' && 'Click en el mapa para colocar marcador'}
             {drawMode === 'circle' && 'Click para centro, luego click para radio'}
