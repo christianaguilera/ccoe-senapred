@@ -19,14 +19,15 @@ export default function HydrometricStationsPanel() {
     setLoading(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Extrae información de estaciones hidrométricas de Chile desde https://snia.mop.gob.cl/sat/site/informes/mapas/mapas.xhtml.
+        prompt: `Extrae información de TODAS las estaciones hidrométricas de Chile que están transmitiendo actualmente desde https://snia.mop.gob.cl/sat/site/informes/mapas/mapas.xhtml.
         Para cada estación devuelve: nombre (string), region (string), tipo (string como Fluviométrica, Meteorológica, etc), 
-        estado_transmision (string: "transmitiendo", "sin_transmision", "error"), 
+        estado_transmision (string: debe ser "transmitiendo"), 
         alerta (string: "ninguna", "azul", "amarilla", "roja"), 
         caudal_o_nivel (número si disponible, sino null), unidad (string si disponible),
         latitud (número), longitud (número).
-        Ordena por alertas más críticas primero, luego por estado de transmisión.
-        Devuelve máximo 20 estaciones con coordenadas válidas.`,
+        IMPORTANTE: Solo incluye estaciones que están transmitiendo actualmente (en línea).
+        Ordena por alertas más críticas primero, luego por región.
+        Incluye todas las estaciones en línea que encuentres.`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
@@ -52,7 +53,11 @@ export default function HydrometricStationsPanel() {
         }
       });
 
-      setStations(response.estaciones || []);
+      // Filtrar solo estaciones en línea (transmitiendo)
+      const onlineStations = (response.estaciones || []).filter(
+        st => st.estado_transmision?.toLowerCase() === 'transmitiendo'
+      );
+      setStations(onlineStations);
       setLastUpdate(new Date());
     } catch (error) {
       console.error('Error al cargar estaciones:', error);
@@ -132,11 +137,10 @@ export default function HydrometricStationsPanel() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Estaciones Hidrométricas DGA</h2>
-            {lastUpdate && (
-              <p className="text-xs text-slate-500">
-                Actualizado: {lastUpdate.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}
-              </p>
-            )}
+            <p className="text-xs text-slate-500">
+              {lastUpdate && `Actualizado: ${lastUpdate.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })} • `}
+              {stations.length} estaciones en línea
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
