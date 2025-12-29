@@ -71,17 +71,17 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
       { sector: '', oficial: '' }
     ],
     asignaciones: [
-      { unidad: '', personal: '', tarea: '' }
+      { unidad: '', personal: '', sector: '', tarea: '' }
     ]
   });
 
   const handleAddItem = (field) => {
     setBoardData({
       ...boardData,
-      [field]: [...boardData[field], field === 'objetivos' || field === 'estrategias' ? '' : 
+      [field]: [...boardData[field], field === 'objetivos' || field === 'estrategias' || field === 'tacticas' ? '' : 
         field === 'evacuaciones' ? { localidad: '', sae: '', activacion_sirenas: '', asistida: '' } :
         field === 'sectores' ? { sector: '', oficial: '' } :
-        { unidad: '', personal: '', tarea: '' }]
+        { unidad: '', personal: '', sector: '', tarea: '' }]
     });
   };
 
@@ -528,7 +528,7 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                     <div className="space-y-2 max-h-[500px] overflow-y-auto">
                       {boardData.asignaciones.map((asig, idx) => (
                         <div key={idx} className="border-2 border-slate-800 rounded p-2 bg-white space-y-1">
-                          <div className="grid grid-cols-2 gap-1">
+                          <div className="grid grid-cols-3 gap-1">
                             <Input
                               placeholder="Unidad"
                               value={asig.unidad}
@@ -539,6 +539,12 @@ export default function OperationsBoard({ open, onClose, incident, staff = [] })
                               placeholder="N° Pers."
                               value={asig.personal}
                               onChange={(e) => handleNestedChange('asignaciones', idx, 'personal', e.target.value)}
+                              className="h-6 text-xs"
+                            />
+                            <Input
+                              placeholder="Sector"
+                              value={asig.sector}
+                              onChange={(e) => handleNestedChange('asignaciones', idx, 'sector', e.target.value)}
                               className="h-6 text-xs"
                             />
                           </div>
