@@ -61,7 +61,7 @@ export default function IncidentCard({ incident, onDelete }) {
   };
 
   return (
-    <Link to={createPageUrl(`IncidentDetail?id=${incident.id}`)}>
+    <Link to={createPageUrl(`IncidentDetail?id=${incident.id}`)} className="max-w-[70%]">
       <Card className="group p-5 hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-slate-300 cursor-pointer">
         <div className="flex items-start gap-4">
           {/* Type icon */}
