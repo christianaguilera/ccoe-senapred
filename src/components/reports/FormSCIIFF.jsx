@@ -13,7 +13,6 @@ import {
 import { Card } from "@/components/ui/card";
 import { FileText, Plus, Trash2, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 
 export default function FormSCIIFF({ open, onClose, incident }) {
   const [formData, setFormData] = useState({
@@ -57,42 +56,60 @@ export default function FormSCIIFF({ open, onClose, incident }) {
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.text('ANEXO "E"', 105, 20, { align: 'center' });
-    doc.text('LISTADO DE PARTICIPANTES EN PUESTO DE COMANDO UNIFICADO', 105, 30, { align: 'center' });
+    doc.setFontSize(12);
+    doc.text('LISTADO DE PARTICIPANTES EN PUESTO DE COMANDO UNIFICADO', 105, 28, { align: 'center' });
     
     // Información del incidente
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Nombre Incendio: ${formData.nombre_incendio}`, 20, 45);
-    doc.text(`Fecha: ${formData.fecha}`, 140, 45);
-    doc.text(`Región: ${formData.region}`, 20, 52);
-    doc.text(`Comuna: ${formData.comuna}`, 140, 52);
-    doc.text(`Comandante Incidente: ${formData.comandante_incidente}`, 20, 59);
-    doc.text(`Institución: ${formData.institucion_comandante}`, 140, 59);
+    doc.text(`Nombre Incendio: ${formData.nombre_incendio}`, 15, 40);
+    doc.text(`Fecha: ${formData.fecha}`, 140, 40);
+    doc.text(`Región: ${formData.region}`, 15, 46);
+    doc.text(`Comuna: ${formData.comuna}`, 140, 46);
+    doc.text(`Comandante Incidente: ${formData.comandante_incidente}`, 15, 52);
+    doc.text(`Institución: ${formData.institucion_comandante}`, 15, 58);
     
-    // Tabla de participantes
-    const tableData = participantes.map(p => [
-      p.nombre,
-      p.institucion,
-      p.cargo,
-      p.medio_contacto,
-      p.llegada,
-      p.salida
-    ]);
-
-    doc.autoTable({
-      startY: 70,
-      head: [['Nombre', 'Institución', 'Cargo', 'Medio de contacto', 'Día y Horario llegada', 'Día y Horario salida']],
-      body: tableData,
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [220, 53, 69], fontStyle: 'bold' },
-      columnStyles: {
-        0: { cellWidth: 30 },
-        1: { cellWidth: 28 },
-        2: { cellWidth: 25 },
-        3: { cellWidth: 28 },
-        4: { cellWidth: 35 },
-        5: { cellWidth: 35 }
+    // Tabla de participantes - Manual
+    doc.setFontSize(8);
+    let y = 70;
+    
+    // Encabezados
+    doc.setFont('helvetica', 'bold');
+    doc.setFillColor(220, 53, 69);
+    doc.rect(15, y, 180, 7, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Nombre', 17, y + 5);
+    doc.text('Institución', 50, y + 5);
+    doc.text('Cargo', 80, y + 5);
+    doc.text('Contacto', 105, y + 5);
+    doc.text('Llegada', 130, y + 5);
+    doc.text('Salida', 165, y + 5);
+    
+    // Datos
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    y += 7;
+    
+    participantes.forEach((p, index) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
       }
+      
+      const rowColor = index % 2 === 0 ? [245, 245, 245] : [255, 255, 255];
+      doc.setFillColor(...rowColor);
+      doc.rect(15, y, 180, 7, 'F');
+      doc.setDrawColor(200, 200, 200);
+      doc.rect(15, y, 180, 7, 'S');
+      
+      doc.text(p.nombre.substring(0, 15), 17, y + 5);
+      doc.text(p.institucion.substring(0, 12), 50, y + 5);
+      doc.text(p.cargo.substring(0, 12), 80, y + 5);
+      doc.text(p.medio_contacto.substring(0, 12), 105, y + 5);
+      doc.text(p.llegada.substring(0, 16), 130, y + 5);
+      doc.text(p.salida.substring(0, 16), 165, y + 5);
+      
+      y += 7;
     });
 
     doc.save(`SCI-IFF_Participantes_${formData.nombre_incendio}_${Date.now()}.pdf`);
