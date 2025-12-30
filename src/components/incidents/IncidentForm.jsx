@@ -183,7 +183,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="severity">Severidad</Label>
+              <Label htmlFor="severity">Nivel de Emergencia</Label>
               <Select
                 value={formData.severity}
                 onValueChange={(value) => setFormData({ ...formData, severity: value })}
