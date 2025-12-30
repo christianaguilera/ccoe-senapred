@@ -104,18 +104,39 @@ export default function MeteochileAlertsPanel() {
             isDarkMode ? "text-white" : "text-slate-900"
           )}>Alertas Meteorológicas</h3>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => fetchAlerts(true)}
-          disabled={refreshing}
-          className={cn(
-            "h-8 w-8",
-            isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
-          )}
-        >
-          <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
-        </Button>
+        <div className="flex items-center gap-2">
+          <a
+            href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(
+                "h-8 text-xs",
+                isDarkMode 
+                  ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
+                  : "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
+              )}
+            >
+              <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
+              Sistema de Alertas
+            </Button>
+          </a>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => fetchAlerts(true)}
+            disabled={refreshing}
+            className={cn(
+              "h-8 w-8",
+              isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
+            )}
+          >
+            <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
+          </Button>
+        </div>
       </div>
 
       {loading ? (
