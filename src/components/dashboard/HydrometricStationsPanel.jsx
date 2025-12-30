@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Droplets, ExternalLink, RefreshCw, AlertTriangle, Info, Map, List, Navigation } from 'lucide-react';
+import { Droplets, ExternalLink, RefreshCw, AlertTriangle, Info, Map, List, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { base44 } from '@/api/base44Client';
 import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap } from 'react-leaflet';
@@ -29,6 +29,7 @@ export default function HydrometricStationsPanel() {
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
   const [userLocation, setUserLocation] = useState(null);
   const [locating, setLocating] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const fetchStations = async () => {
     setLoading(true);
@@ -215,152 +216,164 @@ export default function HydrometricStationsPanel() {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="h-8 w-8"
+          >
+            {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          </Button>
         </div>
       </div>
 
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="border-b border-slate-100 pb-3">
-              <Skeleton className="h-4 w-40 mb-2" />
-              <Skeleton className="h-3 w-full mb-1" />
-              <Skeleton className="h-3 w-32" />
-            </div>
-          ))}
-        </div>
-      ) : stations.length === 0 ? (
-        <div className="text-center py-8 text-slate-500 text-sm">
-          <Info className="w-8 h-8 mx-auto mb-2 text-slate-400" />
-          No se pudieron cargar los datos
-        </div>
-      ) : viewMode === 'map' ? (
-        <div className="relative">
-          <div style={{ height: '400px', width: '100%' }} className="rounded-lg overflow-hidden">
-            <MapContainer
-              center={[-33.4489, -70.6693]}
-              zoom={5}
-              style={{ height: '100%', width: '100%' }}
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <MapGeolocation userLocation={userLocation} />
-              
-              {userLocation && (
-                <CircleMarker
-                  center={[userLocation.lat, userLocation.lng]}
-                  radius={8}
-                  fillColor="#10b981"
-                  color="#ffffff"
-                  weight={3}
-                  opacity={1}
-                  fillOpacity={0.8}
-                >
-                  <Popup>
-                    <div className="p-2">
-                      <p className="text-sm font-semibold">📍 Tu ubicación</p>
-                    </div>
-                  </Popup>
-                </CircleMarker>
-              )}
-              
-              {stations.filter(st => st.latitud && st.longitud).map((station, idx) => (
-              <Marker
-                key={idx}
-                position={[station.latitud, station.longitud]}
-                icon={getMarkerIcon(station)}
-              >
-                <Popup>
-                  <div className="p-2">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      {station.alerta && station.alerta !== 'ninguna' && (
-                        <Badge className={`${getAlertColor(station.alerta)} font-semibold text-xs px-2 py-0.5`}>
-                          <AlertTriangle className="w-3 h-3 mr-1" />
-                          Alerta {station.alerta}
-                        </Badge>
-                      )}
-                      <span className={`text-xs font-mono ${getTransmissionColor(station.estado_transmision)}`}>
-                        {getTransmissionIcon(station.estado_transmision)} {station.estado_transmision}
-                      </span>
-                    </div>
-                    <p className="text-sm font-semibold mb-1">{station.nombre}</p>
-                    <div className="flex items-center gap-2 text-xs text-slate-600 mb-1">
-                      <span className="bg-slate-100 px-2 py-0.5 rounded">{station.tipo}</span>
-                      <span>{station.region}</span>
-                    </div>
-                    {station.caudal_o_nivel !== null && (
-                      <p className="text-xs text-blue-600 font-medium">
-                        {station.caudal_o_nivel} {station.unidad || 'm³/s'}
-                      </p>
-                    )}
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
-        <Button
-          onClick={handleGeolocation}
-          disabled={locating}
-          size="sm"
-          className="absolute top-2 right-2 z-[1000] bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-lg"
-        >
-          <Navigation className={`w-4 h-4 mr-1 ${locating ? 'animate-pulse' : ''}`} />
-          {locating ? 'Ubicando...' : 'Mi ubicación'}
-        </Button>
-      </div>
-      ) : (
-        <div className="space-y-3 max-h-[500px] overflow-y-auto">
-          {stations.map((station, idx) => (
-            <div 
-              key={idx} 
-              className="border-b border-slate-100 last:border-0 pb-3 last:pb-0 hover:bg-slate-50 -mx-2 px-2 py-2 rounded-lg transition-colors"
-            >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    {station.alerta && station.alerta !== 'ninguna' && (
-                      <Badge className={`${getAlertColor(station.alerta)} font-semibold text-xs px-2 py-0.5`}>
-                        <AlertTriangle className="w-3 h-3 mr-1" />
-                        Alerta {station.alerta}
-                      </Badge>
-                    )}
-                    <span className={`text-xs font-mono ${getTransmissionColor(station.estado_transmision)}`}>
-                      {getTransmissionIcon(station.estado_transmision)} {station.estado_transmision}
-                    </span>
-                  </div>
-                  <p className="text-sm font-semibold text-slate-900 mb-1">
-                    {station.nombre}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-slate-600">
-                    <span className="bg-slate-100 px-2 py-0.5 rounded">{station.tipo}</span>
-                    <span>{station.region}</span>
-                  </div>
-                  {station.caudal_o_nivel !== null && (
-                    <p className="text-xs text-blue-600 font-medium mt-1">
-                      {station.caudal_o_nivel} {station.unidad || 'm³/s'}
-                    </p>
-                  )}
+      {!isCollapsed && (
+        <>
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="border-b border-slate-100 pb-3">
+                  <Skeleton className="h-4 w-40 mb-2" />
+                  <Skeleton className="h-3 w-full mb-1" />
+                  <Skeleton className="h-3 w-32" />
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          ) : stations.length === 0 ? (
+            <div className="text-center py-8 text-slate-500 text-sm">
+              <Info className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+              No se pudieron cargar los datos
+            </div>
+          ) : viewMode === 'map' ? (
+            <div className="relative">
+              <div style={{ height: '400px', width: '100%' }} className="rounded-lg overflow-hidden">
+                <MapContainer
+                  center={[-33.4489, -70.6693]}
+                  zoom={5}
+                  style={{ height: '100%', width: '100%' }}
+                  scrollWheelZoom={false}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <MapGeolocation userLocation={userLocation} />
+                  
+                  {userLocation && (
+                    <CircleMarker
+                      center={[userLocation.lat, userLocation.lng]}
+                      radius={8}
+                      fillColor="#10b981"
+                      color="#ffffff"
+                      weight={3}
+                      opacity={1}
+                      fillOpacity={0.8}
+                    >
+                      <Popup>
+                        <div className="p-2">
+                          <p className="text-sm font-semibold">📍 Tu ubicación</p>
+                        </div>
+                      </Popup>
+                    </CircleMarker>
+                  )}
+                  
+                  {stations.filter(st => st.latitud && st.longitud).map((station, idx) => (
+                  <Marker
+                    key={idx}
+                    position={[station.latitud, station.longitud]}
+                    icon={getMarkerIcon(station)}
+                  >
+                    <Popup>
+                      <div className="p-2">
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                          {station.alerta && station.alerta !== 'ninguna' && (
+                            <Badge className={`${getAlertColor(station.alerta)} font-semibold text-xs px-2 py-0.5`}>
+                              <AlertTriangle className="w-3 h-3 mr-1" />
+                              Alerta {station.alerta}
+                            </Badge>
+                          )}
+                          <span className={`text-xs font-mono ${getTransmissionColor(station.estado_transmision)}`}>
+                            {getTransmissionIcon(station.estado_transmision)} {station.estado_transmision}
+                          </span>
+                        </div>
+                        <p className="text-sm font-semibold mb-1">{station.nombre}</p>
+                        <div className="flex items-center gap-2 text-xs text-slate-600 mb-1">
+                          <span className="bg-slate-100 px-2 py-0.5 rounded">{station.tipo}</span>
+                          <span>{station.region}</span>
+                        </div>
+                        {station.caudal_o_nivel !== null && (
+                          <p className="text-xs text-blue-600 font-medium">
+                            {station.caudal_o_nivel} {station.unidad || 'm³/s'}
+                          </p>
+                        )}
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
+            </div>
+            <Button
+              onClick={handleGeolocation}
+              disabled={locating}
+              size="sm"
+              className="absolute top-2 right-2 z-[1000] bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-lg"
+            >
+              <Navigation className={`w-4 h-4 mr-1 ${locating ? 'animate-pulse' : ''}`} />
+              {locating ? 'Ubicando...' : 'Mi ubicación'}
+            </Button>
+          </div>
+          ) : (
+            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+              {stations.map((station, idx) => (
+                <div 
+                  key={idx} 
+                  className="border-b border-slate-100 last:border-0 pb-3 last:pb-0 hover:bg-slate-50 -mx-2 px-2 py-2 rounded-lg transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        {station.alerta && station.alerta !== 'ninguna' && (
+                          <Badge className={`${getAlertColor(station.alerta)} font-semibold text-xs px-2 py-0.5`}>
+                            <AlertTriangle className="w-3 h-3 mr-1" />
+                            Alerta {station.alerta}
+                          </Badge>
+                        )}
+                        <span className={`text-xs font-mono ${getTransmissionColor(station.estado_transmision)}`}>
+                          {getTransmissionIcon(station.estado_transmision)} {station.estado_transmision}
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-900 mb-1">
+                        {station.nombre}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-slate-600">
+                        <span className="bg-slate-100 px-2 py-0.5 rounded">{station.tipo}</span>
+                        <span>{station.region}</span>
+                      </div>
+                      {station.caudal_o_nivel !== null && (
+                        <p className="text-xs text-blue-600 font-medium mt-1">
+                          {station.caudal_o_nivel} {station.unidad || 'm³/s'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-      <div className="mt-4 pt-3 border-t border-slate-200">
-        <a 
-          href="https://snia.mop.gob.cl/sat/site/informes/mapas/mapas.xhtml" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
-        >
-          Ver más en SNIA DGA
-          <ExternalLink className="w-3 h-3" />
-        </a>
-      </div>
+          <div className="mt-4 pt-3 border-t border-slate-200">
+            <a 
+              href="https://snia.mop.gob.cl/sat/site/informes/mapas/mapas.xhtml" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
+            >
+              Ver más en SNIA DGA
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </>
+      )}
     </Card>
   );
 }
