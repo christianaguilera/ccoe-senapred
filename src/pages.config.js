@@ -5,9 +5,9 @@ import IncidentDetail from './pages/IncidentDetail';
 import IncidentMap from './pages/IncidentMap';
 import Incidents from './pages/Incidents';
 import NotificationRules from './pages/NotificationRules';
+import RegionalLinkPlan from './pages/RegionalLinkPlan';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
-import RegionalLinkPlan from './pages/RegionalLinkPlan';
 import __Layout from './Layout.jsx';
 
 
@@ -19,9 +19,9 @@ export const PAGES = {
     "IncidentMap": IncidentMap,
     "Incidents": Incidents,
     "NotificationRules": NotificationRules,
+    "RegionalLinkPlan": RegionalLinkPlan,
     "Reports": Reports,
     "Resources": Resources,
-    "RegionalLinkPlan": RegionalLinkPlan,
 }
 
 export const pagesConfig = {

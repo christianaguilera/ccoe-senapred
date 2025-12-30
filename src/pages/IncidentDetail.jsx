@@ -128,6 +128,7 @@ export default function IncidentDetail() {
   const [showOperationsBoard, setShowOperationsBoard] = useState(false);
   const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
+  const [editingStaffId, setEditingStaffId] = useState(null);
   const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
 
   // Check if any modal/dialog is open
@@ -210,6 +211,17 @@ export default function IncidentDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff', incidentId] });
       setNewStaff({ role: '', name: '', contact: '', radio_channel: '' });
+      setEditingStaffId(null);
+      setShowStaffForm(false);
+    }
+  });
+
+  const updateStaffMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.CommandStaff.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['staff', incidentId] });
+      setNewStaff({ role: '', name: '', contact: '', radio_channel: '' });
+      setEditingStaffId(null);
       setShowStaffForm(false);
     }
   });
@@ -478,7 +490,32 @@ export default function IncidentDetail() {
           </Card>
 
           {/* ICS Structure View */}
-          <ICSStructureView staff={staff} />
+          <ICSStructureView 
+            staff={staff} 
+            isDarkMode={isDarkMode}
+            onEdit={(role, member) => {
+              if (member) {
+                // Editing existing staff
+                setEditingStaffId(member.id);
+                setNewStaff({ 
+                  role: member.role, 
+                  name: member.name, 
+                  contact: member.contact || '', 
+                  radio_channel: member.radio_channel || '' 
+                });
+              } else {
+                // Adding new staff for this role
+                setEditingStaffId(null);
+                setNewStaff({ 
+                  role, 
+                  name: '', 
+                  contact: '', 
+                  radio_channel: '' 
+                });
+              }
+              setShowStaffForm(true);
+            }}
+          />
 
           {/* Tabs */}
           <Tabs defaultValue="staff" className="space-y-4">
@@ -697,10 +734,16 @@ export default function IncidentDetail() {
 
 
       {/* Add Staff Modal */}
-      <Dialog open={showStaffForm} onOpenChange={setShowStaffForm}>
+      <Dialog open={showStaffForm} onOpenChange={(open) => {
+        if (!open) {
+          setNewStaff({ role: '', name: '', contact: '', radio_channel: '' });
+          setEditingStaffId(null);
+        }
+        setShowStaffForm(open);
+      }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Agregar Personal de Comando</DialogTitle>
+            <DialogTitle>{editingStaffId ? 'Editar' : 'Agregar'} Personal de Comando</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
             <div className="space-y-2">
@@ -744,13 +787,23 @@ export default function IncidentDetail() {
 
             </div>
             <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowStaffForm(false)}>Cancelar</Button>
+              <Button variant="outline" onClick={() => {
+                setShowStaffForm(false);
+                setNewStaff({ role: '', name: '', contact: '', radio_channel: '' });
+                setEditingStaffId(null);
+              }}>Cancelar</Button>
               <Button
-                onClick={() => createStaffMutation.mutate(newStaff)}
-                disabled={!newStaff.role || !newStaff.name || createStaffMutation.isPending}
+                onClick={() => {
+                  if (editingStaffId) {
+                    updateStaffMutation.mutate({ id: editingStaffId, data: newStaff });
+                  } else {
+                    createStaffMutation.mutate(newStaff);
+                  }
+                }}
+                disabled={!newStaff.role || !newStaff.name || createStaffMutation.isPending || updateStaffMutation.isPending}
                 className="bg-orange-500 hover:bg-orange-600">
 
-                Agregar
+                {editingStaffId ? 'Actualizar' : 'Agregar'}
               </Button>
             </div>
           </div>
