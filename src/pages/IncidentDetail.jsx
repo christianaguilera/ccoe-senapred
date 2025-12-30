@@ -285,7 +285,7 @@ export default function IncidentDetail() {
   }
 
   const type = typeConfig[incident.type] || typeConfig.other;
-  const severity = severityConfig[incident.severity] || severityConfig.medium;
+  const severity = severityConfig[incident.severity] || severityConfig.minor_emergency;
   const status = statusConfig[incident.status] || statusConfig.active;
   const TypeIcon = type.icon;
 
