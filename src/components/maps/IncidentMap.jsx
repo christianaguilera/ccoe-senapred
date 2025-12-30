@@ -23,13 +23,13 @@ L.Icon.Default.mergeOptions({
 // Custom icon for incidents
 const createIncidentIcon = (severity, type) => {
   const colors = {
-    critical: '#ef4444',
-    high: '#f97316',
-    medium: '#eab308',
-    low: '#22c55e'
+    catastrophe: '#ef4444',
+    disaster: '#f97316',
+    major_emergency: '#eab308',
+    minor_emergency: '#22c55e'
   };
   
-  const color = colors[severity] || colors.medium;
+  const color = colors[severity] || colors.minor_emergency;
   
   return L.divIcon({
     className: 'custom-incident-marker',
@@ -253,22 +253,22 @@ export default function IncidentMap({
 
   const getSeverityColor = (severity) => {
     const colors = {
-      critical: '#ef4444',
-      high: '#f97316',
-      medium: '#eab308',
-      low: '#22c55e'
+      catastrophe: '#ef4444',
+      disaster: '#f97316',
+      major_emergency: '#eab308',
+      minor_emergency: '#22c55e'
     };
-    return colors[severity] || colors.medium;
+    return colors[severity] || colors.minor_emergency;
   };
 
   const getSeverityLabel = (severity) => {
     const labels = {
-      critical: 'Crítico',
-      high: 'Alto',
-      medium: 'Medio',
-      low: 'Bajo'
+      catastrophe: 'Catástrofe',
+      disaster: 'Desastre',
+      major_emergency: 'Emergencia Mayor',
+      minor_emergency: 'Emergencia Menor'
     };
-    return labels[severity] || 'Medio';
+    return labels[severity] || 'Emergencia Menor';
   };
 
   const getStatusLabel = (status) => {
@@ -283,10 +283,10 @@ export default function IncidentMap({
 
   const getRadiusMeters = (severity) => {
     const radii = {
-      critical: 1000,
-      high: 500,
-      medium: 300,
-      low: 200
+      catastrophe: 1000,
+      disaster: 500,
+      major_emergency: 300,
+      minor_emergency: 200
     };
     return radii[severity] || 300;
   };

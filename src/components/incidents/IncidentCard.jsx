@@ -34,10 +34,10 @@ const typeConfig = {
 };
 
 const severityConfig = {
-  low: { label: 'Bajo', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-  medium: { label: 'Medio', color: 'bg-amber-100 text-amber-700 border-amber-200' },
-  high: { label: 'Alto', color: 'bg-orange-100 text-orange-700 border-orange-200' },
-  critical: { label: 'Crítico', color: 'bg-red-100 text-red-700 border-red-200' }
+  minor_emergency: { label: 'Emergencia Menor', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+  major_emergency: { label: 'Emergencia Mayor', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+  disaster: { label: 'Desastre', color: 'bg-orange-100 text-orange-700 border-orange-200' },
+  catastrophe: { label: 'Catástrofe', color: 'bg-red-100 text-red-700 border-red-200' }
 };
 
 const statusConfig = {
@@ -50,7 +50,7 @@ const statusConfig = {
 export default function IncidentCard({ incident, onDelete }) {
   const { isDarkMode } = useTheme();
   const type = typeConfig[incident.type] || typeConfig.other;
-  const severity = severityConfig[incident.severity] || severityConfig.medium;
+  const severity = severityConfig[incident.severity] || severityConfig.minor_emergency;
   const status = statusConfig[incident.status] || statusConfig.active;
   const TypeIcon = type.icon;
 
