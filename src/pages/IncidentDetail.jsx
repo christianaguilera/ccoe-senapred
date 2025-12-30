@@ -356,10 +356,10 @@ export default function IncidentDetail() {
                   value={incident.status}
                   onValueChange={(value) => updateMutation.mutate({ status: value })}>
 
-                  <SelectTrigger className="w-auto min-w-[160px] h-10 border-2 border-orange-500 bg-orange-50 hover:bg-orange-100 font-semibold shadow-lg">
+                  <SelectTrigger className="w-auto min-w-[160px] h-10 border-2 border-orange-500 bg-orange-50 hover:bg-orange-100 font-semibold shadow-lg relative z-50">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-50">
                     <SelectItem value="active">🔴 Activo</SelectItem>
                     <SelectItem value="contained">🟡 Contenido</SelectItem>
                     <SelectItem value="monitoring">🔵 Monitoreo</SelectItem>
