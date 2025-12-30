@@ -232,14 +232,6 @@ export default function Dashboard() {
               isDarkMode ? "text-white" : "text-slate-900"
             )}>{new Date().toLocaleTimeString('es-CL')}</p>
           </div>
-          <Button 
-            onClick={() => window.open('https://www.arcgis.com/apps/webappviewer/index.html?id=5062b40cc3e347c8b11fd8b20a639a88', '_blank')}
-            variant="outline"
-            className="shadow-lg"
-          >
-            <MapPin className="w-4 h-4 mr-2" />
-            Mapa ArcGIS
-          </Button>
           <Link to={createPageUrl('Incidents')}>
             <Button className="bg-orange-500 hover:bg-orange-600 shadow-lg">
               <Plus className="w-4 h-4 mr-2" />

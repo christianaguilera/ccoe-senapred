@@ -169,6 +169,20 @@ function LayoutContent({ children, currentPageName }) {
                 <FileText className="w-5 h-5" />
                 Recomendaciones SENAPRED
               </a>
+              <a
+                href="https://www.arcgis.com/apps/webappviewer/index.html?id=5062b40cc3e347c8b11fd8b20a639a88"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                  isDarkMode
+                  ? "text-slate-400 hover:text-white hover:bg-zinc-800"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                )}
+              >
+                <MapPin className="w-5 h-5" />
+                Mapa ArcGIS
+              </a>
             </div>
             </nav>
 
