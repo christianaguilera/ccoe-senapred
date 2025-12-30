@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Cloud, ExternalLink, Navigation } from 'lucide-react';
+import { Cloud, ExternalLink, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function WindyPanel() {
   const [userLocation, setUserLocation] = useState({ lat: -41.910, lng: -72.684 });
   const [locating, setLocating] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,39 +55,51 @@ export default function WindyPanel() {
             <p className="text-xs text-slate-500">Mapa interactivo Windy</p>
           </div>
         </div>
-      </div>
-
-      <div className="relative">
-        <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '400px', width: '100%' }}>
-          <iframe 
-            key={refreshKey}
-            src={`https://embed.windy.com/embed2.html?lat=${userLocation.lat}&lon=${userLocation.lng}&detailLat=${userLocation.lat}&detailLon=${userLocation.lng}&width=650&height=450&zoom=8&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1`}
-            style={{ width: '100%', height: '100%', border: 'none' }}
-            title="Windy Weather Map"
-          />
-        </div>
         <Button
-          onClick={handleGeolocation}
-          disabled={locating}
-          size="sm"
-          className="absolute top-2 right-2 z-[1000] bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-lg"
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="h-8 w-8"
         >
-          <Navigation className={`w-4 h-4 mr-1 ${locating ? 'animate-pulse' : ''}`} />
-          {locating ? 'Ubicando...' : 'Mi ubicación'}
+          {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
         </Button>
       </div>
 
-      <div className="mt-4 pt-3 border-t border-slate-200">
-        <a 
-          href={`https://www.windy.com/?${userLocation.lat},${userLocation.lng},8`}
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
-        >
-          Abrir en Windy.com
-          <ExternalLink className="w-3 h-3" />
-        </a>
-      </div>
+      {!isCollapsed && (
+        <>
+          <div className="relative">
+            <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '400px', width: '100%' }}>
+              <iframe 
+                key={refreshKey}
+                src={`https://embed.windy.com/embed2.html?lat=${userLocation.lat}&lon=${userLocation.lng}&detailLat=${userLocation.lat}&detailLon=${userLocation.lng}&width=650&height=450&zoom=8&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1`}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+                title="Windy Weather Map"
+              />
+            </div>
+            <Button
+              onClick={handleGeolocation}
+              disabled={locating}
+              size="sm"
+              className="absolute top-2 right-2 z-[1000] bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-lg"
+            >
+              <Navigation className={`w-4 h-4 mr-1 ${locating ? 'animate-pulse' : ''}`} />
+              {locating ? 'Ubicando...' : 'Mi ubicación'}
+            </Button>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-200">
+            <a 
+              href={`https://www.windy.com/?${userLocation.lat},${userLocation.lng},8`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
+            >
+              Abrir en Windy.com
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </>
+      )}
     </Card>
   );
 }
