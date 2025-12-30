@@ -127,7 +127,7 @@ export default function NotificationRules() {
         roles: [],
         command_roles: []
       },
-      message_template: '🚨 Nuevo incidente: {incident_name}\nTipo: {incident_type}\nSeveridad: {incident_severity}\nUbicación: {incident_location}'
+      message_template: '🚨 Nuevo incidente: {incident_name}\nTipo: {incident_type}\nSeveridad: {incident_severity}\nUbicación: {incident_location}\nDescripción: {incident_description}'
     });
     setNewUserEmail('');
   };
@@ -492,10 +492,10 @@ export default function NotificationRules() {
                 value={formData.message_template}
                 onChange={(e) => setFormData({ ...formData, message_template: e.target.value })}
                 rows={4}
-                placeholder="Variables: {incident_name}, {incident_type}, {incident_severity}, {incident_location}"
+                placeholder="Variables: {incident_name}, {incident_type}, {incident_severity}, {incident_location}, {incident_description}"
               />
               <p className="text-xs text-slate-500">
-                Usa variables: {'{incident_name}'}, {'{incident_type}'}, {'{incident_severity}'}, {'{incident_location}'}
+                Usa variables: {'{incident_name}'}, {'{incident_type}'}, {'{incident_severity}'}, {'{incident_location}'}, {'{incident_description}'}
               </p>
             </div>
 
