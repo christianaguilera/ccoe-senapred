@@ -27,6 +27,7 @@ import ChileanSeismicPanel from '../components/dashboard/ChileanSeismicPanel';
 import HydrometricStationsPanel from '../components/dashboard/HydrometricStationsPanel';
 import WindyPanel from '../components/dashboard/WindyPanel';
 import PowerBIPanel from '../components/dashboard/PowerBIPanel';
+import WazePanel from '../components/dashboard/WazePanel';
 import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
@@ -34,7 +35,7 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'senapred', 'seismic', 'hydrometric', 'windy'];
+    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'senapred', 'seismic', 'hydrometric', 'waze', 'windy'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -156,6 +157,7 @@ export default function Dashboard() {
     senapred: <SenapredAlertsPanel />,
     seismic: <ChileanSeismicPanel />,
     hydrometric: <HydrometricStationsPanel />,
+    waze: <WazePanel />,
     windy: <WindyPanel />
   };
 
