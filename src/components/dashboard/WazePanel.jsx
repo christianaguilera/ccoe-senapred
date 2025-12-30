@@ -26,7 +26,7 @@ export default function WazePanel() {
       )}>
         <div className="relative w-full" style={{ height: '600px' }}>
           <iframe
-            src="https://www.waze.com/es/live-map"
+            src="https://www.waze.com/en/live-map/directions?latlng=-41.46690448477141%2C-72.97120857343545"
             className="w-full h-full border-0"
             title="Waze Live Map - Monitoreo de Tránsito"
             allow="geolocation"
@@ -46,7 +46,7 @@ export default function WazePanel() {
             </span>
           </div>
           <a
-            href="https://www.waze.com/es/live-map"
+            href="https://www.waze.com/en/live-map/directions?latlng=-41.46690448477141%2C-72.97120857343545"
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
