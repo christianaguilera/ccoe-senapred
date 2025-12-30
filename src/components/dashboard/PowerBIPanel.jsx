@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
-import { BarChart3, ExternalLink } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { BarChart3, ExternalLink, RefreshCw } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
 export default function PowerBIPanel() {
   const { isDarkMode } = useTheme();
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const powerBIUrl = "https://app.powerbi.com/view?r=eyJrIjoiZDZjZTExZTctM2MwMC00Mzk5LTkzYzAtODNlOTk0NDAzMWY5IiwidCI6IjZlMTA2YmFkLTk5NTAtNDcxNC1iY2JhLWZlYTUwMDNlNTY4OCIsImMiOjR9";
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setRefreshKey(prev => prev + 1);
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,6 +46,15 @@ export default function PowerBIPanel() {
             )}>Análisis y métricas</p>
           </div>
         </div>
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="h-8 w-8"
+        >
+          <RefreshCw className={cn("w-4 h-4", isRefreshing && "animate-spin")} />
+        </Button>
       </div>
 
       <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '500px', width: '100%' }}>
