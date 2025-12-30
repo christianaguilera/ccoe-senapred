@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Info, AlertCircle, Users, Radio, ClipboardList, FileText, DollarSign } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Shield, Info, AlertCircle, Users, Radio, ClipboardList, FileText, DollarSign, Pencil, Plus } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 const roleConfig = {
@@ -63,7 +64,7 @@ const roleConfig = {
   }
 };
 
-export default function ICSStructureView({ staff = [], isDarkMode = false }) {
+export default function ICSStructureView({ staff = [], isDarkMode = false, onEdit }) {
   const getStaffByRole = (role) => staff.find(m => m.role === role);
 
   const commanderStaff = ['public_info_officer', 'safety_officer', 'liaison_officer'];
@@ -76,16 +77,18 @@ export default function ICSStructureView({ staff = [], isDarkMode = false }) {
     return (
       <div className="relative group">
         <div className={cn(
-          "rounded-lg border-2 p-3 transition-all",
+          "rounded-lg border-2 p-3 transition-all cursor-pointer",
           isDarkMode ? "bg-slate-800" : "bg-white",
           member 
             ? isDarkMode 
               ? "border-slate-700 hover:border-slate-600 hover:shadow-lg" 
               : "border-slate-200 hover:border-slate-400 hover:shadow-lg"
             : isDarkMode
-              ? "border-dashed border-slate-700"
-              : "border-dashed border-slate-200"
-        )}>
+              ? "border-dashed border-slate-700 hover:border-slate-600"
+              : "border-dashed border-slate-200 hover:border-slate-400"
+        )}
+        onClick={() => onEdit && onEdit(role, member)}
+        >
           <div className="flex items-start gap-2">
             <div className={cn(
               "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
@@ -120,6 +123,22 @@ export default function ICSStructureView({ staff = [], isDarkMode = false }) {
                 <p className="text-xs text-slate-400 italic mt-1">Sin asignar</p>
               )}
             </div>
+            {onEdit && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity",
+                  isDarkMode ? "hover:bg-slate-700" : "hover:bg-slate-100"
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(role, member);
+                }}
+              >
+                {member ? <Pencil className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+              </Button>
+            )}
           </div>
         </div>
       </div>
