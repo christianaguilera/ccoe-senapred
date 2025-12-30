@@ -118,7 +118,14 @@ export default function FormSCIIFF({ open, onClose, incident }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+        <div className="absolute top-4 left-4">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/694ed54b1d1364757e1b5450/7a21f602a_LogoTripartito.jpg" 
+            alt="Logo Tripartito"
+            className="h-12 object-contain"
+          />
+        </div>
+        <DialogHeader className="pt-8">
           <DialogTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
             Listado de Participantes SCI-IFF
