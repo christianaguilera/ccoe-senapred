@@ -29,6 +29,7 @@ function LayoutContent({ children, currentPageName }) {
     { name: 'Incidentes', href: createPageUrl('Incidents'), icon: AlertTriangle, page: 'Incidents' },
     { name: 'Mapa', href: createPageUrl('IncidentMap'), icon: MapPin, page: 'IncidentMap' },
     { name: 'Estructura ICS', href: createPageUrl('ICSStructure'), icon: Users, page: 'ICSStructure' },
+    { name: 'Plan de Enlace Regional', href: createPageUrl('RegionalLinkPlan'), icon: Users, page: 'RegionalLinkPlan' },
     { name: 'Recursos', href: createPageUrl('Resources'), icon: Package, page: 'Resources' },
     { name: 'Reportes', href: createPageUrl('Reports'), icon: FileText, page: 'Reports' },
     { name: 'Notificaciones', href: createPageUrl('NotificationRules'), icon: Bell, page: 'NotificationRules' },
