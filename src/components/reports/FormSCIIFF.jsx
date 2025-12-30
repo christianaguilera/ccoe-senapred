@@ -128,7 +128,7 @@ export default function FormSCIIFF({ open, onClose, incident }) {
         <DialogHeader className="pt-8">
           <DialogTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            Listado de Participantes SCI-IFF
+            Anexo "E" Listado de Participantes en Puesto de Comando Unificado
           </DialogTitle>
         </DialogHeader>
 
