@@ -162,68 +162,72 @@ export default function MeteochileAlertsPanel() {
             isDarkMode ? "text-white" : "text-slate-900"
           )}>Alertas Meteorológicas</h3>
         </div>
-        <div className="flex items-center gap-2">
-          <a
-            href="https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2">
             <Button
-              variant="outline"
-              size="sm"
+              variant="ghost"
+              size="icon"
+              onClick={() => fetchAlerts(true)}
+              disabled={refreshing}
               className={cn(
-                "h-8 text-xs",
-                isDarkMode 
-                  ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
-                  : "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                "h-8 w-8",
+                isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
               )}
             >
-              <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
-              Sistema de Alertas
+              <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
             </Button>
-          </a>
-          <a
-            href="https://archivos.meteochile.gob.cl/portaldmc/metaer/metaer_wrf_estacion.php?codigo=PMONTT"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
             <Button
-              variant="outline"
-              size="sm"
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(!isCollapsed)}
               className={cn(
-                "h-8 text-xs",
-                isDarkMode 
-                  ? "border-sky-500/50 bg-sky-950 text-sky-400 hover:bg-sky-900 hover:text-sky-300" 
-                  : "border-sky-500 bg-sky-50 text-sky-700 hover:bg-sky-100"
+                "h-8 w-8",
+                isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
               )}
             >
-              <Cloud className="w-3.5 h-3.5 mr-1.5" />
-              Meteograma
+              {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             </Button>
-          </a>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => fetchAlerts(true)}
-            disabled={refreshing}
-            className={cn(
-              "h-8 w-8",
-              isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
-            )}
-          >
-            <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className={cn(
-              "h-8 w-8",
-              isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
-            )}
-          >
-            {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
-          </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "h-8 text-xs",
+                  isDarkMode 
+                    ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
+                    : "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                )}
+              >
+                <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
+                Sistema de Alertas
+              </Button>
+            </a>
+            <a
+              href="https://archivos.meteochile.gob.cl/portaldmc/metaer/metaer_wrf_estacion.php?codigo=PMONTT"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "h-8 text-xs",
+                  isDarkMode 
+                    ? "border-sky-500/50 bg-sky-950 text-sky-400 hover:bg-sky-900 hover:text-sky-300" 
+                    : "border-sky-500 bg-sky-50 text-sky-700 hover:bg-sky-100"
+                )}
+              >
+                <Cloud className="w-3.5 h-3.5 mr-1.5" />
+                Meteograma
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
 
