@@ -12,7 +12,8 @@ import {
   Bell,
   MapPin,
   FileText,
-  Archive
+  Archive,
+  Settings
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,7 @@ function LayoutContent({ children, currentPageName }) {
     { name: 'Plan de Enlace Regional', href: createPageUrl('RegionalLinkPlan'), icon: Users, page: 'RegionalLinkPlan' },
     { name: 'Recursos', href: createPageUrl('Resources'), icon: Package, page: 'Resources' },
     { name: 'Reportes', href: createPageUrl('Reports'), icon: FileText, page: 'Reports' },
-    { name: 'Notificaciones', href: createPageUrl('NotificationRules'), icon: Bell, page: 'NotificationRules' },
+    { name: 'Reglas de Notificación', href: createPageUrl('NotificationRules'), icon: Bell, page: 'NotificationRules' },
   ];
 
   const archiveNavigation = [
@@ -151,6 +152,34 @@ function LayoutContent({ children, currentPageName }) {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Configuración */}
+            <div className={cn(
+              "pt-4 mt-4 border-t",
+              isDarkMode ? "border-zinc-800" : "border-slate-200"
+            )}>
+              <p className={cn(
+                "text-xs font-semibold uppercase tracking-wider px-4 mb-2",
+                isDarkMode ? "text-slate-500" : "text-slate-500"
+              )}>
+                Configuración
+              </p>
+              <Link
+                to={createPageUrl('NotificationSettings')}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                  currentPageName === 'NotificationSettings'
+                    ? "bg-orange-500/10 text-orange-400 border border-orange-500/20"
+                    : isDarkMode
+                    ? "text-slate-400 hover:text-white hover:bg-zinc-800"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                )}
+              >
+                <Settings className={cn("w-5 h-5", currentPageName === 'NotificationSettings' && "text-orange-400")} />
+                Preferencias de Notificaciones
+              </Link>
             </div>
 
             {/* Recomendaciones SENAPRED */}

@@ -166,6 +166,15 @@ export default function Dashboard() {
     const notifyCriticalIncidents = async () => {
       if (criticalIncidents.length > 0 && !loadingIncidents) {
         const user = await base44.auth.me();
+        
+        // Check user preferences
+        const prefs = await base44.entities.UserNotificationPreferences.filter({
+          user_email: user.email
+        });
+        
+        const hasCriticalIncidentsEnabled = !prefs[0] || prefs[0].critical_incidents !== false;
+        if (!hasCriticalIncidentsEnabled) return;
+        
         const existingNotifications = await base44.entities.Notification.filter({
           user_email: user.email,
           type: 'critical_alert'

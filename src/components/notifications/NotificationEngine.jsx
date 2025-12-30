@@ -141,10 +141,36 @@ function formatMessage(template, incident, action) {
 }
 
 /**
+ * Check if user has notifications enabled for this type
+ */
+async function checkUserPreferences(recipientEmail, notificationType) {
+  try {
+    const prefs = await base44.entities.UserNotificationPreferences.filter({
+      user_email: recipientEmail
+    });
+    
+    if (!prefs || prefs.length === 0) {
+      return true; // Default to enabled if no preferences set
+    }
+    
+    return prefs[0][notificationType] !== false;
+  } catch (error) {
+    console.error('Error checking user preferences:', error);
+    return true; // Default to enabled on error
+  }
+}
+
+/**
  * Send internal notification
  */
 async function sendInternalNotification(recipientEmail, incident, message, rule) {
   try {
+    // Check user preferences
+    const hasPreference = await checkUserPreferences(recipientEmail, 'incident_updates');
+    if (!hasPreference) {
+      return;
+    }
+    
     await base44.entities.Notification.create({
       title: rule.name,
       message: message,
