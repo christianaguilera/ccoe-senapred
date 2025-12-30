@@ -8,6 +8,7 @@ import RegionalLinkPlan from './pages/RegionalLinkPlan';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
 import Dashboard from './pages/Dashboard';
+import NotificationSettings from './pages/NotificationSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +23,7 @@ export const PAGES = {
     "Reports": Reports,
     "Resources": Resources,
     "Dashboard": Dashboard,
+    "NotificationSettings": NotificationSettings,
 }
 
 export const pagesConfig = {
