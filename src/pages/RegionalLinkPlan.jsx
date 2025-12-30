@@ -44,6 +44,11 @@ export default function RegionalLinkPlan() {
     telefono_2: '',
     telefono_satelital: '',
     mail: '',
+    nombre_subrogante: '',
+    cargo_subrogante: '',
+    telefono_1_subrogante: '',
+    telefono_2_subrogante: '',
+    mail_subrogante: '',
     group_id: '',
     notas: ''
   });
@@ -124,6 +129,11 @@ export default function RegionalLinkPlan() {
       telefono_2: '',
       telefono_satelital: '',
       mail: '',
+      nombre_subrogante: '',
+      cargo_subrogante: '',
+      telefono_1_subrogante: '',
+      telefono_2_subrogante: '',
+      mail_subrogante: '',
       group_id: '',
       notas: ''
     });
@@ -160,6 +170,11 @@ export default function RegionalLinkPlan() {
       telefono_2: contact.telefono_2 || '',
       telefono_satelital: contact.telefono_satelital || '',
       mail: contact.mail || '',
+      nombre_subrogante: contact.nombre_subrogante || '',
+      cargo_subrogante: contact.cargo_subrogante || '',
+      telefono_1_subrogante: contact.telefono_1_subrogante || '',
+      telefono_2_subrogante: contact.telefono_2_subrogante || '',
+      mail_subrogante: contact.mail_subrogante || '',
       group_id: contact.group_id || '',
       notas: contact.notas || ''
     });
@@ -525,6 +540,63 @@ export default function RegionalLinkPlan() {
                       >
                         {contact.mail}
                       </a>
+                    </div>
+                  )}
+
+                  {(contact.nombre_subrogante || contact.cargo_subrogante) && (
+                    <div className={cn(
+                      "mt-3 pt-3 border-t",
+                      isDarkMode ? "border-zinc-800" : "border-slate-200"
+                    )}>
+                      <p className={cn(
+                        "text-xs font-semibold mb-2",
+                        isDarkMode ? "text-slate-400" : "text-slate-500"
+                      )}>
+                        Subrogante
+                      </p>
+                      {contact.nombre_subrogante && (
+                        <p className={cn(
+                          "text-sm font-medium",
+                          isDarkMode ? "text-white" : "text-slate-900"
+                        )}>
+                          {contact.nombre_subrogante}
+                        </p>
+                      )}
+                      {contact.cargo_subrogante && (
+                        <p className={cn(
+                          "text-xs mb-2",
+                          isDarkMode ? "text-slate-400" : "text-slate-600"
+                        )}>
+                          {contact.cargo_subrogante}
+                        </p>
+                      )}
+                      {contact.telefono_1_subrogante && (
+                        <div className="flex items-center gap-2 text-sm mb-1">
+                          <Phone className="w-3 h-3 text-blue-500" />
+                          <span className={cn(isDarkMode ? "text-slate-300" : "text-slate-700")}>
+                            {contact.telefono_1_subrogante}
+                          </span>
+                        </div>
+                      )}
+                      {contact.telefono_2_subrogante && (
+                        <div className="flex items-center gap-2 text-sm mb-1">
+                          <Phone className="w-3 h-3 text-green-500" />
+                          <span className={cn(isDarkMode ? "text-slate-300" : "text-slate-700")}>
+                            {contact.telefono_2_subrogante}
+                          </span>
+                        </div>
+                      )}
+                      {contact.mail_subrogante && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <Mail className="w-3 h-3 text-orange-500" />
+                          <a 
+                            href={`mailto:${contact.mail_subrogante}`}
+                            className="text-orange-500 hover:text-orange-600"
+                          >
+                            {contact.mail_subrogante}
+                          </a>
+                        </div>
+                      )}
                     </div>
                   )}
 
