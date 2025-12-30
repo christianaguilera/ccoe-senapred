@@ -14,6 +14,7 @@ const alertTypeColors = {
 
 export default function SenapredAlertsPanel() {
   const [loading, setLoading] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleRefresh = () => {
     setLoading(true);

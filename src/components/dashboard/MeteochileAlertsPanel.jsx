@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Cloud, RefreshCw, ExternalLink, AlertTriangle, Wind, Droplets, Thermometer } from 'lucide-react';
+import { Cloud, RefreshCw, ExternalLink, AlertTriangle, Wind, Droplets, Thermometer, ChevronDown, ChevronUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from "@/lib/utils";
@@ -28,6 +28,7 @@ export default function MeteochileAlertsPanel() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const fetchAlerts = async (showRefreshing = false) => {
     if (showRefreshing) setRefreshing(true);
@@ -136,100 +137,115 @@ export default function MeteochileAlertsPanel() {
           >
             <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={cn(
+              "h-8 w-8",
+              isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
+            )}
+          >
+            {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          </Button>
         </div>
       </div>
 
-      {loading ? (
-        <div className="space-y-3 flex-1">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-20 w-full" />
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-3 flex-1 overflow-y-auto">
-          {alerts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Cloud className="w-12 h-12 text-slate-300 mb-3" />
-              <p className={cn(
-                "text-sm",
-                isDarkMode ? "text-slate-400" : "text-slate-500"
-              )}>
-                No hay alertas meteorológicas activas
-              </p>
+      {!isCollapsed && (
+        <>
+          {loading ? (
+            <div className="space-y-3 flex-1">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
             </div>
           ) : (
-            alerts.map((alert, index) => {
-              const style = alertTypeStyles[alert.type] || alertTypeStyles['Verde'];
-              const Icon = getPhenomenonIcon(alert.phenomenon);
-              
-              return (
-                <div
-                  key={index}
-                  className={cn(
-                    "p-4 rounded-lg border-2 transition-all",
-                    isDarkMode 
-                      ? "bg-slate-800 border-slate-700 hover:border-slate-600" 
-                      : `bg-${alert.type === 'Roja' ? 'red' : alert.type === 'Naranja' ? 'orange' : alert.type === 'Amarilla' ? 'amber' : 'emerald'}-50 ${style.border} hover:shadow-md`
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className={cn("p-1.5 rounded-lg", style.bg)}>
-                        <Icon className="w-4 h-4 text-white" />
-                      </div>
-                      <Badge className={cn("font-bold", style.bg, "text-white")}>
-                        {style.label}
-                      </Badge>
-                    </div>
-                    {alert.time && (
-                      <span className="text-xs text-slate-500">{alert.time}</span>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <p className={cn(
-                      "font-semibold text-sm",
-                      isDarkMode ? "text-white" : style.text
-                    )}>
-                      {alert.phenomenon} - {alert.region}
-                    </p>
-                    <p className={cn(
-                      "text-xs leading-relaxed",
-                      isDarkMode ? "text-slate-300" : "text-slate-600"
-                    )}>
-                      {alert.description}
-                    </p>
-                  </div>
+            <div className="space-y-3 flex-1 overflow-y-auto">
+              {alerts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Cloud className="w-12 h-12 text-slate-300 mb-3" />
+                  <p className={cn(
+                    "text-sm",
+                    isDarkMode ? "text-slate-400" : "text-slate-500"
+                  )}>
+                    No hay alertas meteorológicas activas
+                  </p>
                 </div>
-              );
-            })
+              ) : (
+                alerts.map((alert, index) => {
+                  const style = alertTypeStyles[alert.type] || alertTypeStyles['Verde'];
+                  const Icon = getPhenomenonIcon(alert.phenomenon);
+                  
+                  return (
+                    <div
+                      key={index}
+                      className={cn(
+                        "p-4 rounded-lg border-2 transition-all",
+                        isDarkMode 
+                          ? "bg-slate-800 border-slate-700 hover:border-slate-600" 
+                          : `bg-${alert.type === 'Roja' ? 'red' : alert.type === 'Naranja' ? 'orange' : alert.type === 'Amarilla' ? 'amber' : 'emerald'}-50 ${style.border} hover:shadow-md`
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className={cn("p-1.5 rounded-lg", style.bg)}>
+                            <Icon className="w-4 h-4 text-white" />
+                          </div>
+                          <Badge className={cn("font-bold", style.bg, "text-white")}>
+                            {style.label}
+                          </Badge>
+                        </div>
+                        {alert.time && (
+                          <span className="text-xs text-slate-500">{alert.time}</span>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <p className={cn(
+                          "font-semibold text-sm",
+                          isDarkMode ? "text-white" : style.text
+                        )}>
+                          {alert.phenomenon} - {alert.region}
+                        </p>
+                        <p className={cn(
+                          "text-xs leading-relaxed",
+                          isDarkMode ? "text-slate-300" : "text-slate-600"
+                        )}>
+                          {alert.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      <div className={cn(
-        "pt-4 mt-4 border-t flex items-center justify-between",
-        isDarkMode ? "border-slate-800" : "border-slate-200"
-      )}>
-        {lastUpdate && (
-          <span className="text-xs text-slate-500">
-            Actualizado: {lastUpdate.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}
-          </span>
-        )}
-        <a
-          href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "text-xs flex items-center gap-1 transition-colors",
-            isDarkMode 
-              ? "text-sky-400 hover:text-sky-300" 
-              : "text-sky-600 hover:text-sky-700"
-          )}
-        >
-          Ver todas las alertas
-          <ExternalLink className="w-3 h-3" />
-        </a>
-      </div>
+          <div className={cn(
+            "pt-4 mt-4 border-t flex items-center justify-between",
+            isDarkMode ? "border-slate-800" : "border-slate-200"
+          )}>
+            {lastUpdate && (
+              <span className="text-xs text-slate-500">
+                Actualizado: {lastUpdate.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            )}
+            <a
+              href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "text-xs flex items-center gap-1 transition-colors",
+                isDarkMode 
+                  ? "text-sky-400 hover:text-sky-300" 
+                  : "text-sky-600 hover:text-sky-700"
+              )}
+            >
+              Ver todas las alertas
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </>
+      )}
     </Card>
   );
 }

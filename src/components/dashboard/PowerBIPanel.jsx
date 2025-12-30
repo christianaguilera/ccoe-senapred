@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, ExternalLink, RefreshCw } from 'lucide-react';
+import { BarChart3, ExternalLink, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
 export default function PowerBIPanel() {
   const { isDarkMode } = useTheme();
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const powerBIUrl = "https://app.powerbi.com/view?r=eyJrIjoiZDZjZTExZTctM2MwMC00Mzk5LTkzYzAtODNlOTk0NDAzMWY5IiwidCI6IjZlMTA2YmFkLTk5NTAtNDcxNC1iY2JhLWZlYTUwMDNlNTY4OCIsImMiOjR9";
 
