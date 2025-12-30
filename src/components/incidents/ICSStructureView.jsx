@@ -157,7 +157,7 @@ export default function ICSStructureView({ staff = [], isDarkMode = false, onEdi
         isDarkMode ? "text-white" : "text-slate-900"
       )}>
         <Shield className="w-5 h-5 text-orange-600" />
-        Estructura ICS del Incidente
+        Estructura de Comando de Incidente
       </h3>
 
       <div className="space-y-6">
