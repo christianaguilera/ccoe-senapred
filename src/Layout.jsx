@@ -181,7 +181,7 @@ function LayoutContent({ children, currentPageName }) {
                 )}
               >
                 <MapPin className="w-5 h-5" />
-                Mapa ArcGIS
+                Visor Chile Preparado
               </a>
             </div>
             </nav>
