@@ -63,6 +63,7 @@ import FormSCI214 from '../components/reports/FormSCI214';
 import FormSCI215A from '../components/reports/FormSCI215A';
 import FormSCI221 from '../components/reports/FormSCI221';
 import FormSCI222 from '../components/reports/FormSCI222';
+import FormSCIIFF from '../components/reports/FormSCIIFF';
 import GeneralIncidentReport from '../components/reports/GeneralIncidentReport';
 import OperationsBoard from '../components/operations/OperationsBoard';
 import SituationRoomAlert from '../components/alerts/SituationRoomAlert';
@@ -123,6 +124,7 @@ export default function IncidentDetail() {
   const [showSCI215A, setShowSCI215A] = useState(false);
   const [showSCI221, setShowSCI221] = useState(false);
   const [showSCI222, setShowSCI222] = useState(false);
+  const [showSCIIFF, setShowSCIIFF] = useState(false);
   const [showGeneralReport, setShowGeneralReport] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [showOperationsBoard, setShowOperationsBoard] = useState(false);
@@ -139,7 +141,7 @@ export default function IncidentDetail() {
   // Check if any modal/dialog is open
   const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 ||
   showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 ||
-  showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showGeneralReport || showInstitutions || showOperationsBoard;
+  showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showSCIIFF || showGeneralReport || showInstitutions || showOperationsBoard;
 
   const queryClient = useQueryClient();
 
@@ -661,6 +663,12 @@ export default function IncidentDetail() {
               <FileText className="w-4 h-4 mr-2" />
               SCI-222-Prioridades de Recursos
             </Button>
+            <Button
+              className="w-full bg-orange-600 hover:bg-orange-700"
+              onClick={() => setShowSCIIFF(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              Listado de Participantes SCI-IFF
+            </Button>
             </div>
         </div>
       </div>
@@ -897,6 +905,12 @@ export default function IncidentDetail() {
       <FormSCI222
         open={showSCI222}
         onClose={() => setShowSCI222(false)}
+        incident={incident} />
+
+      {/* Formulario SCI-IFF */}
+      <FormSCIIFF
+        open={showSCIIFF}
+        onClose={() => setShowSCIIFF(false)}
         incident={incident} />
 
       {/* Reporte General */}
