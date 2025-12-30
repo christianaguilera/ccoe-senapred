@@ -20,7 +20,8 @@ import {
   Building2,
   User,
   FolderPlus,
-  Folder
+  Folder,
+  Download
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useTheme } from '../components/contexts/ThemeContext';
@@ -212,6 +213,71 @@ export default function RegionalLinkPlan() {
     }
   };
 
+  const exportGroupToCSV = (groupId) => {
+    const group = groups.find(g => g.id === groupId);
+    const groupContacts = contacts.filter(c => c.group_id === groupId);
+    
+    if (groupContacts.length === 0) {
+      toast.error('Este grupo no tiene contactos para exportar');
+      return;
+    }
+
+    // CSV headers
+    const headers = [
+      'Institución',
+      'Cargo',
+      'Nombre',
+      'Teléfono 1',
+      'Teléfono 2',
+      'Teléfono Satelital',
+      'Email',
+      'Nombre Subrogante',
+      'Cargo Subrogante',
+      'Teléfono 1 Subrogante',
+      'Teléfono 2 Subrogante',
+      'Email Subrogante',
+      'Notas'
+    ];
+
+    // CSV rows
+    const rows = groupContacts.map(contact => [
+      contact.institucion || '',
+      contact.cargo || '',
+      contact.nombre || '',
+      contact.telefono_1 || '',
+      contact.telefono_2 || '',
+      contact.telefono_satelital || '',
+      contact.mail || '',
+      contact.nombre_subrogante || '',
+      contact.cargo_subrogante || '',
+      contact.telefono_1_subrogante || '',
+      contact.telefono_2_subrogante || '',
+      contact.mail_subrogante || '',
+      contact.notas || ''
+    ]);
+
+    // Build CSV content
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    // Create download
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Grupo_${group?.nombre || 'Contactos'}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success('Grupo exportado exitosamente');
+  };
+
   const filteredContacts = contacts.filter(contact => {
     const matchesSearch = contact.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.institucion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -345,6 +411,16 @@ export default function RegionalLinkPlan() {
                   <Folder className="w-3 h-3 mr-1" />
                   {group.nombre}
                   <div className="ml-2 flex gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        exportGroupToCSV(group.id);
+                      }}
+                      className="hover:bg-white/20 rounded p-0.5"
+                      title="Descargar grupo"
+                    >
+                      <Download className="w-3 h-3" />
+                    </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
