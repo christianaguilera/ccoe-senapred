@@ -29,6 +29,8 @@ export default function MeteochileAlertsPanel() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [historicalAlerts, setHistoricalAlerts] = useState([]);
 
   const fetchAlerts = async (showRefreshing = false) => {
     if (showRefreshing) setRefreshing(true);
@@ -67,8 +69,43 @@ export default function MeteochileAlertsPanel() {
         }
       });
       
-      setAlerts(result.alerts || []);
+      const currentAlerts = result.alerts || [];
+      setAlerts(currentAlerts);
       setLastUpdate(new Date());
+      
+      // Guardar nuevas alertas y desactivar las que ya no existen
+      const dbAlerts = await base44.entities.WeatherAlert.filter({ is_active: true });
+      
+      // Crear identificador único para cada alerta
+      const alertKey = (alert) => `${alert.type}-${alert.region}-${alert.phenomenon}`;
+      const currentKeys = new Set(currentAlerts.map(alertKey));
+      
+      // Desactivar alertas que ya no están activas
+      for (const dbAlert of dbAlerts) {
+        const key = alertKey(dbAlert);
+        if (!currentKeys.has(key)) {
+          await base44.entities.WeatherAlert.update(dbAlert.id, {
+            is_active: false,
+            deactivated_at: new Date().toISOString()
+          });
+        }
+      }
+      
+      // Agregar nuevas alertas
+      const existingKeys = new Set(dbAlerts.map(alertKey));
+      const newAlerts = currentAlerts.filter(alert => !existingKeys.has(alertKey(alert)));
+      
+      for (const alert of newAlerts) {
+        await base44.entities.WeatherAlert.create({
+          type: alert.type,
+          region: alert.region,
+          phenomenon: alert.phenomenon,
+          description: alert.description,
+          emission_time: alert.time || new Date().toLocaleString('es-CL'),
+          is_active: true
+        });
+      }
+      
     } catch (error) {
       console.error('Error fetching Meteochile alerts:', error);
       setAlerts([]);
@@ -77,12 +114,32 @@ export default function MeteochileAlertsPanel() {
       setRefreshing(false);
     }
   };
+  
+  const loadHistoricalAlerts = async () => {
+    try {
+      const historical = await base44.entities.WeatherAlert.filter(
+        { is_active: false },
+        '-deactivated_at',
+        50
+      );
+      setHistoricalAlerts(historical);
+    } catch (error) {
+      console.error('Error loading historical alerts:', error);
+    }
+  };
 
   useEffect(() => {
     fetchAlerts();
+    loadHistoricalAlerts();
     const interval = setInterval(() => fetchAlerts(), 30 * 60 * 1000); // Refresh every 30 minutes
     return () => clearInterval(interval);
   }, []);
+  
+  useEffect(() => {
+    if (showHistory) {
+      loadHistoricalAlerts();
+    }
+  }, [showHistory]);
 
   const getPhenomenonIcon = (phenomenon) => {
     const key = phenomenon?.toLowerCase() || 'default';
@@ -250,31 +307,115 @@ export default function MeteochileAlertsPanel() {
           )}
 
           <div className={cn(
-            "pt-4 mt-4 border-t flex items-center justify-between",
+            "pt-4 mt-4 border-t",
             isDarkMode ? "border-slate-800" : "border-slate-200"
           )}>
-            {lastUpdate && (
-              <span className="text-xs text-slate-500">
-                Actualizado: {lastUpdate.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            )}
-            <a
-              href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml"
-              target="_blank"
-              rel="noopener noreferrer"
+            <div className="flex items-center justify-between mb-3">
+              {lastUpdate && (
+                <span className="text-xs text-slate-500">
+                  Actualizado: {lastUpdate.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
+              <a
+                href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "text-xs flex items-center gap-1 transition-colors",
+                  isDarkMode 
+                    ? "text-sky-400 hover:text-sky-300" 
+                    : "text-sky-600 hover:text-sky-700"
+                )}
+              >
+                Ver todas las alertas
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowHistory(!showHistory)}
               className={cn(
-                "text-xs flex items-center gap-1 transition-colors",
+                "w-full text-xs",
                 isDarkMode 
-                  ? "text-sky-400 hover:text-sky-300" 
-                  : "text-sky-600 hover:text-sky-700"
+                  ? "border-slate-700 hover:bg-slate-800" 
+                  : "border-slate-200 hover:bg-slate-50"
               )}
             >
-              Ver todas las alertas
-              <ExternalLink className="w-3 h-3" />
-            </a>
+              {showHistory ? <ChevronUp className="w-3 h-3 mr-1.5" /> : <ChevronDown className="w-3 h-3 mr-1.5" />}
+              {showHistory ? 'Ocultar historial' : 'Ver historial de alertas'}
+            </Button>
+
+            {showHistory && (
+              <div className={cn(
+                "mt-3 pt-3 border-t space-y-2 max-h-64 overflow-y-auto",
+                isDarkMode ? "border-slate-800" : "border-slate-200"
+              )}>
+                {historicalAlerts.length === 0 ? (
+                  <p className={cn(
+                    "text-xs text-center py-4",
+                    isDarkMode ? "text-slate-500" : "text-slate-400"
+                  )}>
+                    No hay alertas en el historial
+                  </p>
+                ) : (
+                  historicalAlerts.map((alert, index) => {
+                    const style = alertTypeStyles[alert.type] || alertTypeStyles['Verde'];
+                    const Icon = getPhenomenonIcon(alert.phenomenon);
+
+                    return (
+                      <div
+                        key={index}
+                        className={cn(
+                          "p-3 rounded-lg border opacity-70",
+                          isDarkMode 
+                            ? "bg-slate-800/50 border-slate-700" 
+                            : "bg-slate-50 border-slate-200"
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <div className={cn("p-1 rounded", style.bg)}>
+                              <Icon className="w-3 h-3 text-white" />
+                            </div>
+                            <Badge className={cn("text-[10px] font-bold", style.bg, "text-white")}>
+                              {style.label}
+                            </Badge>
+                          </div>
+                          <span className="text-[10px] text-slate-500">
+                            {alert.deactivated_at 
+                              ? new Date(alert.deactivated_at).toLocaleDateString('es-CL', { 
+                                  day: '2-digit', 
+                                  month: '2-digit',
+                                  year: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })
+                              : alert.emission_time}
+                          </span>
+                        </div>
+                        <p className={cn(
+                          "text-xs font-medium mb-1",
+                          isDarkMode ? "text-slate-300" : "text-slate-700"
+                        )}>
+                          {alert.phenomenon} - {alert.region}
+                        </p>
+                        <p className={cn(
+                          "text-[10px] leading-relaxed",
+                          isDarkMode ? "text-slate-400" : "text-slate-500"
+                        )}>
+                          {alert.description}
+                        </p>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
           </div>
-        </>
-      )}
-    </Card>
-  );
-}
+          </>
+          )}
+          </Card>
+          );
+          }
