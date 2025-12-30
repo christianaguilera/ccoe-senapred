@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Plus, 
   Search, 
@@ -17,7 +18,9 @@ import {
   Pencil,
   Trash2,
   Building2,
-  User
+  User,
+  FolderPlus,
+  Folder
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useTheme } from '../components/contexts/ThemeContext';
@@ -29,7 +32,10 @@ export default function RegionalLinkPlan() {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showGroupForm, setShowGroupForm] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
+  const [editingGroup, setEditingGroup] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState('all');
   const [formData, setFormData] = useState({
     institucion: '',
     cargo: '',
@@ -38,12 +44,23 @@ export default function RegionalLinkPlan() {
     telefono_2: '',
     telefono_satelital: '',
     mail: '',
+    group_id: '',
     notas: ''
+  });
+  const [groupFormData, setGroupFormData] = useState({
+    nombre: '',
+    descripcion: '',
+    color: 'blue'
   });
 
   const { data: contacts = [], isLoading } = useQuery({
     queryKey: ['regional-contacts'],
     queryFn: () => base44.entities.RegionalContact.list()
+  });
+
+  const { data: groups = [] } = useQuery({
+    queryKey: ['contact-groups'],
+    queryFn: () => base44.entities.ContactGroup.list()
   });
 
   const createMutation = useMutation({
@@ -72,6 +89,32 @@ export default function RegionalLinkPlan() {
     }
   });
 
+  const createGroupMutation = useMutation({
+    mutationFn: (data) => base44.entities.ContactGroup.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['contact-groups']);
+      resetGroupForm();
+      toast.success('Grupo creado exitosamente');
+    }
+  });
+
+  const updateGroupMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.ContactGroup.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['contact-groups']);
+      resetGroupForm();
+      toast.success('Grupo actualizado');
+    }
+  });
+
+  const deleteGroupMutation = useMutation({
+    mutationFn: (id) => base44.entities.ContactGroup.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['contact-groups']);
+      toast.success('Grupo eliminado');
+    }
+  });
+
   const resetForm = () => {
     setFormData({
       institucion: '',
@@ -81,10 +124,21 @@ export default function RegionalLinkPlan() {
       telefono_2: '',
       telefono_satelital: '',
       mail: '',
+      group_id: '',
       notas: ''
     });
     setEditingContact(null);
     setShowForm(false);
+  };
+
+  const resetGroupForm = () => {
+    setGroupFormData({
+      nombre: '',
+      descripcion: '',
+      color: 'blue'
+    });
+    setEditingGroup(null);
+    setShowGroupForm(false);
   };
 
   const handleSubmit = (e) => {
@@ -106,9 +160,35 @@ export default function RegionalLinkPlan() {
       telefono_2: contact.telefono_2 || '',
       telefono_satelital: contact.telefono_satelital || '',
       mail: contact.mail || '',
+      group_id: contact.group_id || '',
       notas: contact.notas || ''
     });
     setShowForm(true);
+  };
+
+  const handleSubmitGroup = (e) => {
+    e.preventDefault();
+    if (editingGroup) {
+      updateGroupMutation.mutate({ id: editingGroup.id, data: groupFormData });
+    } else {
+      createGroupMutation.mutate(groupFormData);
+    }
+  };
+
+  const handleEditGroup = (group) => {
+    setEditingGroup(group);
+    setGroupFormData({
+      nombre: group.nombre || '',
+      descripcion: group.descripcion || '',
+      color: group.color || 'blue'
+    });
+    setShowGroupForm(true);
+  };
+
+  const handleDeleteGroup = (id) => {
+    if (window.confirm('¿Eliminar este grupo? Los contactos no se eliminarán.')) {
+      deleteGroupMutation.mutate(id);
+    }
   };
 
   const handleDelete = (id) => {
@@ -117,11 +197,38 @@ export default function RegionalLinkPlan() {
     }
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.institucion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.cargo?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredContacts = contacts.filter(contact => {
+    const matchesSearch = contact.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.institucion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.cargo?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesGroup = selectedGroup === 'all' || 
+      (selectedGroup === 'none' && !contact.group_id) ||
+      contact.group_id === selectedGroup;
+    
+    return matchesSearch && matchesGroup;
+  });
+
+  const getGroupName = (groupId) => {
+    const group = groups.find(g => g.id === groupId);
+    return group?.nombre || 'Sin grupo';
+  };
+
+  const getGroupColor = (groupId) => {
+    const group = groups.find(g => g.id === groupId);
+    return group?.color || 'slate';
+  };
+
+  const colorClasses = {
+    blue: 'bg-blue-500',
+    green: 'bg-green-500',
+    purple: 'bg-purple-500',
+    orange: 'bg-orange-500',
+    red: 'bg-red-500',
+    pink: 'bg-pink-500',
+    indigo: 'bg-indigo-500',
+    teal: 'bg-teal-500'
+  };
 
   return (
     <div className={cn(
@@ -145,30 +252,108 @@ export default function RegionalLinkPlan() {
               Directorio de contactos institucionales
             </p>
           </div>
-          <Button 
-            onClick={() => setShowForm(true)}
-            className="bg-orange-500 hover:bg-orange-600"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Contacto
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => setShowGroupForm(true)}
+              variant="outline"
+            >
+              <FolderPlus className="w-4 h-4 mr-2" />
+              Nuevo Grupo
+            </Button>
+            <Button 
+              onClick={() => setShowForm(true)}
+              className="bg-orange-500 hover:bg-orange-600"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nuevo Contacto
+            </Button>
+          </div>
         </div>
 
-        {/* Search */}
+        {/* Search and Filters */}
         <Card className={cn(
           "p-4",
           isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white"
         )}>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="Buscar por nombre, institución o cargo..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input
+                placeholder="Buscar por nombre, institución o cargo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filtrar por grupo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los grupos</SelectItem>
+                <SelectItem value="none">Sin grupo</SelectItem>
+                {groups.map(group => (
+                  <SelectItem key={group.id} value={group.id}>
+                    {group.nombre}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </Card>
+
+        {/* Groups Management */}
+        {groups.length > 0 && (
+          <Card className={cn(
+            "p-4",
+            isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white"
+          )}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className={cn(
+                "text-sm font-semibold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>
+                Grupos de Contactos
+              </h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {groups.map(group => (
+                <Badge 
+                  key={group.id}
+                  className={cn(
+                    "px-3 py-1.5 cursor-pointer hover:opacity-80 transition-opacity",
+                    colorClasses[group.color] || 'bg-slate-500',
+                    "text-white"
+                  )}
+                  onClick={() => setSelectedGroup(group.id)}
+                >
+                  <Folder className="w-3 h-3 mr-1" />
+                  {group.nombre}
+                  <div className="ml-2 flex gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditGroup(group);
+                      }}
+                      className="hover:bg-white/20 rounded p-0.5"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteGroup(group.id);
+                      }}
+                      className="hover:bg-white/20 rounded p-0.5"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                </Badge>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -260,7 +445,18 @@ export default function RegionalLinkPlan() {
               )}>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <Badge className="mb-2 bg-orange-500">{contact.institucion}</Badge>
+                    <div className="flex gap-2 mb-2">
+                      <Badge className="bg-orange-500">{contact.institucion}</Badge>
+                      {contact.group_id && (
+                        <Badge className={cn(
+                          "text-white",
+                          colorClasses[getGroupColor(contact.group_id)]
+                        )}>
+                          <Folder className="w-3 h-3 mr-1" />
+                          {getGroupName(contact.group_id)}
+                        </Badge>
+                      )}
+                    </div>
                     <h3 className={cn(
                       "text-lg font-semibold",
                       isDarkMode ? "text-white" : "text-slate-900"
@@ -427,6 +623,23 @@ export default function RegionalLinkPlan() {
               </div>
 
               <div className="col-span-2">
+                <Label>Grupo</Label>
+                <Select value={formData.group_id} onValueChange={(value) => setFormData({ ...formData, group_id: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar grupo (opcional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={null}>Sin grupo</SelectItem>
+                    {groups.map(group => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="col-span-2">
                 <Label>Notas Adicionales</Label>
                 <Textarea
                   value={formData.notas}
@@ -443,6 +656,67 @@ export default function RegionalLinkPlan() {
               </Button>
               <Button type="submit" className="bg-orange-500 hover:bg-orange-600">
                 {editingContact ? 'Actualizar' : 'Crear'} Contacto
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Group Form Dialog */}
+      <Dialog open={showGroupForm} onOpenChange={(open) => !open && resetGroupForm()}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {editingGroup ? 'Editar Grupo' : 'Nuevo Grupo de Contactos'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmitGroup} className="space-y-4">
+            <div>
+              <Label>Nombre del Grupo *</Label>
+              <Input
+                value={groupFormData.nombre}
+                onChange={(e) => setGroupFormData({ ...groupFormData, nombre: e.target.value })}
+                required
+                placeholder="Ej: Bomberos Región Los Lagos"
+              />
+            </div>
+
+            <div>
+              <Label>Descripción</Label>
+              <Textarea
+                value={groupFormData.descripcion}
+                onChange={(e) => setGroupFormData({ ...groupFormData, descripcion: e.target.value })}
+                placeholder="Descripción del grupo..."
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label>Color Identificador</Label>
+              <Select value={groupFormData.color} onValueChange={(value) => setGroupFormData({ ...groupFormData, color: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(colorClasses).map(color => (
+                    <SelectItem key={color} value={color}>
+                      <div className="flex items-center gap-2">
+                        <div className={cn("w-4 h-4 rounded", colorClasses[color])} />
+                        <span className="capitalize">{color}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button type="button" variant="outline" onClick={resetGroupForm}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="bg-orange-500 hover:bg-orange-600">
+                {editingGroup ? 'Actualizar' : 'Crear'} Grupo
               </Button>
             </div>
           </form>
