@@ -517,120 +517,51 @@ export default function IncidentDetail() {
             }}
           />
 
-          {/* Tabs */}
-          <Tabs defaultValue="staff" className="space-y-4">
-            <TabsList className={cn(
-              "w-full justify-start",
-              isDarkMode ? "bg-slate-800" : "bg-slate-100"
-            )}>
-              <TabsTrigger value="staff">Personal de Comando</TabsTrigger>
-              <TabsTrigger value="resources">Recursos</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="staff" className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className={cn(
-                  "font-semibold",
-                  isDarkMode ? "text-white" : "text-slate-900"
-                )}>Estructura de Comando</h3>
-                <Button size="sm" onClick={() => setShowStaffForm(true)}>
+          {/* Deployed Resources */}
+          <Card className={cn(
+            "p-6",
+            isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+          )}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className={cn(
+                "font-semibold",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>Recursos Desplegados</h3>
+              <Link to={createPageUrl(`Resources?incident=${incidentId}`)}>
+                <Button size="sm">
                   <Plus className="w-4 h-4 mr-1" />
-                  Agregar
+                  Gestionar
                 </Button>
-              </div>
-              
-              {staff.length === 0 ?
-              <Card className="p-8 text-center">
-                  <Users className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No hay personal asignado</p>
-                </Card> :
+              </Link>
+            </div>
 
-              <div className="grid sm:grid-cols-2 gap-3">
-                  {staff.map((member) =>
-                <Card key={member.id} className={cn(
-                  "p-4 group",
-                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
-                )}>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-xs text-orange-600 font-medium mb-1">
-                            {roleLabels[member.role] || member.role}
-                          </p>
-                          <p className={cn(
-                            "font-semibold",
-                            isDarkMode ? "text-white" : "text-slate-900"
-                          )}>{member.name}</p>
-                          {member.contact &&
-                      <p className="text-sm text-slate-500 mt-1">{member.contact}</p>
-                      }
-                          {member.radio_channel &&
-                      <p className="text-xs text-slate-400 mt-1">
-                              <Radio className="w-3 h-3 inline mr-1" />
-                              Canal: {member.radio_channel}
-                            </p>
-                      }
-                        </div>
-                        <Button
-                      variant="ghost"
-                      size="icon"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
-                      onClick={() => deleteStaffMutation.mutate(member.id)}>
+            {resources.filter(r => r.status === 'deployed').length === 0 ?
+            <div className="p-8 text-center">
+                <Radio className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-500">No hay recursos desplegados</p>
+              </div> :
 
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+            <div className="grid sm:grid-cols-2 gap-3">
+                {resources.filter(r => r.status === 'deployed').map((resource) =>
+              <Card key={resource.id} className={cn(
+                "p-4",
+                isDarkMode ? "bg-slate-800 border-slate-700" : "bg-slate-50"
+              )}>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className={cn(
+                          "font-semibold",
+                          isDarkMode ? "text-white" : "text-slate-900"
+                        )}>{resource.name}</p>
+                        <p className="text-sm text-slate-500">{resource.category}</p>
                       </div>
-                    </Card>
-                )}
-                </div>
-              }
-            </TabsContent>
-
-            <TabsContent value="resources" className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className={cn(
-                  "font-semibold",
-                  isDarkMode ? "text-white" : "text-slate-900"
-                )}>Recursos Asignados</h3>
-                <Link to={createPageUrl(`Resources?incident=${incidentId}`)}>
-                  <Button size="sm">
-                    <Plus className="w-4 h-4 mr-1" />
-                    Gestionar
-                  </Button>
-                </Link>
+                      <Badge variant="default">Desplegado</Badge>
+                    </div>
+                  </Card>
+              )}
               </div>
-
-              {resources.length === 0 ?
-              <Card className="p-8 text-center">
-                  <Radio className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No hay recursos asignados</p>
-                </Card> :
-
-              <div className="grid sm:grid-cols-2 gap-3">
-                  {resources.map((resource) =>
-                <Card key={resource.id} className={cn(
-                  "p-4",
-                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
-                )}>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className={cn(
-                            "font-semibold",
-                            isDarkMode ? "text-white" : "text-slate-900"
-                          )}>{resource.name}</p>
-                          <p className="text-sm text-slate-500">{resource.category}</p>
-                        </div>
-                        <Badge variant={resource.status === 'deployed' ? 'default' : 'secondary'}>
-                          {resource.status === 'deployed' ? 'Desplegado' :
-                      resource.status === 'available' ? 'Disponible' :
-                      resource.status === 'en_route' ? 'En Camino' : 'Fuera de Servicio'}
-                        </Badge>
-                      </div>
-                    </Card>
-                )}
-                </div>
-              }
-            </TabsContent>
-          </Tabs>
+            }
+          </Card>
         </div>
 
         {/* Sidebar - Activity */}
