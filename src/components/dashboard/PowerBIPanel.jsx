@@ -47,46 +47,60 @@ export default function PowerBIPanel() {
             )}>Análisis y métricas</p>
           </div>
         </div>
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className="h-8 w-8"
-        >
-          <RefreshCw className={cn("w-4 h-4", isRefreshing && "animate-spin")} />
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="h-8 w-8"
+          >
+            <RefreshCw className={cn("w-4 h-4", isRefreshing && "animate-spin")} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="h-8 w-8"
+          >
+            {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          </Button>
+        </div>
       </div>
 
-      <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '500px', width: '100%' }}>
-        <iframe 
-          key={refreshKey}
-          src={powerBIUrl}
-          style={{ width: '100%', height: '100%', border: 'none' }}
-          title="Power BI Dashboard"
-          allowFullScreen
-        />
-      </div>
+      {!isCollapsed && (
+        <>
+          <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '500px', width: '100%' }}>
+            <iframe 
+              key={refreshKey}
+              src={powerBIUrl}
+              style={{ width: '100%', height: '100%', border: 'none' }}
+              title="Power BI Dashboard"
+              allowFullScreen
+            />
+          </div>
 
-      <div className={cn(
-        "mt-4 pt-3 border-t",
-        isDarkMode ? "border-zinc-800" : "border-slate-200"
-      )}>
-        <a 
-          href={powerBIUrl}
-          target="_blank" 
-          rel="noopener noreferrer"
-          className={cn(
-            "text-xs font-medium flex items-center gap-1",
-            isDarkMode 
-              ? "text-blue-400 hover:text-blue-300" 
-              : "text-blue-600 hover:text-blue-700"
-          )}
-        >
-          Abrir en pantalla completa
-          <ExternalLink className="w-3 h-3" />
-        </a>
-      </div>
+          <div className={cn(
+            "mt-4 pt-3 border-t",
+            isDarkMode ? "border-zinc-800" : "border-slate-200"
+          )}>
+            <a 
+              href={powerBIUrl}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={cn(
+                "text-xs font-medium flex items-center gap-1",
+                isDarkMode 
+                  ? "text-blue-400 hover:text-blue-300" 
+                  : "text-blue-600 hover:text-blue-700"
+              )}
+            >
+              Abrir en pantalla completa
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </>
+      )}
     </Card>
   );
 }
