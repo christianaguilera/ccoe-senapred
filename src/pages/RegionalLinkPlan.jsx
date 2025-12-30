@@ -711,7 +711,58 @@ export default function RegionalLinkPlan() {
                 </Select>
               </div>
 
+              {/* Subrogante Section */}
+              <div className="col-span-2 pt-4 border-t">
+                <h3 className="text-sm font-semibold mb-3">Información del Subrogante</h3>
+              </div>
+
+              <div>
+                <Label>Nombre Subrogante</Label>
+                <Input
+                  value={formData.nombre_subrogante}
+                  onChange={(e) => setFormData({ ...formData, nombre_subrogante: e.target.value })}
+                  placeholder="Ej: María González"
+                />
+              </div>
+
+              <div>
+                <Label>Cargo Subrogante</Label>
+                <Input
+                  value={formData.cargo_subrogante}
+                  onChange={(e) => setFormData({ ...formData, cargo_subrogante: e.target.value })}
+                  placeholder="Ej: Subdirector"
+                />
+              </div>
+
+              <div>
+                <Label>Teléfono 1 Subrogante</Label>
+                <Input
+                  value={formData.telefono_1_subrogante}
+                  onChange={(e) => setFormData({ ...formData, telefono_1_subrogante: e.target.value })}
+                  placeholder="+56 9 1234 5678"
+                />
+              </div>
+
+              <div>
+                <Label>Teléfono 2 Subrogante</Label>
+                <Input
+                  value={formData.telefono_2_subrogante}
+                  onChange={(e) => setFormData({ ...formData, telefono_2_subrogante: e.target.value })}
+                  placeholder="+56 9 8765 4321"
+                />
+              </div>
+
               <div className="col-span-2">
+                <Label>Correo Electrónico Subrogante</Label>
+                <Input
+                  type="email"
+                  value={formData.mail_subrogante}
+                  onChange={(e) => setFormData({ ...formData, mail_subrogante: e.target.value })}
+                  placeholder="subrogante@dominio.cl"
+                />
+              </div>
+
+              <div className="col-span-2 pt-4 border-t">
                 <Label>Notas Adicionales</Label>
                 <Textarea
                   value={formData.notas}
