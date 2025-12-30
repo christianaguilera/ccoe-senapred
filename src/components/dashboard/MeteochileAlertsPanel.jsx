@@ -181,14 +181,24 @@ export default function MeteochileAlertsPanel() {
           ) : (
             <div className="space-y-3 flex-1 overflow-y-auto">
               {alerts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Cloud className="w-12 h-12 text-slate-300 mb-3" />
-                  <p className={cn(
-                    "text-sm",
-                    isDarkMode ? "text-slate-400" : "text-slate-500"
-                  )}>
-                    No hay alertas meteorológicas activas
-                  </p>
+                <div className="space-y-4">
+                  <div className="flex flex-col items-center justify-center py-4 text-center">
+                    <Cloud className="w-12 h-12 text-slate-300 mb-3" />
+                    <p className={cn(
+                      "text-sm",
+                      isDarkMode ? "text-slate-400" : "text-slate-500"
+                    )}>
+                      No hay alertas meteorológicas activas
+                    </p>
+                  </div>
+                  <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '400px', width: '100%' }}>
+                    <iframe 
+                      src="https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional"
+                      style={{ width: '100%', height: '100%', border: 'none' }}
+                      title="Mapa Red de Estaciones Meteorológicas"
+                      allowFullScreen
+                    />
+                  </div>
                 </div>
               ) : (
                 alerts.map((alert, index) => {
