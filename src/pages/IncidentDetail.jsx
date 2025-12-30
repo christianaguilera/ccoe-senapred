@@ -126,7 +126,12 @@ export default function IncidentDetail() {
   const [showGeneralReport, setShowGeneralReport] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [showOperationsBoard, setShowOperationsBoard] = useState(false);
-  const [newLog, setNewLog] = useState({ action: '', category: 'general', priority: 'info' });
+  const [newLog, setNewLog] = useState({ 
+    action: '', 
+    category: 'general', 
+    priority: 'info',
+    timestamp: new Date().toISOString().slice(0, 16)
+  });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
   const [editingStaffId, setEditingStaffId] = useState(null);
   const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
@@ -194,11 +199,16 @@ export default function IncidentDetail() {
     mutationFn: (data) => base44.entities.ActivityLog.create({
       ...data,
       incident_id: incidentId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date(data.timestamp).toISOString()
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['activities', incidentId] });
-      setNewLog({ action: '', category: 'general', priority: 'info' });
+      setNewLog({ 
+        action: '', 
+        category: 'general', 
+        priority: 'info',
+        timestamp: new Date().toISOString().slice(0, 16)
+      });
       setShowLogForm(false);
     }
   });
@@ -748,6 +758,14 @@ export default function IncidentDetail() {
             <DialogTitle>Nueva Entrada de Bitácora</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Fecha y Hora de Registro</label>
+              <Input
+                type="datetime-local"
+                value={newLog.timestamp}
+                onChange={(e) => setNewLog({ ...newLog, timestamp: e.target.value })}
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Categoría</label>
