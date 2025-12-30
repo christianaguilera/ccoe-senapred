@@ -188,46 +188,25 @@ export default function MeteochileAlertsPanel() {
               {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             </Button>
           </div>
-          <div className="flex items-center gap-2">
-            <a
-              href="https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional"
-              target="_blank"
-              rel="noopener noreferrer"
+          <a
+            href="https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(
+                "h-8 text-xs",
+                isDarkMode 
+                  ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
+                  : "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
+              )}
             >
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "h-8 text-xs",
-                  isDarkMode 
-                    ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
-                    : "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
-                )}
-              >
-                <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
-                Sistema de Alertas
-              </Button>
-            </a>
-            <a
-              href="https://archivos.meteochile.gob.cl/portaldmc/metaer/metaer_wrf_estacion.php?codigo=PMONTT"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "h-8 text-xs",
-                  isDarkMode 
-                    ? "border-sky-500/50 bg-sky-950 text-sky-400 hover:bg-sky-900 hover:text-sky-300" 
-                    : "border-sky-500 bg-sky-50 text-sky-700 hover:bg-sky-100"
-                )}
-              >
-                <Cloud className="w-3.5 h-3.5 mr-1.5" />
-                Meteograma
-              </Button>
-            </a>
-          </div>
+              <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
+              Sistema de Alertas
+            </Button>
+          </a>
         </div>
       </div>
 
