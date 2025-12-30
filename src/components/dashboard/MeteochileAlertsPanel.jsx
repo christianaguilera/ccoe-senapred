@@ -125,6 +125,25 @@ export default function MeteochileAlertsPanel() {
               Sistema de Alertas
             </Button>
           </a>
+          <a
+            href="https://archivos.meteochile.gob.cl/portaldmc/metaer/metaer_wrf_estacion.php?codigo=PMONTT"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(
+                "h-8 text-xs",
+                isDarkMode 
+                  ? "border-sky-500/50 bg-sky-950 text-sky-400 hover:bg-sky-900 hover:text-sky-300" 
+                  : "border-sky-500 bg-sky-50 text-sky-700 hover:bg-sky-100"
+              )}
+            >
+              <Cloud className="w-3.5 h-3.5 mr-1.5" />
+              Meteograma
+            </Button>
+          </a>
           <Button
             variant="ghost"
             size="icon"
