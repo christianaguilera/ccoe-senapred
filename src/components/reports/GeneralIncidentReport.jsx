@@ -3,12 +3,26 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Printer, Download } from 'lucide-react';
+import { Printer, Download, FileText, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { cn } from "@/lib/utils";
+
+// Import SCI Forms
+import FormSCI201 from './FormSCI201';
+import FormSCI202 from './FormSCI202';
+import FormSCI203 from './FormSCI203';
+import FormSCI204 from './FormSCI204';
+import FormSCI205 from './FormSCI205';
+import FormSCI206 from './FormSCI206';
+import FormSCI207 from './FormSCI207';
+import FormSCI211 from './FormSCI211';
+import FormSCI214 from './FormSCI214';
+import FormSCI215A from './FormSCI215A';
+import FormSCI221 from './FormSCI221';
+import FormSCI222 from './FormSCI222';
 
 const typeLabels = {
   fire: 'Incendio',
@@ -47,6 +61,7 @@ const roleLabels = {
 
 export default function GeneralIncidentReport({ open, onClose, incident, staff = [], resources = [], institutions = [], activities = [] }) {
   const reportRef = useRef(null);
+  const [activeFormDialog, setActiveFormDialog] = React.useState(null);
 
   const handlePrint = () => {
     window.print();
@@ -326,45 +341,41 @@ export default function GeneralIncidentReport({ open, onClose, incident, staff =
           <Card className="p-6">
             <h2 className="text-xl font-bold text-slate-900 mb-4 border-b pb-2">6. FORMULARIOS SCI DISPONIBLES</h2>
             <p className="text-sm text-slate-600 mb-4">
-              Los siguientes formularios SCI están disponibles para este incidente y pueden ser generados individualmente desde el detalle del incidente:
+              Formularios del Sistema de Comando de Incidentes disponibles para visualización y descarga:
             </p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="border rounded p-3 bg-blue-50">
-                <p className="font-semibold text-sm text-blue-900">SCI-201</p>
-                <p className="text-xs text-blue-700">Resumen del Incidente</p>
-              </div>
-              <div className="border rounded p-3 bg-indigo-50">
-                <p className="font-semibold text-sm text-indigo-900">SCI-202</p>
-                <p className="text-xs text-indigo-700">Plan de Acción del Incidente</p>
-              </div>
-              <div className="border rounded p-3 bg-purple-50">
-                <p className="font-semibold text-sm text-purple-900">SCI-203</p>
-                <p className="text-xs text-purple-700">Listado de Asignación</p>
-              </div>
-              <div className="border rounded p-3 bg-pink-50">
-                <p className="font-semibold text-sm text-pink-900">SCI-204</p>
-                <p className="text-xs text-pink-700">Asignaciones Tácticas</p>
-              </div>
-              <div className="border rounded p-3 bg-teal-50">
-                <p className="font-semibold text-sm text-teal-900">SCI-205</p>
-                <p className="text-xs text-teal-700">Plan de Comunicaciones</p>
-              </div>
-              <div className="border rounded p-3 bg-rose-50">
-                <p className="font-semibold text-sm text-rose-900">SCI-206</p>
-                <p className="text-xs text-rose-700">Plan Médico</p>
-              </div>
-              <div className="border rounded p-3 bg-red-50">
-                <p className="font-semibold text-sm text-red-900">SCI-207</p>
-                <p className="text-xs text-red-700">Registro de Víctimas</p>
-              </div>
-              <div className="border rounded p-3 bg-slate-50">
-                <p className="font-semibold text-sm text-slate-900">SCI-211</p>
-                <p className="text-xs text-slate-700">Registro y Control de Recursos</p>
-              </div>
-              <div className="border rounded p-3 bg-cyan-50">
-                <p className="font-semibold text-sm text-cyan-900">SCI-214</p>
-                <p className="text-xs text-cyan-700">Registro de Actividades</p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                { code: 'SCI-201', name: 'Resumen del Incidente', color: 'blue', form: 'sci201' },
+                { code: 'SCI-202', name: 'Plan de Acción del Incidente', color: 'indigo', form: 'sci202' },
+                { code: 'SCI-203', name: 'Listado de Asignación de Organización', color: 'purple', form: 'sci203' },
+                { code: 'SCI-204', name: 'Asignaciones Tácticas de División/Grupo', color: 'pink', form: 'sci204' },
+                { code: 'SCI-205', name: 'Plan de Comunicaciones del Incidente', color: 'teal', form: 'sci205' },
+                { code: 'SCI-206', name: 'Plan Médico', color: 'rose', form: 'sci206' },
+                { code: 'SCI-207', name: 'Registro de Víctimas', color: 'red', form: 'sci207' },
+                { code: 'SCI-211', name: 'Registro y Control de Recursos', color: 'slate', form: 'sci211' },
+                { code: 'SCI-214', name: 'Registro de Actividades de la Unidad', color: 'cyan', form: 'sci214' },
+                { code: 'SCI-215A', name: 'Plan de Seguridad de la Operación', color: 'amber', form: 'sci215a' },
+                { code: 'SCI-221', name: 'Registro de Evaluación de Daños', color: 'orange', form: 'sci221' },
+                { code: 'SCI-222', name: 'Reporte Meteorológico', color: 'emerald', form: 'sci222' }
+              ].map((formInfo) => (
+                <div key={formInfo.code} className={`border rounded-lg p-3 bg-${formInfo.color}-50 hover:shadow-md transition-shadow`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className={`font-semibold text-sm text-${formInfo.color}-900`}>{formInfo.code}</p>
+                      <p className={`text-xs text-${formInfo.color}-700 mt-1`}>{formInfo.name}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setActiveFormDialog(formInfo.form)}
+                      className="h-8 px-2 hover:bg-white/50"
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      Ver
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </Card>
 
@@ -381,6 +392,68 @@ export default function GeneralIncidentReport({ open, onClose, incident, staff =
           </Button>
         </div>
       </DialogContent>
+
+      {/* SCI Forms Dialogs */}
+      <FormSCI201 
+        open={activeFormDialog === 'sci201'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI202 
+        open={activeFormDialog === 'sci202'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI203 
+        open={activeFormDialog === 'sci203'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI204 
+        open={activeFormDialog === 'sci204'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI205 
+        open={activeFormDialog === 'sci205'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI206 
+        open={activeFormDialog === 'sci206'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI207 
+        open={activeFormDialog === 'sci207'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI211 
+        open={activeFormDialog === 'sci211'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI214 
+        open={activeFormDialog === 'sci214'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI215A 
+        open={activeFormDialog === 'sci215a'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI221 
+        open={activeFormDialog === 'sci221'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
+      <FormSCI222 
+        open={activeFormDialog === 'sci222'} 
+        onClose={() => setActiveFormDialog(null)} 
+        incident={incident} 
+      />
     </Dialog>
   );
 }
