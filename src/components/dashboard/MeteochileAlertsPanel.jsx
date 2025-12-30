@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Cloud, RefreshCw, ExternalLink, AlertTriangle, Wind, Droplets, Thermometer, ChevronDown, ChevronUp } from 'lucide-react';
+import { Cloud, RefreshCw, ExternalLink, AlertTriangle, Wind, Droplets, Thermometer, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from "@/lib/utils";
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const alertTypeStyles = {
   'Roja': { bg: 'bg-red-500', text: 'text-red-700', border: 'border-red-200', label: 'Roja' },
@@ -22,6 +23,11 @@ const phenomenonIcons = {
   'default': Cloud
 };
 
+const defaultButtons = [
+  { id: 'red-estaciones', label: 'Red de Estaciones', icon: AlertTriangle, url: 'https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional', color: 'amber' },
+  { id: 'pronostico', label: 'Pronóstico Meteorológico', icon: Cloud, url: 'https://www.meteochile.gob.cl/', color: 'sky' }
+];
+
 export default function MeteochileAlertsPanel() {
   const { isDarkMode } = useTheme();
   const [alerts, setAlerts] = useState([]);
@@ -31,6 +37,13 @@ export default function MeteochileAlertsPanel() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [historicalAlerts, setHistoricalAlerts] = useState([]);
+  const [buttons, setButtons] = useState(() => {
+    const saved = localStorage.getItem('meteochile-buttons-order');
+    return saved ? JSON.parse(saved) : defaultButtons;
+  });
+  const [isDraggingEnabled, setIsDraggingEnabled] = useState(false);
+  const [pressTimer, setPressTimer] = useState(null);
+  const pressStartRef = useRef(null);
 
   const fetchAlerts = async (showRefreshing = false) => {
     if (showRefreshing) setRefreshing(true);
@@ -149,6 +162,43 @@ export default function MeteochileAlertsPanel() {
     return phenomenonIcons.default;
   };
 
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+    
+    const items = Array.from(buttons);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    setButtons(items);
+    localStorage.setItem('meteochile-buttons-order', JSON.stringify(items));
+  };
+
+  const handleMouseDown = (e) => {
+    pressStartRef.current = Date.now();
+    const timer = setTimeout(() => {
+      setIsDraggingEnabled(true);
+    }, 3000);
+    setPressTimer(timer);
+  };
+
+  const handleMouseUp = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
+    }
+    if (isDraggingEnabled && Date.now() - pressStartRef.current < 3000) {
+      // Si se suelta antes de 3 segundos, no activar
+      setIsDraggingEnabled(false);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
+    }
+  };
+
   return (
     <Card className={cn(
       "p-6 h-full flex flex-col",
@@ -188,46 +238,84 @@ export default function MeteochileAlertsPanel() {
               {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             </Button>
           </div>
-          <div className="flex items-center gap-2">
-            <a
-              href="https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional"
-              target="_blank"
-              rel="noopener noreferrer"
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="meteochile-buttons" direction="horizontal">
+              {(provided) => (
+                <div 
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="flex items-center gap-2"
+                >
+                  {buttons.map((button, index) => {
+                    const Icon = button.icon;
+                    return (
+                      <Draggable 
+                        key={button.id} 
+                        draggableId={button.id} 
+                        index={index}
+                        isDragDisabled={!isDraggingEnabled}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className="relative"
+                          >
+                            <a
+                              href={button.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onMouseDown={handleMouseDown}
+                              onMouseUp={handleMouseUp}
+                              onMouseLeave={handleMouseLeave}
+                              onTouchStart={handleMouseDown}
+                              onTouchEnd={handleMouseUp}
+                            >
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className={cn(
+                                  "h-8 text-xs transition-all",
+                                  button.color === 'amber' 
+                                    ? isDarkMode 
+                                      ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
+                                      : "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                                    : isDarkMode 
+                                      ? "border-sky-500/50 bg-sky-950 text-sky-400 hover:bg-sky-900 hover:text-sky-300" 
+                                      : "border-sky-500 bg-sky-50 text-sky-700 hover:bg-sky-100",
+                                  snapshot.isDragging && "shadow-lg scale-105 cursor-grabbing",
+                                  isDraggingEnabled && "cursor-grab"
+                                )}
+                              >
+                                {isDraggingEnabled && (
+                                  <span {...provided.dragHandleProps}>
+                                    <GripVertical className="w-3 h-3 mr-1" />
+                                  </span>
+                                )}
+                                <Icon className="w-3.5 h-3.5 mr-1.5" />
+                                {button.label}
+                              </Button>
+                            </a>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          {isDraggingEnabled && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDraggingEnabled(false)}
+              className="h-8 text-xs text-green-600"
             >
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "h-8 text-xs",
-                  isDarkMode 
-                    ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
-                    : "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
-                )}
-              >
-                <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
-                Red de Estaciones
-              </Button>
-            </a>
-            <a
-              href="https://www.meteochile.gob.cl/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "h-8 text-xs",
-                  isDarkMode 
-                    ? "border-sky-500/50 bg-sky-950 text-sky-400 hover:bg-sky-900 hover:text-sky-300" 
-                    : "border-sky-500 bg-sky-50 text-sky-700 hover:bg-sky-100"
-                )}
-              >
-                <Cloud className="w-3.5 h-3.5 mr-1.5" />
-                Pronóstico Meteorológico
-              </Button>
-            </a>
-          </div>
+              ✓ Listo
+            </Button>
+          )}
         </div>
       </div>
 
