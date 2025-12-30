@@ -35,7 +35,7 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'meteochile', 'senapred', 'seismic', 'hydrometric', 'windy'];
+    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
