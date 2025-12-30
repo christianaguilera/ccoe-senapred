@@ -56,7 +56,7 @@ export default function Dashboard() {
   });
 
   const activeIncidents = incidents.filter(i => i.status === 'active');
-  const criticalIncidents = incidents.filter(i => i.severity === 'critical' && i.status === 'active');
+  const criticalIncidents = incidents.filter(i => (i.severity === 'catastrophe' || i.severity === 'disaster') && i.status === 'active');
   const deployedResources = resources.filter(r => r.status === 'deployed');
 
   const handleDragEnd = (result) => {

@@ -25,7 +25,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
     incident_number: '',
     name: '',
     type: 'fire',
-    severity: 'medium',
+    severity: 'minor_emergency',
     status: 'active',
     location: '',
     region: '',
@@ -60,7 +60,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
         incident_number: `INC-${Date.now().toString().slice(-6)}`,
         name: '',
         type: 'fire',
-        severity: 'medium',
+        severity: 'minor_emergency',
         status: 'active',
         location: '',
         region: '',
@@ -192,10 +192,10 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Bajo</SelectItem>
-                  <SelectItem value="medium">Medio</SelectItem>
-                  <SelectItem value="high">Alto</SelectItem>
-                  <SelectItem value="critical">Crítico</SelectItem>
+                  <SelectItem value="minor_emergency">Emergencia Menor</SelectItem>
+                  <SelectItem value="major_emergency">Emergencia Mayor</SelectItem>
+                  <SelectItem value="disaster">Desastre</SelectItem>
+                  <SelectItem value="catastrophe">Catástrofe</SelectItem>
                 </SelectContent>
               </Select>
             </div>

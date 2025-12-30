@@ -79,10 +79,10 @@ const typeConfig = {
 };
 
 const severityConfig = {
-  low: { label: 'Bajo', color: 'bg-emerald-100 text-emerald-700' },
-  medium: { label: 'Medio', color: 'bg-amber-100 text-amber-700' },
-  high: { label: 'Alto', color: 'bg-orange-100 text-orange-700' },
-  critical: { label: 'Crítico', color: 'bg-red-100 text-red-700' }
+  minor_emergency: { label: 'Emergencia Menor', color: 'bg-emerald-100 text-emerald-700' },
+  major_emergency: { label: 'Emergencia Mayor', color: 'bg-amber-100 text-amber-700' },
+  disaster: { label: 'Desastre', color: 'bg-orange-100 text-orange-700' },
+  catastrophe: { label: 'Catástrofe', color: 'bg-red-100 text-red-700' }
 };
 
 const statusConfig = {
@@ -292,7 +292,7 @@ export default function IncidentDetail() {
   return (
     <div className="space-y-6">
       {/* Situation Room Alert */}
-      {incident.severity === 'critical' && incident.status === 'active' &&
+      {incident.severity === 'catastrophe' && incident.status === 'active' &&
       <SituationRoomAlert
         severity={incident.severity}
         title="ALERTA DE INCIDENTE CRÍTICO"
@@ -307,7 +307,7 @@ export default function IncidentDetail() {
 
       }
 
-      {incident.severity === 'high' && incident.status === 'active' &&
+      {(incident.severity === 'disaster' || incident.severity === 'major_emergency') && incident.status === 'active' &&
       <SituationRoomAlert
         severity={incident.severity}
         title="INCIDENTE DE ALTA PRIORIDAD"

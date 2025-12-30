@@ -37,10 +37,10 @@ const statusLabels = {
 };
 
 const severityLabels = {
-  low: 'Bajo',
-  medium: 'Medio',
-  high: 'Alto',
-  critical: 'Crítico'
+  minor_emergency: 'Emergencia Menor',
+  major_emergency: 'Emergencia Mayor',
+  disaster: 'Desastre',
+  catastrophe: 'Catástrofe'
 };
 
 export default function Reports() {

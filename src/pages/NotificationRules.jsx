@@ -23,10 +23,10 @@ const incidentTypes = [
 ];
 
 const severities = [
-  { value: 'low', label: 'Bajo', color: 'bg-green-100 text-green-700' },
-  { value: 'medium', label: 'Medio', color: 'bg-yellow-100 text-yellow-700' },
-  { value: 'high', label: 'Alto', color: 'bg-orange-100 text-orange-700' },
-  { value: 'critical', label: 'Crítico', color: 'bg-red-100 text-red-700' }
+  { value: 'minor_emergency', label: 'Emergencia Menor', color: 'bg-green-100 text-green-700' },
+  { value: 'major_emergency', label: 'Emergencia Mayor', color: 'bg-yellow-100 text-yellow-700' },
+  { value: 'disaster', label: 'Desastre', color: 'bg-orange-100 text-orange-700' },
+  { value: 'catastrophe', label: 'Catástrofe', color: 'bg-red-100 text-red-700' }
 ];
 
 const statuses = [
