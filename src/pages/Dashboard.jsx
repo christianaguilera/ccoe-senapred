@@ -112,7 +112,46 @@ export default function Dashboard() {
   const panels = {
     activity: (
       <div>
-...
+        <div className={cn(
+          "flex items-center gap-2 pb-3 border-b mb-4",
+          isDarkMode ? "border-slate-800" : "border-slate-300"
+        )}>
+          <div className="w-1 h-6 bg-blue-500"></div>
+          <h2 className={cn(
+            "text-lg font-bold tracking-wider",
+            isDarkMode ? "text-white" : "text-slate-900"
+          )}>MONITOREO TÉCNICO REGIONAL</h2>
+        </div>
+        {loadingActivities ? (
+          <Card className={cn(
+            "p-6",
+            isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"
+          )}>
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="flex gap-4">
+                  <Skeleton className={cn(
+                    "w-3 h-3 rounded-full",
+                    isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                  )} />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className={cn(
+                      "h-4 w-24",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
+                    <Skeleton className={cn(
+                      "h-4 w-full",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        ) : (
+          <ActivityTimeline activities={activities} incidents={incidents} />
+        )}
+      </div>
     ),
     powerbi: <PowerBIPanel />,
     meteochile: <MeteochileAlertsPanel />,
