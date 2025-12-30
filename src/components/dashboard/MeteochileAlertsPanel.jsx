@@ -107,7 +107,7 @@ export default function MeteochileAlertsPanel() {
         </div>
         <div className="flex items-center gap-2">
           <a
-            href="https://www.meteochile.gob.cl/PortalDMC-web/index.xhtml"
+            href="https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional"
             target="_blank"
             rel="noopener noreferrer"
           >
