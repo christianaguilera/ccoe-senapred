@@ -44,7 +44,7 @@ export default function SNAMPanel() {
             <p className={cn(
               "text-xs",
               isDarkMode ? "text-slate-400" : "text-slate-500"
-            )}>Sistema Nacional de Alertas Meteorológicas</p>
+            )}>Sistema de Alertas de Tsunami</p>
           </div>
         </div>
         <div className="flex gap-2">
