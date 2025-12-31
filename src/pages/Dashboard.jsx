@@ -320,42 +320,7 @@ export default function Dashboard() {
     ),
     powerbi: <PowerBIPanel />,
     snam: <SNAMPanel />,
-    horaoficial: (() => {
-      const [horaOficialKey, setHoraOficialKey] = useState(0);
-
-      useEffect(() => {
-        const interval = setInterval(() => {
-          setHoraOficialKey(prev => prev + 1);
-        }, 60000); // 1 minuto
-
-        return () => clearInterval(interval);
-      }, []);
-
-      return (
-        <Card className={cn(
-          "p-6 border-2 shadow-xl",
-          isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-slate-200"
-        )}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Clock className={cn("w-5 h-5", isDarkMode ? "text-blue-400" : "text-blue-600")} />
-              <h2 className={cn(
-                "text-lg font-semibold",
-                isDarkMode ? "text-white" : "text-slate-900"
-              )}>Hora Oficial de Chile</h2>
-            </div>
-          </div>
-          <div className="rounded-lg overflow-hidden" style={{ height: '400px' }}>
-            <iframe 
-              key={horaOficialKey}
-              src="https://www.horaoficial.cl/"
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              title="Hora Oficial Chile"
-            />
-          </div>
-        </Card>
-      );
-    })()
+    horaoficial: <HoraOficialPanel />
   };
 
   const panels = allPanels;
