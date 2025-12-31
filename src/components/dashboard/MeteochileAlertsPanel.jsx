@@ -44,6 +44,49 @@ export default function MeteochileAlertsPanel() {
   const [isDraggingEnabled, setIsDraggingEnabled] = useState(false);
   const [pressTimer, setPressTimer] = useState(null);
   const pressStartRef = useRef(null);
+  const [notificationPermission, setNotificationPermission] = useState(
+    typeof Notification !== 'undefined' ? Notification.permission : 'denied'
+  );
+  const notifiedAlertsRef = useRef(new Set());
+
+  // Solicitar permisos de notificación
+  const requestNotificationPermission = async () => {
+    if (typeof Notification === 'undefined') return 'denied';
+    
+    if (Notification.permission === 'default') {
+      const permission = await Notification.requestPermission();
+      setNotificationPermission(permission);
+      return permission;
+    }
+    return Notification.permission;
+  };
+
+  // Enviar notificación push
+  const sendPushNotification = (alert) => {
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    
+    const alertKey = `${alert.type}-${alert.region}-${alert.phenomenon}`;
+    if (notifiedAlertsRef.current.has(alertKey)) return;
+    
+    const title = `⚠️ Alerta ${alert.type} - Meteochile`;
+    const body = `${alert.phenomenon} en ${alert.region}\n${alert.description}`;
+    
+    const notification = new Notification(title, {
+      body: body,
+      icon: 'https://www.meteochile.gob.cl/favicon.ico',
+      badge: 'https://www.meteochile.gob.cl/favicon.ico',
+      tag: alertKey,
+      requireInteraction: alert.type === 'Roja',
+      vibrate: [200, 100, 200]
+    });
+    
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
+    
+    notifiedAlertsRef.current.add(alertKey);
+  };
 
   const fetchAlerts = async (showRefreshing = false) => {
     if (showRefreshing) setRefreshing(true);
@@ -117,6 +160,11 @@ export default function MeteochileAlertsPanel() {
           emission_time: alert.time || new Date().toLocaleString('es-CL'),
           is_active: true
         });
+        
+        // Enviar notificación push para alertas críticas
+        if (alert.type === 'Roja' || alert.type === 'Naranja') {
+          sendPushNotification(alert);
+        }
       }
       
     } catch (error) {
@@ -142,6 +190,9 @@ export default function MeteochileAlertsPanel() {
   };
 
   useEffect(() => {
+    // Solicitar permisos de notificación al montar
+    requestNotificationPermission();
+    
     fetchAlerts();
     loadHistoricalAlerts();
     const interval = setInterval(() => fetchAlerts(), 30 * 60 * 1000); // Refresh every 30 minutes
@@ -211,6 +262,21 @@ export default function MeteochileAlertsPanel() {
             "font-semibold",
             isDarkMode ? "text-white" : "text-slate-900"
           )}>Alertas Meteorológicas</h3>
+          {notificationPermission === 'granted' && (
+            <Badge variant="outline" className="text-[10px] px-1.5 py-0.5 bg-green-50 text-green-700 border-green-300">
+              🔔 Push activo
+            </Badge>
+          )}
+          {notificationPermission === 'default' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={requestNotificationPermission}
+              className="text-[10px] h-6 px-2"
+            >
+              Activar notificaciones
+            </Button>
+          )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-2">
@@ -444,6 +510,22 @@ export default function MeteochileAlertsPanel() {
                 "mt-3 pt-3 border-t space-y-2 max-h-64 overflow-y-auto",
                 isDarkMode ? "border-slate-800" : "border-slate-200"
               )}>
+                <div className="flex items-center justify-between mb-2">
+                  <p className={cn(
+                    "text-xs font-semibold",
+                    isDarkMode ? "text-slate-400" : "text-slate-600"
+                  )}>
+                    Historial de alertas ({historicalAlerts.length})
+                  </p>
+                  {historicalAlerts.length > 0 && (
+                    <p className={cn(
+                      "text-[10px]",
+                      isDarkMode ? "text-slate-500" : "text-slate-400"
+                    )}>
+                      Últimas {historicalAlerts.length} alertas desactivadas
+                    </p>
+                  )}
+                </div>
                 {historicalAlerts.length === 0 ? (
                   <p className={cn(
                     "text-xs text-center py-4",
