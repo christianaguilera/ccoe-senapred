@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, ExternalLink, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
-import { Skeleton } from "@/components/ui/skeleton";
-
-const alertTypeColors = {
-  'Roja': 'bg-red-100 text-red-700 border-red-300',
-  'Amarilla': 'bg-amber-100 text-amber-700 border-amber-300',
-  'Verde': 'bg-green-100 text-green-700 border-green-300',
-  'Temprana Preventiva': 'bg-blue-100 text-blue-700 border-blue-300'
-};
+import { useTheme } from '../contexts/ThemeContext';
+import { cn } from "@/lib/utils";
 
 export default function SenapredAlertsPanel() {
+  const { isDarkMode } = useTheme();
   const [loading, setLoading] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -32,15 +26,30 @@ export default function SenapredAlertsPanel() {
   }, []);
 
   return (
-    <Card className="p-6">
-      <div className="bg-slate-50 mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-            <AlertTriangle className="w-5 h-5 text-orange-600" />
+    <Card className={cn(
+      "p-6",
+      isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+    )}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className={cn(
+            "w-8 h-8 rounded-lg flex items-center justify-center",
+            isDarkMode ? "bg-orange-500" : "bg-orange-100"
+          )}>
+            <AlertTriangle className={cn(
+              "w-4 h-4",
+              isDarkMode ? "text-white" : "text-orange-600"
+            )} />
           </div>
           <div>
-            <h3 className="font-semibold text-slate-900">Alertas SENAPRED</h3>
-            <p className="text-xs text-slate-500">Sistema Nacional de Emergencia</p>
+            <h2 className={cn(
+              "text-lg font-semibold",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>Alertas SENAPRED</h2>
+            <p className={cn(
+              "text-xs",
+              isDarkMode ? "text-slate-400" : "text-slate-500"
+            )}>Sistema Nacional de Emergencia</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -48,15 +57,23 @@ export default function SenapredAlertsPanel() {
             variant="ghost"
             size="icon"
             onClick={handleRefresh}
-            disabled={loading}>
-
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            disabled={loading}
+            className={cn(
+              "h-8 w-8",
+              isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
+            )}
+          >
+            <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setIsCollapsed(!isCollapsed)}>
-
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={cn(
+              "h-8 w-8",
+              isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
+            )}
+          >
             {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
           </Button>
         </div>
@@ -64,7 +81,10 @@ export default function SenapredAlertsPanel() {
 
       {!isCollapsed && (
         <>
-          <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '400px', width: '100%' }}>
+          <div className={cn(
+            "rounded-lg overflow-hidden border",
+            isDarkMode ? "border-slate-700" : "border-slate-200"
+          )} style={{ height: '400px', width: '100%' }}>
             <iframe 
               key={refreshKey}
               src="https://senapred.cl/alertas/"
@@ -74,19 +94,27 @@ export default function SenapredAlertsPanel() {
             />
           </div>
 
-          <div className="mt-4 pt-4 border-t">
+          <div className={cn(
+            "mt-4 pt-3 border-t",
+            isDarkMode ? "border-slate-800" : "border-slate-200"
+          )}>
             <a
               href="https://senapred.cl/alertas/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1 justify-center">
-
+              className={cn(
+                "text-xs font-medium flex items-center gap-1",
+                isDarkMode 
+                  ? "text-orange-400 hover:text-orange-300" 
+                  : "text-orange-600 hover:text-orange-700"
+              )}
+            >
               Abrir en pantalla completa
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </>
       )}
-    </Card>);
-
+    </Card>
+  );
 }
