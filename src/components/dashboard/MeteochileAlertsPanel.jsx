@@ -25,7 +25,7 @@ const phenomenonIcons = {
 
 const defaultButtons = [
   { id: 'red-estaciones', label: 'Red de Estaciones', icon: AlertTriangle, url: 'https://climatologia.meteochile.gob.cl/application/diarioc/mapaRedEmaNacional', color: 'amber' },
-  { id: 'pronostico', label: 'Pronóstico Meteorológico', icon: Cloud, url: 'https://www.meteochile.gob.cl/', color: 'sky' }
+  { id: 'pronostico', label: 'Pron. Meteorológico', icon: Cloud, url: 'https://www.meteochile.gob.cl/', color: 'sky' }
 ];
 
 export default function MeteochileAlertsPanel() {
