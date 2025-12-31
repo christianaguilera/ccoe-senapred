@@ -204,15 +204,15 @@ export default function MeteochileAlertsPanel() {
       "p-6 h-full flex flex-col",
       isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
     )}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Cloud className={cn("w-5 h-5", isDarkMode ? "text-sky-400" : "text-sky-600")} />
-          <h3 className={cn(
-            "font-semibold",
-            isDarkMode ? "text-white" : "text-slate-900"
-          )}>Alertas Meteorológicas</h3>
-        </div>
-        <div className="flex flex-col items-end gap-2">
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Cloud className={cn("w-5 h-5", isDarkMode ? "text-sky-400" : "text-sky-600")} />
+            <h3 className={cn(
+              "font-semibold",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>Alertas Meteorológicas</h3>
+          </div>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -238,7 +238,8 @@ export default function MeteochileAlertsPanel() {
               {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             </Button>
           </div>
-          <DragDropContext onDragEnd={handleDragEnd}>
+        </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="meteochile-buttons" direction="horizontal">
               {(provided) => (
                 <div 
@@ -305,19 +306,18 @@ export default function MeteochileAlertsPanel() {
                 </div>
               )}
             </Droppable>
-          </DragDropContext>
-          {isDraggingEnabled && (
+            </DragDropContext>
+            {isDraggingEnabled && (
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsDraggingEnabled(false)}
-              className="h-8 text-xs text-green-600"
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsDraggingEnabled(false)}
+            className="h-8 text-xs text-green-600 mt-2"
             >
-              ✓ Listo
+            ✓ Listo
             </Button>
-          )}
-        </div>
-      </div>
+            )}
+            </div>
 
       {!isCollapsed && (
         <div className={cn(
