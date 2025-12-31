@@ -407,8 +407,8 @@ export default function Dashboard() {
               isDarkMode ? "text-white" : "text-slate-900"
             )}>{currentTime.toLocaleDateString('es-CL')}</p>
             <p className={cn(
-              "text-lg font-mono font-bold",
-              isDarkMode ? "text-blue-400" : "text-blue-600"
+              "text-sm font-mono",
+              isDarkMode ? "text-white" : "text-slate-900"
             )}>{currentTime.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</p>
           </div>
           <Link to={createPageUrl('Incidents')}>
