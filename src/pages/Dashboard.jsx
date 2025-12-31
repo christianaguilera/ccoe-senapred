@@ -238,13 +238,6 @@ export default function Dashboard() {
               isDarkMode ? "text-white" : "text-slate-900"
             )}>{new Date().toLocaleDateString('es-CL')}</p>
           </div>
-          <div className="text-right">
-            <p className={cn("text-xs", isDarkMode ? "text-slate-500" : "text-slate-600")}>HORA</p>
-            <p className={cn(
-              "text-sm font-mono",
-              isDarkMode ? "text-white" : "text-slate-900"
-            )}>{new Date().toLocaleTimeString('es-CL')}</p>
-          </div>
           <Link to={createPageUrl('Incidents')}>
             <Button className="bg-orange-500 hover:bg-orange-600 shadow-lg">
               <Plus className="w-4 h-4 mr-2" />
