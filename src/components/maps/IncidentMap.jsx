@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, LayersControl, CircleMarker } from 'react-leaflet';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, AlertTriangle, Flame, Plus, MapPinned, Layers } from 'lucide-react';
+import { MapPin, AlertTriangle, Flame, Plus, MapPinned, Layers, Navigation } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AddPOIDialog from './AddPOIDialog';
+import { toast } from 'sonner';
 
 const { BaseLayer, Overlay } = LayersControl;
 
@@ -180,7 +181,7 @@ const createPOIIcon = (type) => {
 
 
 
-function MapController({ center, zoom }) {
+function MapController({ center, zoom, userLocation }) {
   const map = useMap();
   
   useEffect(() => {
@@ -188,6 +189,12 @@ function MapController({ center, zoom }) {
       map.setView(center, zoom || 13);
     }
   }, [center, zoom, map]);
+
+  useEffect(() => {
+    if (userLocation) {
+      map.flyTo([userLocation.lat, userLocation.lng], 14, { duration: 1.5 });
+    }
+  }, [userLocation, map]);
   
   return null;
 }
@@ -205,6 +212,8 @@ export default function IncidentMap({
   const [mapZoom, setMapZoom] = useState(11);
   const [showAddPOI, setShowAddPOI] = useState(false);
   const [clickedCoords, setClickedCoords] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locating, setLocating] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch POIs
@@ -329,6 +338,31 @@ export default function IncidentMap({
     return labels[type] || type;
   };
 
+  const handleGeolocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocalización no disponible en este navegador');
+      return;
+    }
+
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        setLocating(false);
+        toast.success('Ubicación obtenida');
+      },
+      (error) => {
+        setLocating(false);
+        toast.error('No se pudo obtener la ubicación');
+        console.error('Geolocation error:', error);
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+  };
+
 
 
   return (
@@ -346,6 +380,18 @@ export default function IncidentMap({
         </div>
       )}
 
+      <div className="relative">
+        <Button
+          onClick={handleGeolocation}
+          disabled={locating}
+          size="sm"
+          className="absolute top-2 right-2 z-[1000] bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-lg"
+        >
+          <Navigation className={`w-4 h-4 mr-1 ${locating ? 'animate-pulse' : ''}`} />
+          {locating ? 'Ubicando...' : 'Mi ubicación'}
+        </Button>
+      </div>
+
       <div style={{ height: showAddPOI ? '250px' : height, width: '100%' }}>
         <MapContainer
           center={mapCenter}
@@ -353,7 +399,25 @@ export default function IncidentMap({
           style={{ height: '100%', width: '100%' }}
           scrollWheelZoom={true}
         >
-          <MapController center={mapCenter} zoom={mapZoom} />
+          <MapController center={mapCenter} zoom={mapZoom} userLocation={userLocation} />
+          
+          {userLocation && (
+            <CircleMarker
+              center={[userLocation.lat, userLocation.lng]}
+              radius={8}
+              fillColor="#10b981"
+              color="#ffffff"
+              weight={3}
+              opacity={1}
+              fillOpacity={0.8}
+            >
+              <Popup>
+                <div className="p-2">
+                  <p className="text-sm font-semibold">📍 Tu ubicación</p>
+                </div>
+              </Popup>
+            </CircleMarker>
+          )}
           
           <LayersControl position="topright">
             <BaseLayer checked name="Mapa Estándar">
