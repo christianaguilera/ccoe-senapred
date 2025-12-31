@@ -28,6 +28,7 @@ import HydrometricStationsPanel from '../components/dashboard/HydrometricStation
 import WindyPanel from '../components/dashboard/WindyPanel';
 import PowerBIPanel from '../components/dashboard/PowerBIPanel';
 import MeteochileAlertsPanel from '../components/dashboard/MeteochileAlertsPanel';
+import IncidentMap from '../components/maps/IncidentMap';
 import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
@@ -35,7 +36,7 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
+    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'map', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -154,6 +155,23 @@ export default function Dashboard() {
       </div>
     ),
     powerbi: <PowerBIPanel />,
+    map: (
+      <Card className={cn(
+        "p-6",
+        isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+      )}>
+        <div className="flex items-center gap-2 mb-4">
+          <MapPin className={cn("w-5 h-5", isDarkMode ? "text-orange-400" : "text-orange-600")} />
+          <h3 className={cn(
+            "font-semibold",
+            isDarkMode ? "text-white" : "text-slate-900"
+          )}>Mapa de Incidentes</h3>
+        </div>
+        <div style={{ height: '400px' }}>
+          <IncidentMap incidents={activeIncidents} />
+        </div>
+      </Card>
+    ),
     meteochile: <MeteochileAlertsPanel />,
     senapred: <SenapredAlertsPanel />,
     seismic: <ChileanSeismicPanel />,
