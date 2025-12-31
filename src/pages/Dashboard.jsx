@@ -36,7 +36,7 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
+    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -154,7 +154,6 @@ export default function Dashboard() {
         )}
       </div>
     ),
-    powerbi: <PowerBIPanel />,
     meteochile: <MeteochileAlertsPanel />,
     senapred: <SenapredAlertsPanel />,
     seismic: <ChileanSeismicPanel />,
@@ -503,10 +502,15 @@ export default function Dashboard() {
                 <IncidentMap incidents={incidents.filter(i => !i.deleted)} />
               </div>
             </Card>
-          </div>
-        </div>
+            </div>
 
-        {/* Right Sidebar */}
+            {/* Panel Incendios Forestales */}
+            <div className="mt-6">
+            <PowerBIPanel />
+            </div>
+            </div>
+
+            {/* Right Sidebar */}
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="dashboard-panels" isDropDisabled={!dragEnabled}>
             {(provided) => (
