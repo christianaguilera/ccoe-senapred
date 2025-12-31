@@ -10,7 +10,7 @@ export default function SNAMPanel() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const snamUrl = "https://www.snamchile.cl/";
+  const snamUrl = "https://www.snamchile.cl/boletines/";
 
   const handleRefresh = () => {
     setIsRefreshing(true);
