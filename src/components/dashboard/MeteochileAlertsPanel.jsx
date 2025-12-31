@@ -275,7 +275,7 @@ export default function MeteochileAlertsPanel() {
                                 variant="outline"
                                 size="sm"
                                 className={cn(
-                                  "h-8 text-xs transition-all",
+                                  "h-9 text-sm px-4 transition-all",
                                   button.color === 'amber' 
                                     ? isDarkMode 
                                       ? "border-amber-500/50 bg-amber-950 text-amber-400 hover:bg-amber-900 hover:text-amber-300" 
