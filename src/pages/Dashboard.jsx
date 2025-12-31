@@ -30,6 +30,7 @@ import PowerBIPanel from '../components/dashboard/PowerBIPanel';
 import MeteochileAlertsPanel from '../components/dashboard/MeteochileAlertsPanel';
 import SNAMPanel from '../components/dashboard/SNAMPanel';
 import IncidentMap from '../components/maps/IncidentMap';
+import HoraOficialPanel from '../components/dashboard/HoraOficialPanel';
 import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
