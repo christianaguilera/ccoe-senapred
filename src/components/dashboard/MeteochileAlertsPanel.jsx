@@ -244,7 +244,7 @@ export default function MeteochileAlertsPanel() {
                 <div 
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 flex-wrap"
                 >
                   {buttons.map((button, index) => {
                     const Icon = button.icon;
