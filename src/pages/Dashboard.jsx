@@ -74,6 +74,7 @@ export default function Dashboard() {
     const destinationDroppableId = result.destination.droppableId;
 
     if (sourceDroppableId === destinationDroppableId) {
+      // Reordenar dentro de la misma columna
       if (sourceDroppableId === 'dashboard-panels') {
         const items = Array.from(panelOrder);
         const [reorderedItem] = items.splice(result.source.index, 1);
@@ -86,6 +87,27 @@ export default function Dashboard() {
         items.splice(result.destination.index, 0, reorderedItem);
         setLeftPanelOrder(items);
         localStorage.setItem('dashboardLeftPanelOrder', JSON.stringify(items));
+      }
+    } else {
+      // Mover entre columnas
+      if (sourceDroppableId === 'dashboard-panels' && destinationDroppableId === 'left-panels') {
+        const sourceItems = Array.from(panelOrder);
+        const destItems = Array.from(leftPanelOrder);
+        const [movedItem] = sourceItems.splice(result.source.index, 1);
+        destItems.splice(result.destination.index, 0, movedItem);
+        setPanelOrder(sourceItems);
+        setLeftPanelOrder(destItems);
+        localStorage.setItem('dashboardPanelOrder', JSON.stringify(sourceItems));
+        localStorage.setItem('dashboardLeftPanelOrder', JSON.stringify(destItems));
+      } else if (sourceDroppableId === 'left-panels' && destinationDroppableId === 'dashboard-panels') {
+        const sourceItems = Array.from(leftPanelOrder);
+        const destItems = Array.from(panelOrder);
+        const [movedItem] = sourceItems.splice(result.source.index, 1);
+        destItems.splice(result.destination.index, 0, movedItem);
+        setLeftPanelOrder(sourceItems);
+        setPanelOrder(destItems);
+        localStorage.setItem('dashboardLeftPanelOrder', JSON.stringify(sourceItems));
+        localStorage.setItem('dashboardPanelOrder', JSON.stringify(destItems));
       }
     }
 
@@ -128,7 +150,7 @@ export default function Dashboard() {
     }
   };
 
-  const panels = {
+  const allPanels = {
     activity: (
       <div>
         <div className={cn(
@@ -177,10 +199,7 @@ export default function Dashboard() {
     snam: <SNAMPanel />,
     seismic: <ChileanSeismicPanel />,
     hydrometric: <HydrometricStationsPanel />,
-    windy: <WindyPanel />
-  };
-
-  const leftPanels = {
+    windy: <WindyPanel />,
     incidents: (
       <div>
         <div className={cn(
