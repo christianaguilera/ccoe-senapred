@@ -39,6 +39,10 @@ export default function Dashboard() {
     const saved = localStorage.getItem('dashboardPanelOrder');
     return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile', 'snam'];
   });
+  const [leftPanelOrder, setLeftPanelOrder] = useState(() => {
+    const saved = localStorage.getItem('dashboardLeftPanelOrder');
+    return saved ? JSON.parse(saved) : ['incidents', 'map', 'powerbi', 'horaoficial'];
+  });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
   const [pressingPanel, setPressingPanel] = useState(null);
@@ -66,12 +70,25 @@ export default function Dashboard() {
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 
-    const items = Array.from(panelOrder);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    const sourceDroppableId = result.source.droppableId;
+    const destinationDroppableId = result.destination.droppableId;
 
-    setPanelOrder(items);
-    localStorage.setItem('dashboardPanelOrder', JSON.stringify(items));
+    if (sourceDroppableId === destinationDroppableId) {
+      if (sourceDroppableId === 'dashboard-panels') {
+        const items = Array.from(panelOrder);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+        setPanelOrder(items);
+        localStorage.setItem('dashboardPanelOrder', JSON.stringify(items));
+      } else if (sourceDroppableId === 'left-panels') {
+        const items = Array.from(leftPanelOrder);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+        setLeftPanelOrder(items);
+        localStorage.setItem('dashboardLeftPanelOrder', JSON.stringify(items));
+      }
+    }
+
     setDragEnabled(false);
     setPressingPanel(null);
     setPressProgress(0);
@@ -161,6 +178,150 @@ export default function Dashboard() {
     seismic: <ChileanSeismicPanel />,
     hydrometric: <HydrometricStationsPanel />,
     windy: <WindyPanel />
+  };
+
+  const leftPanels = {
+    incidents: (
+      <div>
+        <div className={cn(
+          "flex items-center justify-between pb-3 border-b mb-4",
+          isDarkMode ? "border-slate-800" : "border-slate-300"
+        )}>
+          <h2 className={cn(
+            "text-lg font-bold tracking-wider flex items-center gap-2",
+            isDarkMode ? "text-white" : "text-slate-900"
+          )}>
+            <div className="w-1 h-6 bg-orange-500"></div>
+            INCIDENTES ACTIVOS
+          </h2>
+          <Link to={createPageUrl('Incidents')} className={cn(
+            "text-sm font-bold flex items-center gap-1",
+            isDarkMode 
+              ? "text-orange-400 hover:text-orange-300" 
+              : "text-orange-600 hover:text-orange-700"
+          )}>
+            VER TODOS
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {loadingIncidents ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className={cn(
+                "border rounded-lg p-5",
+                isDarkMode 
+                  ? "bg-slate-900 border-slate-800" 
+                  : "bg-white border-slate-200"
+              )}>
+                <div className="flex gap-4">
+                  <Skeleton className={cn(
+                    "w-12 h-12 rounded-xl",
+                    isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                  )} />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className={cn(
+                      "h-4 w-32",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
+                    <Skeleton className={cn(
+                      "h-5 w-full",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
+                    <Skeleton className={cn(
+                      "h-4 w-48",
+                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
+                    )} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : activeIncidents.length === 0 ? (
+          <div className={cn(
+            "border rounded-lg p-8 text-center",
+            isDarkMode 
+              ? "bg-slate-900 border-slate-800" 
+              : "bg-white border-slate-200"
+          )}>
+            <div className={cn(
+              "w-16 h-16 rounded-full border-2 flex items-center justify-center mx-auto mb-4",
+              isDarkMode 
+                ? "bg-emerald-900/50 border-emerald-500" 
+                : "bg-emerald-50 border-emerald-300"
+            )}>
+              <AlertTriangle className={cn(
+                "w-8 h-8",
+                isDarkMode ? "text-emerald-400" : "text-emerald-600"
+              )} />
+            </div>
+            <h3 className={cn(
+              "font-semibold",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>SIN INCIDENTES ACTIVOS</h3>
+            <p className={cn(
+              "text-sm mt-1",
+              isDarkMode ? "text-slate-400" : "text-slate-600"
+            )}>Todos los incidentes han sido resueltos</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {activeIncidents.slice(0, 5).map((incident) => (
+              <IncidentCard key={incident.id} incident={incident} />
+            ))}
+          </div>
+        )}
+      </div>
+    ),
+    map: (
+      <div>
+        <div className={cn(
+          "flex items-center gap-2 pb-3 border-b mb-4",
+          isDarkMode ? "border-slate-800" : "border-slate-300"
+        )}>
+          <div className="w-1 h-6 bg-orange-500"></div>
+          <h2 className={cn(
+            "text-lg font-bold tracking-wider flex items-center gap-2",
+            isDarkMode ? "text-white" : "text-slate-900"
+          )}>
+            <MapPin className="w-5 h-5" />
+            MAPA DE INCIDENTES
+          </h2>
+        </div>
+        <Card className={cn(
+          "p-6",
+          isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+        )}>
+          <div style={{ height: '500px' }}>
+            <IncidentMap incidents={incidents.filter(i => !i.deleted)} />
+          </div>
+        </Card>
+      </div>
+    ),
+    powerbi: <PowerBIPanel />,
+    horaoficial: (
+      <Card className={cn(
+        "p-6 border-2 shadow-xl",
+        isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-slate-200"
+      )}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Clock className={cn("w-5 h-5", isDarkMode ? "text-blue-400" : "text-blue-600")} />
+            <h2 className={cn(
+              "text-lg font-semibold",
+              isDarkMode ? "text-white" : "text-slate-900"
+            )}>Hora Oficial de Chile</h2>
+          </div>
+        </div>
+        <div className="rounded-lg overflow-hidden" style={{ height: '400px' }}>
+          <iframe 
+            src="https://www.horaoficial.cl/"
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            title="Hora Oficial Chile"
+          />
+        </div>
+      </Card>
+    )
   };
 
   // Notificar sobre incidentes críticos activos al cargar
@@ -382,156 +543,87 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Grid - Command Center Style */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Active Incidents */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className={cn(
-            "flex items-center justify-between pb-3 border-b",
-            isDarkMode ? "border-slate-800" : "border-slate-300"
-          )}>
-            <h2 className={cn(
-              "text-lg font-bold tracking-wider flex items-center gap-2",
-              isDarkMode ? "text-white" : "text-slate-900"
-            )}>
-              <div className="w-1 h-6 bg-orange-500"></div>
-              INCIDENTES ACTIVOS
-            </h2>
-            <Link to={createPageUrl('Incidents')} className={cn(
-              "text-sm font-bold flex items-center gap-1",
-              isDarkMode 
-                ? "text-orange-400 hover:text-orange-300" 
-                : "text-orange-600 hover:text-orange-700"
-            )}>
-              VER TODOS
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {loadingIncidents ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map(i => (
-                <div key={i} className={cn(
-                  "border rounded-lg p-5",
-                  isDarkMode 
-                    ? "bg-slate-900 border-slate-800" 
-                    : "bg-white border-slate-200"
-                )}>
-                  <div className="flex gap-4">
-                    <Skeleton className={cn(
-                      "w-12 h-12 rounded-xl",
-                      isDarkMode ? "bg-slate-800" : "bg-slate-200"
-                    )} />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className={cn(
-                        "h-4 w-32",
-                        isDarkMode ? "bg-slate-800" : "bg-slate-200"
-                      )} />
-                      <Skeleton className={cn(
-                        "h-5 w-full",
-                        isDarkMode ? "bg-slate-800" : "bg-slate-200"
-                      )} />
-                      <Skeleton className={cn(
-                        "h-4 w-48",
-                        isDarkMode ? "bg-slate-800" : "bg-slate-200"
-                      )} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : activeIncidents.length === 0 ? (
-            <div className={cn(
-              "border rounded-lg p-8 text-center",
-              isDarkMode 
-                ? "bg-slate-900 border-slate-800" 
-                : "bg-white border-slate-200"
-            )}>
-              <div className={cn(
-                "w-16 h-16 rounded-full border-2 flex items-center justify-center mx-auto mb-4",
-                isDarkMode 
-                  ? "bg-emerald-900/50 border-emerald-500" 
-                  : "bg-emerald-50 border-emerald-300"
-              )}>
-                <AlertTriangle className={cn(
-                  "w-8 h-8",
-                  isDarkMode ? "text-emerald-400" : "text-emerald-600"
-                )} />
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Draggable */}
+          <Droppable droppableId="left-panels" isDropDisabled={!dragEnabled}>
+            {(provided) => (
+              <div 
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="lg:col-span-2 space-y-4"
+              >
+                {leftPanelOrder.map((panelId, index) => (
+                  <Draggable 
+                    key={panelId} 
+                    draggableId={panelId} 
+                    index={index}
+                    isDragDisabled={!dragEnabled || pressingPanel !== panelId}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        onMouseDown={() => handlePressStart(panelId)}
+                        onMouseUp={handlePressEnd}
+                        onMouseLeave={handlePressEnd}
+                        onTouchStart={() => handlePressStart(panelId)}
+                        onTouchEnd={handlePressEnd}
+                        className={`relative touch-none ${snapshot.isDragging ? 'z-50 opacity-90 scale-105 shadow-2xl' : ''} ${pressingPanel === panelId && !dragEnabled ? 'ring-4 ring-orange-400 ring-opacity-50' : ''} transition-all duration-200`}
+                        style={{
+                          ...provided.draggableProps.style,
+                          cursor: dragEnabled && pressingPanel === panelId ? 'grab' : 'default'
+                        }}
+                      >
+                        {pressingPanel === panelId && !dragEnabled && (
+                          <div className="absolute inset-0 bg-orange-500/10 rounded-lg pointer-events-none z-10 flex items-center justify-center">
+                            <div className="bg-white rounded-full p-4 shadow-lg">
+                              <div className="relative w-16 h-16">
+                                <svg className="transform -rotate-90 w-16 h-16">
+                                  <circle
+                                    cx="32"
+                                    cy="32"
+                                    r="28"
+                                    stroke="#e5e7eb"
+                                    strokeWidth="4"
+                                    fill="none"
+                                  />
+                                  <circle
+                                    cx="32"
+                                    cy="32"
+                                    r="28"
+                                    stroke="#f97316"
+                                    strokeWidth="4"
+                                    fill="none"
+                                    strokeDasharray={`${2 * Math.PI * 28}`}
+                                    strokeDashoffset={`${2 * Math.PI * 28 * (1 - pressProgress / 100)}`}
+                                    className="transition-all duration-100"
+                                  />
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center text-orange-600 font-bold text-sm">
+                                  {Math.round(pressProgress)}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {snapshot.isDragging && (
+                          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs px-3 py-1 rounded-full shadow-lg whitespace-nowrap">
+                            📍 Suelta para fijar posición
+                          </div>
+                        )}
+                        {leftPanels[panelId]}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
               </div>
-              <h3 className={cn(
-                "font-semibold",
-                isDarkMode ? "text-white" : "text-slate-900"
-              )}>SIN INCIDENTES ACTIVOS</h3>
-              <p className={cn(
-                "text-sm mt-1",
-                isDarkMode ? "text-slate-400" : "text-slate-600"
-              )}>Todos los incidentes han sido resueltos</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {activeIncidents.slice(0, 5).map((incident) => (
-                <IncidentCard key={incident.id} incident={incident} />
-              ))}
-            </div>
-          )}
+            )}
+          </Droppable>
 
-          {/* Mapa de Incidentes */}
-          <div className="mt-6">
-            <div className={cn(
-              "flex items-center gap-2 pb-3 border-b mb-4",
-              isDarkMode ? "border-slate-800" : "border-slate-300"
-            )}>
-              <div className="w-1 h-6 bg-orange-500"></div>
-              <h2 className={cn(
-                "text-lg font-bold tracking-wider flex items-center gap-2",
-                isDarkMode ? "text-white" : "text-slate-900"
-              )}>
-                <MapPin className="w-5 h-5" />
-                MAPA DE INCIDENTES
-              </h2>
-            </div>
-            <Card className={cn(
-              "p-6",
-              isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
-            )}>
-              <div style={{ height: '500px' }}>
-                <IncidentMap incidents={incidents.filter(i => !i.deleted)} />
-              </div>
-            </Card>
-            </div>
-
-            {/* Panel Incendios Forestales */}
-            <div className="mt-6">
-            <PowerBIPanel />
-            </div>
-            
-            {/* Panel Hora Oficial */}
-            <div className="mt-6">
-              <Card className={cn(
-                "p-6 border-2 shadow-xl",
-                isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-slate-200"
-              )}>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Clock className={cn("w-5 h-5", isDarkMode ? "text-blue-400" : "text-blue-600")} />
-                    <h2 className={cn(
-                      "text-lg font-semibold",
-                      isDarkMode ? "text-white" : "text-slate-900"
-                    )}>Hora Oficial de Chile</h2>
-                  </div>
-                </div>
-                <div className="rounded-lg overflow-hidden" style={{ height: '400px' }}>
-                  <iframe 
-                    src="https://www.horaoficial.cl/"
-                    style={{ width: '100%', height: '100%', border: 'none' }}
-                    title="Hora Oficial Chile"
-                  />
-                </div>
-              </Card>
-            </div>
-            </div>
-
-            {/* Right Sidebar */}
-        <DragDropContext onDragEnd={handleDragEnd}>
+          {/* Right Sidebar */}
           <Droppable droppableId="dashboard-panels" isDropDisabled={!dragEnabled}>
             {(provided) => (
               <div 
@@ -608,8 +700,8 @@ export default function Dashboard() {
               </div>
             )}
           </Droppable>
-        </DragDropContext>
-      </div>
+        </div>
+      </DragDropContext>
     </div>
   );
 }
