@@ -196,8 +196,6 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
                   <SelectItem value="hazmat">Materiales Peligrosos</SelectItem>
                   <SelectItem value="medical">Emergencia Médica</SelectItem>
                   <SelectItem value="rescue">Rescate</SelectItem>
-                  <SelectItem value="natural_disaster">Desastre Natural</SelectItem>
-                  <SelectItem value="civil_emergency">Emergencia Civil</SelectItem>
                   <SelectItem value="other">Otro</SelectItem>
                 </SelectContent>
               </Select>
