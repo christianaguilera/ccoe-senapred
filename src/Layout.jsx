@@ -183,7 +183,16 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             {/* Recomendaciones SENAPRED */}
-            <div className="pt-4 mt-4 border-t">
+            <div className={cn(
+              "pt-4 mt-4 border-t",
+              isDarkMode ? "border-zinc-800" : "border-slate-200"
+            )}>
+              <p className={cn(
+                "text-xs font-semibold uppercase tracking-wider px-4 mb-2",
+                isDarkMode ? "text-slate-500" : "text-slate-500"
+              )}>
+                Inf. SENAPRED
+              </p>
               <a
                 href="https://senapred.cl/recomendaciones/"
                 target="_blank"
