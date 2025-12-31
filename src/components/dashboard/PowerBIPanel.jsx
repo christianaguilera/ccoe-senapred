@@ -70,6 +70,16 @@ export default function PowerBIPanel() {
 
       {!isCollapsed && (
         <>
+          <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '500px', width: '100%' }}>
+            <iframe 
+              key={refreshKey}
+              src={powerBIUrl}
+              style={{ width: '100%', height: '100%', border: 'none' }}
+              title="Power BI Dashboard"
+              allowFullScreen
+            />
+          </div>
+
           <div className={cn(
             "mt-4 pt-3 border-t",
             isDarkMode ? "border-zinc-800" : "border-slate-200"
