@@ -191,7 +191,7 @@ function LayoutContent({ children, currentPageName }) {
                 "text-xs font-semibold uppercase tracking-wider px-4 mb-2",
                 isDarkMode ? "text-slate-500" : "text-slate-500"
               )}>
-                Inf. SENAPRED
+                INFO. SENAPRED
               </p>
               <a
                 href="https://senapred.cl/recomendaciones/"
