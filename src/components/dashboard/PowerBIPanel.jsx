@@ -70,7 +70,7 @@ export default function PowerBIPanel() {
 
       {!isCollapsed && (
         <>
-          <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '500px', width: '100%' }}>
+          <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: 'auto', aspectRatio: '16/9', width: '100%' }}>
             <iframe 
               key={refreshKey}
               src={powerBIUrl}
