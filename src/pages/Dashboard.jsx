@@ -37,11 +37,11 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile', 'snam'];
+    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
   });
   const [leftPanelOrder, setLeftPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardLeftPanelOrder');
-    return saved ? JSON.parse(saved) : ['incidents', 'map', 'powerbi', 'horaoficial'];
+    return saved ? JSON.parse(saved) : ['incidents', 'map', 'powerbi', 'snam', 'horaoficial'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -299,6 +299,7 @@ export default function Dashboard() {
       </div>
     ),
     powerbi: <PowerBIPanel />,
+    snam: <SNAMPanel />,
     horaoficial: (
       <Card className={cn(
         "p-6 border-2 shadow-xl",
