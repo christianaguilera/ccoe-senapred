@@ -50,7 +50,7 @@ export default function ActivityTimeline({ activities, incidents = [] }) {
       <h3 className={cn(
         "font-bold mb-6 tracking-wide",
         isDarkMode ? "text-white" : "text-slate-900"
-      )}>ACTIVIDAD DEL INCIDENTE</h3>
+      )}>ACTIVIDAD RECIENTE REGIONAL</h3>
       
       <div className="space-y-4">
         {activities.map((activity, index) => {
