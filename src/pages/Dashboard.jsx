@@ -30,7 +30,6 @@ import PowerBIPanel from '../components/dashboard/PowerBIPanel';
 import MeteochileAlertsPanel from '../components/dashboard/MeteochileAlertsPanel';
 import SNAMPanel from '../components/dashboard/SNAMPanel';
 import IncidentMap from '../components/maps/IncidentMap';
-import HoraOficialPanel from '../components/dashboard/HoraOficialPanel';
 import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
@@ -42,7 +41,7 @@ export default function Dashboard() {
   });
   const [leftPanelOrder, setLeftPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardLeftPanelOrder');
-    return saved ? JSON.parse(saved) : ['incidents', 'map', 'powerbi', 'snam', 'horaoficial'];
+    return saved ? JSON.parse(saved) : ['incidents', 'map', 'powerbi', 'snam'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -319,8 +318,7 @@ export default function Dashboard() {
       </div>
     ),
     powerbi: <PowerBIPanel />,
-    snam: <SNAMPanel />,
-    horaoficial: <HoraOficialPanel />
+    snam: <SNAMPanel />
   };
 
   const panels = allPanels;
