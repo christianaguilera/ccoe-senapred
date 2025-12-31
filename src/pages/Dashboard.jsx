@@ -344,6 +344,9 @@ export default function Dashboard() {
     )
   };
 
+  const panels = allPanels;
+  const leftPanels = allPanels;
+
   // Notificar sobre incidentes críticos activos al cargar
   useEffect(() => {
     const notifyCriticalIncidents = async () => {
