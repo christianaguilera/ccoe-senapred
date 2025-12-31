@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const { isDarkMode } = useTheme();
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
     return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
@@ -47,6 +48,13 @@ export default function Dashboard() {
   const [dragEnabled, setDragEnabled] = useState(false);
   const [pressingPanel, setPressingPanel] = useState(null);
   const [pressProgress, setPressProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const { data: incidents = [], isLoading: loadingIncidents } = useQuery({
     queryKey: ['incidents'],
@@ -397,7 +405,11 @@ export default function Dashboard() {
             <p className={cn(
               "text-sm font-mono",
               isDarkMode ? "text-white" : "text-slate-900"
-            )}>{new Date().toLocaleDateString('es-CL')}</p>
+            )}>{currentTime.toLocaleDateString('es-CL')}</p>
+            <p className={cn(
+              "text-lg font-mono font-bold",
+              isDarkMode ? "text-blue-400" : "text-blue-600"
+            )}>{currentTime.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</p>
           </div>
           <Link to={createPageUrl('Incidents')}>
             <Button className="bg-orange-500 hover:bg-orange-600 shadow-lg">
