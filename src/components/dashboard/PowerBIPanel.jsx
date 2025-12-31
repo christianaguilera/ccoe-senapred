@@ -21,7 +21,7 @@ export default function PowerBIPanel() {
   useEffect(() => {
     const interval = setInterval(() => {
       setRefreshKey(prev => prev + 1);
-    }, 120000); // 2 minutos
+    }, 60000); // 1 minuto
 
     return () => clearInterval(interval);
   }, []);
