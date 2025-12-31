@@ -168,7 +168,7 @@ export default function Dashboard() {
           )}>Mapa de Incidentes</h3>
         </div>
         <div style={{ height: '400px' }}>
-          <IncidentMap incidents={activeIncidents} />
+          <IncidentMap incidents={incidents.filter(i => !i.deleted)} />
         </div>
       </Card>
     ),
