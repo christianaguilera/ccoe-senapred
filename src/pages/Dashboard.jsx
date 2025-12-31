@@ -36,7 +36,7 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'map', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
+    return saved ? JSON.parse(saved) : ['activity', 'powerbi', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -155,23 +155,6 @@ export default function Dashboard() {
       </div>
     ),
     powerbi: <PowerBIPanel />,
-    map: (
-      <Card className={cn(
-        "p-6",
-        isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
-      )}>
-        <div className="flex items-center gap-2 mb-4">
-          <MapPin className={cn("w-5 h-5", isDarkMode ? "text-orange-400" : "text-orange-600")} />
-          <h3 className={cn(
-            "font-semibold",
-            isDarkMode ? "text-white" : "text-slate-900"
-          )}>Mapa de Incidentes</h3>
-        </div>
-        <div style={{ height: '400px' }}>
-          <IncidentMap incidents={incidents.filter(i => !i.deleted)} />
-        </div>
-      </Card>
-    ),
     meteochile: <MeteochileAlertsPanel />,
     senapred: <SenapredAlertsPanel />,
     seismic: <ChileanSeismicPanel />,
@@ -496,6 +479,31 @@ export default function Dashboard() {
               ))}
             </div>
           )}
+
+          {/* Mapa de Incidentes */}
+          <div className="mt-6">
+            <div className={cn(
+              "flex items-center gap-2 pb-3 border-b mb-4",
+              isDarkMode ? "border-slate-800" : "border-slate-300"
+            )}>
+              <div className="w-1 h-6 bg-orange-500"></div>
+              <h2 className={cn(
+                "text-lg font-bold tracking-wider flex items-center gap-2",
+                isDarkMode ? "text-white" : "text-slate-900"
+              )}>
+                <MapPin className="w-5 h-5" />
+                MAPA DE INCIDENTES
+              </h2>
+            </div>
+            <Card className={cn(
+              "p-6",
+              isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white"
+            )}>
+              <div style={{ height: '500px' }}>
+                <IncidentMap incidents={incidents.filter(i => !i.deleted)} />
+              </div>
+            </Card>
+          </div>
         </div>
 
         {/* Right Sidebar */}
