@@ -173,6 +173,26 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="fire">Incendio</SelectItem>
+                  <SelectItem value="forest_fire">Incendio Forestal</SelectItem>
+                  <SelectItem value="industrial_fire">Incendio Industrial</SelectItem>
+                  <SelectItem value="residential_fire">Incendio Domiciliario</SelectItem>
+                  <SelectItem value="critical_infrastructure_fire">Incendio en Infraestructura Crítica</SelectItem>
+                  <SelectItem value="maritime_emergency">Emergencia Marítima</SelectItem>
+                  <SelectItem value="shipwreck">Naufragio</SelectItem>
+                  <SelectItem value="terrorist_attack">Atentado Terrorista</SelectItem>
+                  <SelectItem value="bomb_threat">Aviso de Bomba</SelectItem>
+                  <SelectItem value="aircraft_crash">Caída de Aeronave</SelectItem>
+                  <SelectItem value="mass_removal">Remoción en Masa</SelectItem>
+                  <SelectItem value="flash_flood">Aluvión</SelectItem>
+                  <SelectItem value="tornado">Tornado</SelectItem>
+                  <SelectItem value="earthquake">Sismo/Terremoto</SelectItem>
+                  <SelectItem value="tsunami">Tsunami</SelectItem>
+                  <SelectItem value="vehicle_accident">Accidente Vehicular</SelectItem>
+                  <SelectItem value="multiple_vehicle_accident">Accidente Vehicular Múltiple</SelectItem>
+                  <SelectItem value="missing_person_search">Búsqueda de Personas Extraviadas</SelectItem>
+                  <SelectItem value="wilderness_rescue">Rescate Agreste</SelectItem>
+                  <SelectItem value="high_seas_rescue">Rescate en Alta Mar</SelectItem>
+                  <SelectItem value="high_mountain_rescue">Rescate en Alta Montaña</SelectItem>
                   <SelectItem value="hazmat">Materiales Peligrosos</SelectItem>
                   <SelectItem value="medical">Emergencia Médica</SelectItem>
                   <SelectItem value="rescue">Rescate</SelectItem>
