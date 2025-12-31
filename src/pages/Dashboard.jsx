@@ -28,6 +28,7 @@ import HydrometricStationsPanel from '../components/dashboard/HydrometricStation
 import WindyPanel from '../components/dashboard/WindyPanel';
 import PowerBIPanel from '../components/dashboard/PowerBIPanel';
 import MeteochileAlertsPanel from '../components/dashboard/MeteochileAlertsPanel';
+import SNAMPanel from '../components/dashboard/SNAMPanel';
 import IncidentMap from '../components/maps/IncidentMap';
 import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
@@ -36,7 +37,7 @@ export default function Dashboard() {
   const { isDarkMode } = useTheme();
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
+    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile', 'snam'];
   });
   const [pressTimer, setPressTimer] = useState(null);
   const [dragEnabled, setDragEnabled] = useState(false);
@@ -156,6 +157,7 @@ export default function Dashboard() {
     ),
     meteochile: <MeteochileAlertsPanel />,
     senapred: <SenapredAlertsPanel />,
+    snam: <SNAMPanel />,
     seismic: <ChileanSeismicPanel />,
     hydrometric: <HydrometricStationsPanel />,
     windy: <WindyPanel />
