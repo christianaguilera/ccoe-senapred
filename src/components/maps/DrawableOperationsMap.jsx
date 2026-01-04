@@ -114,7 +114,8 @@ export default function DrawableOperationsMap({
     type: 'hazard_zone',
     description: '',
     resources: '',
-    priority: 'medium'
+    priority: 'medium',
+    color: '#ef4444'
   });
 
   // Emergency icons kit
@@ -188,7 +189,8 @@ export default function DrawableOperationsMap({
       type: 'hazard_zone',
       description: '',
       resources: '',
-      priority: 'medium'
+      priority: 'medium',
+      color: '#ef4444'
     });
     setShowMetadataDialog(true);
   };
@@ -220,7 +222,8 @@ export default function DrawableOperationsMap({
       description: '',
       resources: '',
       priority: 'medium',
-      resourceId: null
+      resourceId: null,
+      color: '#ef4444'
     });
   };
 
@@ -231,7 +234,8 @@ export default function DrawableOperationsMap({
       type: drawing.type || 'hazard_zone',
       description: drawing.description || '',
       resources: drawing.resources || '',
-      priority: drawing.priority || 'medium'
+      priority: drawing.priority || 'medium',
+      color: drawing.color || '#ef4444'
     });
     setShowMetadataDialog(true);
   };
@@ -288,7 +292,7 @@ export default function DrawableOperationsMap({
   };
 
   const renderDrawing = (drawing) => {
-    const color = getDrawingColor(drawing.type);
+    const color = drawing.color || getDrawingColor(drawing.type);
     const isEditing = editingPoints?.id === drawing.id;
     
     if (drawing.geometry.type === 'icon') {
@@ -1108,6 +1112,26 @@ export default function DrawableOperationsMap({
                 rows={3}
               />
             </div>
+
+            {(currentDrawing?.geometry?.type === 'polygon' || currentDrawing?.geometry?.type === 'circle' || currentDrawing?.geometry?.type === 'rectangle' || editingDrawing) && (
+              <div className="space-y-2">
+                <Label>Color del Polígono</Label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={metadata.color}
+                    onChange={(e) => setMetadata({ ...metadata, color: e.target.value })}
+                    className="w-20 h-10 rounded cursor-pointer border"
+                  />
+                  <Input
+                    value={metadata.color}
+                    onChange={(e) => setMetadata({ ...metadata, color: e.target.value })}
+                    placeholder="#ef4444"
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-end gap-3 pt-4">
               <Button 
