@@ -1174,24 +1174,40 @@ export default function DrawableOperationsMap({
               </div>
             )}
 
-            <div className="flex justify-end gap-3 pt-4">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setShowMetadataDialog(false);
-                  setCurrentDrawing(null);
-                  setEditingDrawing(null);
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button 
-                onClick={handleSaveMetadata}
-                disabled={!metadata.name}
-                className="bg-orange-500 hover:bg-orange-600"
-              >
-                Guardar
-              </Button>
+            <div className="flex justify-between items-center gap-3 pt-4">
+              {editingDrawing && (
+                <Button 
+                  variant="outline"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={() => {
+                    handleDelete(editingDrawing.id);
+                    setShowMetadataDialog(false);
+                    setEditingDrawing(null);
+                  }}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Eliminar
+                </Button>
+              )}
+              <div className="flex gap-3 ml-auto">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowMetadataDialog(false);
+                    setCurrentDrawing(null);
+                    setEditingDrawing(null);
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleSaveMetadata}
+                  disabled={!metadata.name}
+                  className="bg-orange-500 hover:bg-orange-600"
+                >
+                  Guardar
+                </Button>
+              </div>
             </div>
           </div>
         </DialogContent>
