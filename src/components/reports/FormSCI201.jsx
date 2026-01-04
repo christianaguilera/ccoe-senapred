@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import DrawableCanvas from './DrawableCanvas';
 
 export default function FormSCI201({ open, onClose, incident }) {
   const formRef = useRef(null);
@@ -32,6 +33,7 @@ export default function FormSCI201({ open, onClose, incident }) {
     mensaje_seguridad: '',
     comandante: incident?.incident_commander || '',
     acciones: [{ fecha_hora: '', resumen: '' }],
+    mapa_situacional: '',
   });
 
   const handleAddAccion = () => {
@@ -308,12 +310,9 @@ export default function FormSCI201({ open, onClose, incident }) {
               <Card className="p-6">
                 <div className="space-y-4">
                   <Label className="font-semibold text-base">14. Mapa Situacional o Croquis:</Label>
-                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 min-h-[400px] bg-slate-50 flex items-center justify-center">
-                    <p className="text-slate-400 text-center">
-                      Espacio para mapa o croquis<br />
-                      <span className="text-xs">Use herramientas de dibujo o pegue una imagen</span>
-                    </p>
-                  </div>
+                  <DrawableCanvas 
+                    onImageChange={(imageData) => setFormData({ ...formData, mapa_situacional: imageData })}
+                  />
                   
                   <div className="space-y-2 border-t pt-4">
                     <Label className="font-semibold">13. Comandante del Incidente (Nombre, Apellidos) y firma:</Label>
