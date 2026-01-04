@@ -1013,24 +1013,36 @@ export default function DrawableOperationsMap({
                     <Select
                       value={currentDrawing.geometry.iconType}
                       onValueChange={(value) => {
-                        setCurrentDrawing({
+                        const updatedDrawing = {
                           ...currentDrawing,
                           geometry: { ...currentDrawing.geometry, iconType: value }
-                        });
+                        };
+                        setCurrentDrawing(updatedDrawing);
+                        setSelectedIcon(value);
                         setMetadata({ ...metadata, name: emergencyIcons[value].label });
                       }}
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-80">
                         {Object.entries(emergencyIcons).map(([key, data]) => (
                           <SelectItem key={key} value={key}>
-                            {data.icon} {data.label}
+                            <div className="flex items-center gap-2">
+                              <span>{data.icon}</span>
+                              <span>{data.label}</span>
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                    <div className="p-2 bg-slate-50 rounded border flex items-center gap-2">
+                      <span className="text-2xl">{emergencyIcons[currentDrawing.geometry.iconType].icon}</span>
+                      <div className="text-xs">
+                        <div className="font-semibold">{emergencyIcons[currentDrawing.geometry.iconType].label}</div>
+                        <div className="text-slate-500">{emergencyIcons[currentDrawing.geometry.iconType].category}</div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </>
