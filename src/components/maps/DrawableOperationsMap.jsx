@@ -986,25 +986,54 @@ export default function DrawableOperationsMap({
           <div className="space-y-4 pt-4">
             {/* Icon Type Selector */}
             {currentDrawing?.geometry?.type === 'icon' && !editingDrawing && (
-              <div className="space-y-2">
-                <Label>Tipo de Icono</Label>
-                <Select
-                  value={metadata.resourceId ? 'resource' : 'general'}
-                  onValueChange={(value) => {
-                    if (value === 'general') {
-                      setMetadata({ ...metadata, resourceId: null });
-                    }
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="general">Icono General</SelectItem>
-                    <SelectItem value="resource">Recurso del Incidente</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label>Tipo de Icono</Label>
+                  <Select
+                    value={metadata.resourceId ? 'resource' : 'general'}
+                    onValueChange={(value) => {
+                      if (value === 'general') {
+                        setMetadata({ ...metadata, resourceId: null });
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">Icono General</SelectItem>
+                      <SelectItem value="resource">Recurso del Incidente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {!metadata.resourceId && currentDrawing?.geometry?.iconType && (
+                  <div className="space-y-2">
+                    <Label>Icono Específico</Label>
+                    <Select
+                      value={currentDrawing.geometry.iconType}
+                      onValueChange={(value) => {
+                        setCurrentDrawing({
+                          ...currentDrawing,
+                          geometry: { ...currentDrawing.geometry, iconType: value }
+                        });
+                        setMetadata({ ...metadata, name: emergencyIcons[value].label });
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(emergencyIcons).map(([key, data]) => (
+                          <SelectItem key={key} value={key}>
+                            {data.icon} {data.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </>
             )}
 
             {/* Resource Selector */}
