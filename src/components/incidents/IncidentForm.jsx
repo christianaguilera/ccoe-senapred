@@ -23,6 +23,7 @@ import LocationPicker from '../maps/LocationPicker';
 export default function IncidentForm({ open, onClose, onSubmit, incident, isLoading }) {
   const [formData, setFormData] = useState({
     incident_number: '',
+    operational_period: 'initial_period',
     name: '',
     type: 'fire',
     severity: 'minor_emergency',
@@ -42,6 +43,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
     if (incident) {
       setFormData({
         incident_number: incident.incident_number || '',
+        operational_period: incident.operational_period || 'initial_period',
         name: incident.name || '',
         type: incident.type || 'fire',
         severity: incident.severity || 'medium',
@@ -58,6 +60,7 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
     } else {
       setFormData({
         incident_number: `INC-${Date.now().toString().slice(-6)}`,
+        operational_period: 'initial_period',
         name: '',
         type: 'fire',
         severity: 'minor_emergency',
@@ -151,6 +154,36 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="operational_period">Periodo Operacional</Label>
+            <Select
+              value={formData.operational_period}
+              onValueChange={(value) => setFormData({ ...formData, operational_period: value })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="initial_period">Periodo Inicial</SelectItem>
+                <SelectItem value="period_1">1. Periodo Operacional</SelectItem>
+                <SelectItem value="period_2">2. Periodo Operacional</SelectItem>
+                <SelectItem value="period_3">3. Periodo Operacional</SelectItem>
+                <SelectItem value="period_4">4. Periodo Operacional</SelectItem>
+                <SelectItem value="period_5">5. Periodo Operacional</SelectItem>
+                <SelectItem value="period_6">6. Periodo Operacional</SelectItem>
+                <SelectItem value="period_7">7. Periodo Operacional</SelectItem>
+                <SelectItem value="period_8">8. Periodo Operacional</SelectItem>
+                <SelectItem value="period_9">9. Periodo Operacional</SelectItem>
+                <SelectItem value="period_10">10. Periodo Operacional</SelectItem>
+                <SelectItem value="period_11">11. Periodo Operacional</SelectItem>
+                <SelectItem value="period_12">12. Periodo Operacional</SelectItem>
+                <SelectItem value="period_13">13. Periodo Operacional</SelectItem>
+                <SelectItem value="period_14">14. Periodo Operacional</SelectItem>
+                <SelectItem value="period_15">15. Periodo Operacional</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="name">Nombre del Incidente *</Label>
             <Input
               id="name"
@@ -197,6 +230,10 @@ export default function IncidentForm({ open, onClose, onSubmit, incident, isLoad
                   <SelectItem value="earthquake">Sismo/Terremoto</SelectItem>
                   <SelectItem value="tornado">Tornado</SelectItem>
                   <SelectItem value="tsunami">Tsunami</SelectItem>
+                  <SelectItem value="volcanic_eruption">Erupción Volcánica</SelectItem>
+                  <SelectItem value="avalanche">Avalancha</SelectItem>
+                  <SelectItem value="weather_event">Evento Meteorológico</SelectItem>
+                  <SelectItem value="medical_emergency">Emergencia Médica</SelectItem>
                 </SelectContent>
               </Select>
             </div>
