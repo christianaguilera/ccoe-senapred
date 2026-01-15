@@ -134,7 +134,7 @@ export default function IncidentDetail() {
     priority: 'info',
     timestamp: new Date().toISOString().slice(0, 16)
   });
-  const [newStaff, setNewStaff] = useState({ role: '', name: '', institucion: '', cargo: '', contact: '', radio_channel: '' });
+  const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
   const [editingStaffId, setEditingStaffId] = useState(null);
   const [newInstitution, setNewInstitution] = useState({ nombre: 'Bomberos', contact_person: '', phone: '', units_deployed: 1, detalle_recursos: '' });
 
@@ -511,9 +511,7 @@ export default function IncidentDetail() {
                 setEditingStaffId(member.id);
                 setNewStaff({ 
                   role: member.role, 
-                  name: member.name,
-                  institucion: member.institucion || '',
-                  cargo: member.cargo || '',
+                  name: member.name, 
                   contact: member.contact || '', 
                   radio_channel: member.radio_channel || '' 
                 });
@@ -522,9 +520,7 @@ export default function IncidentDetail() {
                 setEditingStaffId(null);
                 setNewStaff({ 
                   role, 
-                  name: '',
-                  institucion: '',
-                  cargo: '',
+                  name: '', 
                   contact: '', 
                   radio_channel: '' 
                 });
@@ -689,7 +685,7 @@ export default function IncidentDetail() {
       {/* Add Staff Modal */}
       <Dialog open={showStaffForm} onOpenChange={(open) => {
         if (!open) {
-          setNewStaff({ role: '', name: '', institucion: '', cargo: '', contact: '', radio_channel: '' });
+          setNewStaff({ role: '', name: '', contact: '', radio_channel: '' });
           setEditingStaffId(null);
         }
         setShowStaffForm(open);
@@ -723,22 +719,6 @@ export default function IncidentDetail() {
                 placeholder="Nombre completo" />
 
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Institución</label>
-                <Input
-                  value={newStaff.institucion}
-                  onChange={(e) => setNewStaff({ ...newStaff, institucion: e.target.value })}
-                  placeholder="Ej: Bomberos de Chile" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Cargo</label>
-                <Input
-                  value={newStaff.cargo}
-                  onChange={(e) => setNewStaff({ ...newStaff, cargo: e.target.value })}
-                  placeholder="Ej: Capitán" />
-              </div>
-            </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Contacto</label>
               <Input
@@ -758,7 +738,7 @@ export default function IncidentDetail() {
             <div className="flex justify-end gap-3 pt-4">
               <Button variant="outline" onClick={() => {
                 setShowStaffForm(false);
-                setNewStaff({ role: '', name: '', institucion: '', cargo: '', contact: '', radio_channel: '' });
+                setNewStaff({ role: '', name: '', contact: '', radio_channel: '' });
                 setEditingStaffId(null);
               }}>Cancelar</Button>
               <Button

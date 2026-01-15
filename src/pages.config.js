@@ -10,7 +10,6 @@ import RegionalLinkPlan from './pages/RegionalLinkPlan';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
 import InformationRepository from './pages/InformationRepository';
-import TAKSituational from './pages/TAKSituational';
 import __Layout from './Layout.jsx';
 
 
@@ -27,7 +26,6 @@ export const PAGES = {
     "Reports": Reports,
     "Resources": Resources,
     "InformationRepository": InformationRepository,
-    "TAKSituational": TAKSituational,
 }
 
 export const pagesConfig = {
