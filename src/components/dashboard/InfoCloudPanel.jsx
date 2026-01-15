@@ -59,7 +59,7 @@ export default function InfoCloudPanel() {
             isDarkMode ? "text-white" : "text-slate-900"
           )}>
             <Cloud className="w-5 h-5" />
-            NUBE DE INFORMACIÓN
+            INFORMACIÓN METEOROLÓGICA LOCAL
           </h2>
         </div>
         <div className="flex items-center gap-2">
