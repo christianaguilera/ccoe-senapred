@@ -28,6 +28,7 @@ function LayoutContent({ children, currentPageName }) {
   const navigation = [
     { name: 'Dashboard', href: createPageUrl('Dashboard'), icon: LayoutDashboard, page: 'Dashboard' },
     { name: 'Incidentes', href: createPageUrl('Incidents'), icon: AlertTriangle, page: 'Incidents' },
+    { name: 'TAK Situacional', href: createPageUrl('TAKSituational'), icon: Shield, page: 'TAKSituational' },
     { name: 'Mapa', href: createPageUrl('IncidentMap'), icon: MapPin, page: 'IncidentMap' },
     { name: 'Plan de Enlace Regional', href: createPageUrl('RegionalLinkPlan'), icon: Users, page: 'RegionalLinkPlan' },
     { name: 'Recursos', href: createPageUrl('Resources'), icon: Package, page: 'Resources' },
