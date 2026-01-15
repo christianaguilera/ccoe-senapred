@@ -107,13 +107,23 @@ export default function ICSStructureView({ staff = [], isDarkMode = false, onEdi
                 {config.title}
               </h4>
               {member ? (
-                <div className="mt-1">
+                <div className="mt-1 space-y-0.5">
                   <p className={cn(
                     "text-xs font-medium truncate",
                     isDarkMode ? "text-slate-300" : "text-slate-700"
                   )}>{member.name}</p>
+                  {member.institucion && (
+                    <p className="text-xs text-slate-500 truncate">
+                      🏢 {member.institucion}
+                    </p>
+                  )}
+                  {member.cargo && (
+                    <p className="text-xs text-slate-500 truncate">
+                      👤 {member.cargo}
+                    </p>
+                  )}
                   {member.radio_channel && (
-                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                    <p className="text-xs text-slate-500 flex items-center gap-1">
                       <Radio className="w-2.5 h-2.5" />
                       {member.radio_channel}
                     </p>
