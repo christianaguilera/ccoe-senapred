@@ -29,6 +29,7 @@ import WindyPanel from '../components/dashboard/WindyPanel';
 import PowerBIPanel from '../components/dashboard/PowerBIPanel';
 import MeteochileAlertsPanel from '../components/dashboard/MeteochileAlertsPanel';
 import SNAMPanel from '../components/dashboard/SNAMPanel';
+import InfoCloudPanel from '../components/dashboard/InfoCloudPanel';
 import IncidentMap from '../components/maps/IncidentMap';
 import { useTheme } from '../components/contexts/ThemeContext';
 import { cn } from "@/lib/utils";
@@ -38,7 +39,7 @@ export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [panelOrder, setPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardPanelOrder');
-    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile'];
+    return saved ? JSON.parse(saved) : ['activity', 'senapred', 'seismic', 'hydrometric', 'windy', 'meteochile', 'infocloud'];
   });
   const [leftPanelOrder, setLeftPanelOrder] = useState(() => {
     const saved = localStorage.getItem('dashboardLeftPanelOrder');
@@ -208,6 +209,7 @@ export default function Dashboard() {
     seismic: <ChileanSeismicPanel />,
     hydrometric: <HydrometricStationsPanel />,
     windy: <WindyPanel />,
+    infocloud: <InfoCloudPanel />,
     incidents: (
       <div>
         <div className={cn(
