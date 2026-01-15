@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Printer, Download, Plus, X, Upload } from 'lucide-react';
+import { Printer, Download, Plus, X, Upload, Radio, MessageCircle, Send, Users as UsersIcon, MapPin as MapPinIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
@@ -14,9 +14,15 @@ import jsPDF from 'jspdf';
 import ICSStructureView from '../incidents/ICSStructureView';
 import IncidentMap from '../maps/IncidentMap';
 import DrawableOperationsMap from '../maps/DrawableOperationsMap';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function OperationsBoard({ open, onClose, incident, staff = [], resources = [] }) {
   const boardRef = useRef(null);
+  const queryClient = useQueryClient();
+  const [message, setMessage] = useState('');
   const [boardData, setBoardData] = useState({
     tipo_emergencia: incident?.name || '',
     fecha: format(new Date(), "dd-MM-yyyy"),
@@ -84,6 +90,49 @@ export default function OperationsBoard({ open, onClose, incident, staff = [], r
 
     mapDrawings: []
   });
+
+  // Fetch activities for TAK
+  const { data: activities = [] } = useQuery({
+    queryKey: ['activities', incident?.id],
+    queryFn: () => base44.entities.ActivityLog.filter({ incident_id: incident?.id }, '-created_date', 20),
+    enabled: !!incident?.id && open
+  });
+
+  // Create activity mutation for TAK communications
+  const createActivity = useMutation({
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return base44.entities.ActivityLog.create({
+        incident_id: incident?.id,
+        action: data.message,
+        category: 'operations',
+        priority: 'info',
+        reported_by: user.full_name || user.email
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['activities', incident?.id] });
+      setMessage('');
+    }
+  });
+
+  const handleSendMessage = () => {
+    if (message.trim() && incident) {
+      createActivity.mutate({ message: message.trim() });
+    }
+  };
+
+  const deployedResources = resources.filter(r => r.status === 'deployed');
+
+  const getStatusColor = (status) => {
+    const colors = {
+      available: 'bg-green-500',
+      deployed: 'bg-blue-500',
+      en_route: 'bg-yellow-500',
+      out_of_service: 'bg-red-500'
+    };
+    return colors[status] || 'bg-gray-500';
+  };
 
   const handleAddItem = (field) => {
     setBoardData({
@@ -154,9 +203,10 @@ export default function OperationsBoard({ open, onClose, incident, staff = [], r
         </DialogHeader>
 
         <Tabs defaultValue="page1" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="page1">Tablero Principal</TabsTrigger>
             <TabsTrigger value="page2">Escenario de Operaciones</TabsTrigger>
+            <TabsTrigger value="tak">TAK Situacional</TabsTrigger>
           </TabsList>
 
           {/* Página 1 - Tablero Principal */}
@@ -816,6 +866,147 @@ export default function OperationsBoard({ open, onClose, incident, staff = [], r
                         }
                         </div>
                       )}
+                    </div>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Página 3 - TAK Situacional */}
+          <TabsContent value="tak" className="space-y-4">
+            <div className="bg-white p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Map - Main Panel */}
+                <div className="lg:col-span-2 space-y-4">
+                  <Card className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-bold flex items-center gap-2">
+                        <MapPinIcon className="w-5 h-5 text-orange-500" />
+                        MAPA DE OPERACIONES TÁCTICA
+                      </h2>
+                      <Badge variant="outline" className="flex items-center gap-1">
+                        <Radio className="w-3 h-3" />
+                        {deployedResources.length} Recursos Activos
+                      </Badge>
+                    </div>
+                    <div style={{ height: '500px' }}>
+                      {incident?.coordinates?.lat && incident?.coordinates?.lng ? (
+                        <DrawableOperationsMap 
+                          incidentId={incident.id}
+                          incidentCoordinates={incident.coordinates}
+                        />
+                      ) : (
+                        <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 h-full bg-slate-50 flex flex-col items-center justify-center">
+                          <Upload className="w-12 h-12 text-slate-400 mb-2" />
+                          <p className="text-slate-500 text-sm">Sin coordenadas del incidente</p>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                </div>
+
+                {/* Right Sidebar */}
+                <div className="space-y-4">
+                  {/* Resources Panel */}
+                  <Card className="p-6">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                      <UsersIcon className="w-5 h-5 text-blue-500" />
+                      RECURSOS DESPLEGADOS
+                    </h3>
+                    <ScrollArea className="h-64">
+                      <div className="space-y-2">
+                        {deployedResources.length === 0 ? (
+                          <p className="text-sm text-center py-8 text-slate-400">
+                            No hay recursos desplegados
+                          </p>
+                        ) : (
+                          deployedResources.map(resource => (
+                            <div
+                              key={resource.id}
+                              className="p-3 rounded-lg border bg-slate-50 border-slate-200"
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className={`w-2 h-2 rounded-full ${getStatusColor(resource.status)}`} />
+                                <span className="font-semibold text-sm text-slate-900">
+                                  {resource.name}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs">
+                                <Badge variant="outline" className="text-xs">
+                                  {resource.type}
+                                </Badge>
+                                {resource.quantity > 1 && (
+                                  <span className="text-xs text-slate-600">
+                                    x{resource.quantity}
+                                  </span>
+                                )}
+                              </div>
+                              {resource.assigned_to && (
+                                <p className="text-xs mt-1 text-slate-600">
+                                  📍 {resource.assigned_to}
+                                </p>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </ScrollArea>
+                  </Card>
+
+                  {/* Communications Panel */}
+                  <Card className="p-6">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                      <MessageCircle className="w-5 h-5 text-green-500" />
+                      COMUNICACIONES
+                    </h3>
+                    <ScrollArea className="h-64 mb-4">
+                      <div className="space-y-3">
+                        {activities.length === 0 ? (
+                          <p className="text-sm text-center py-8 text-slate-400">
+                            No hay mensajes
+                          </p>
+                        ) : (
+                          activities.map(activity => (
+                            <div
+                              key={activity.id}
+                              className={`p-3 rounded-lg border-l-4 bg-slate-50 ${
+                                activity.priority === 'critical' ? 'border-red-500' :
+                                activity.priority === 'warning' ? 'border-yellow-500' :
+                                'border-blue-500'
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-2 mb-1">
+                                <span className="text-xs font-semibold text-slate-600">
+                                  {activity.reported_by}
+                                </span>
+                                <span className="text-xs text-slate-500">
+                                  {format(new Date(activity.timestamp || activity.created_date), 'HH:mm', { locale: es })}
+                                </span>
+                              </div>
+                              <p className="text-sm text-slate-900">
+                                {activity.action}
+                              </p>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </ScrollArea>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Escribir mensaje..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        className="bg-white"
+                      />
+                      <Button
+                        onClick={handleSendMessage}
+                        disabled={!message.trim()}
+                        className="bg-green-500 hover:bg-green-600"
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
                     </div>
                   </Card>
                 </div>
