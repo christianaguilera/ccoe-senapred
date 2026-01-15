@@ -193,6 +193,21 @@ function LayoutContent({ children, currentPageName }) {
               )}>
                 INFO. SENAPRED
               </p>
+              <Link
+                to={createPageUrl('InformationRepository')}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                  currentPageName === 'InformationRepository'
+                    ? "bg-orange-500/10 text-orange-400 border border-orange-500/20"
+                    : isDarkMode
+                    ? "text-slate-400 hover:text-white hover:bg-zinc-800"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                )}
+              >
+                <FileText className={cn("w-5 h-5", currentPageName === 'InformationRepository' && "text-orange-400")} />
+                Repositorio de Información
+              </Link>
               <a
                 href="https://senapred.cl/recomendaciones/"
                 target="_blank"
