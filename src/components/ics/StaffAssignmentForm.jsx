@@ -33,6 +33,8 @@ export default function StaffAssignmentForm({ open, onClose, onSubmit, incident,
   const [formData, setFormData] = useState({
     role: '',
     name: '',
+    institucion: '',
+    cargo: '',
     contact: '',
     radio_channel: '',
     notes: ''
@@ -43,6 +45,8 @@ export default function StaffAssignmentForm({ open, onClose, onSubmit, incident,
       setFormData({
         role: member.role || '',
         name: member.name || '',
+        institucion: member.institucion || '',
+        cargo: member.cargo || '',
         contact: member.contact || '',
         radio_channel: member.radio_channel || '',
         notes: member.notes || ''
@@ -51,6 +55,8 @@ export default function StaffAssignmentForm({ open, onClose, onSubmit, incident,
       setFormData({
         role: '',
         name: '',
+        institucion: '',
+        cargo: '',
         contact: '',
         radio_channel: '',
         notes: ''
@@ -102,6 +108,27 @@ export default function StaffAssignmentForm({ open, onClose, onSubmit, incident,
               placeholder="Nombre y apellido"
               required
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="institucion">Institución</Label>
+              <Input
+                id="institucion"
+                value={formData.institucion}
+                onChange={(e) => setFormData({ ...formData, institucion: e.target.value })}
+                placeholder="Ej: Bomberos de Chile"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cargo">Cargo</Label>
+              <Input
+                id="cargo"
+                value={formData.cargo}
+                onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+                placeholder="Ej: Capitán"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
