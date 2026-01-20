@@ -10,7 +10,7 @@ export default function PowerBIPanel() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const powerBIUrl = "https://app.powerbi.com/view?r=eyJrIjoiZDZjZTExZTctM2MwMC00Mzk5LTkzYzAtODNlOTk0NDAzMWY5IiwidCI6IjZlMTA2YmFkLTk5NTAtNDcxNC1iY2JhLWZlYTUwMDNlNTY4OCIsImMiOjR9";
+  const powerBIUrl = "https://experience.arcgis.com/experience/6fd06a884b7e43de800927c153a90e7c/page/PYROCAST?views=Monitoreo";
 
   const handleRefresh = () => {
     setIsRefreshing(true);
