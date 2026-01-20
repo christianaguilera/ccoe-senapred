@@ -4,12 +4,12 @@ import ICSStructure from './pages/ICSStructure';
 import IncidentDetail from './pages/IncidentDetail';
 import IncidentMap from './pages/IncidentMap';
 import Incidents from './pages/Incidents';
+import InformationRepository from './pages/InformationRepository';
 import NotificationRules from './pages/NotificationRules';
 import NotificationSettings from './pages/NotificationSettings';
 import RegionalLinkPlan from './pages/RegionalLinkPlan';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
-import InformationRepository from './pages/InformationRepository';
 import __Layout from './Layout.jsx';
 
 
@@ -20,12 +20,12 @@ export const PAGES = {
     "IncidentDetail": IncidentDetail,
     "IncidentMap": IncidentMap,
     "Incidents": Incidents,
+    "InformationRepository": InformationRepository,
     "NotificationRules": NotificationRules,
     "NotificationSettings": NotificationSettings,
     "RegionalLinkPlan": RegionalLinkPlan,
     "Reports": Reports,
     "Resources": Resources,
-    "InformationRepository": InformationRepository,
 }
 
 export const pagesConfig = {
