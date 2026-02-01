@@ -132,6 +132,7 @@ export default function IncidentDetail() {
     action: '', 
     category: 'general', 
     priority: 'info',
+    type: 'evento',
     timestamp: new Date().toISOString().slice(0, 16)
   });
   const [newStaff, setNewStaff] = useState({ role: '', name: '', contact: '', radio_channel: '' });
@@ -209,6 +210,7 @@ export default function IncidentDetail() {
         action: '', 
         category: 'general', 
         priority: 'info',
+        type: 'evento',
         timestamp: new Date().toISOString().slice(0, 16)
       });
       setShowLogForm(false);
@@ -774,7 +776,7 @@ export default function IncidentDetail() {
                 onChange={(e) => setNewLog({ ...newLog, timestamp: e.target.value })}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Categoría</label>
                 <Select
@@ -792,6 +794,24 @@ export default function IncidentDetail() {
                     <SelectItem value="logistics">Logística</SelectItem>
                     <SelectItem value="finance">Finanzas</SelectItem>
                     <SelectItem value="action">Acción</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Tipo</label>
+                <Select
+                  value={newLog.type}
+                  onValueChange={(value) => setNewLog({ ...newLog, type: value })}>
+
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="evento">Evento</SelectItem>
+                    <SelectItem value="decision">Decisión</SelectItem>
+                    <SelectItem value="comunicacion">Comunicación</SelectItem>
+                    <SelectItem value="recurso">Recurso</SelectItem>
+                    <SelectItem value="situacion">Situación</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
