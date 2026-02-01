@@ -10,7 +10,39 @@ export default function PowerBIPanel() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [height, setHeight] = useState(500);
+  const [isResizing, setIsResizing] = useState(false);
   const powerBIUrl = "https://experience.arcgis.com/experience/6fd06a884b7e43de800927c153a90e7c/page/PYROCAST?views=Monitoreo";
+
+  const handleMouseDown = (e) => {
+    setIsResizing(true);
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isResizing) {
+        const newHeight = e.clientY - e.target.getBoundingClientRect().top;
+        if (newHeight > 300 && newHeight < 1200) {
+          setHeight(newHeight);
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -70,13 +102,26 @@ export default function PowerBIPanel() {
 
       {!isCollapsed && (
         <>
-          <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: 'auto', aspectRatio: '16/9', width: '100%' }}>
-            <iframe 
-              key={refreshKey}
-              src={powerBIUrl}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              title="Power BI Dashboard"
-              allowFullScreen
+          <div className="relative">
+            <div 
+              className="rounded-lg overflow-hidden border border-slate-200" 
+              style={{ height: `${height}px`, width: '100%' }}
+            >
+              <iframe 
+                key={refreshKey}
+                src={powerBIUrl}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+                title="Power BI Dashboard"
+                allowFullScreen
+              />
+            </div>
+            <div 
+              onMouseDown={handleMouseDown}
+              className={cn(
+                "absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-blue-500/20 transition-colors",
+                isResizing && "bg-blue-500/30"
+              )}
+              style={{ height: '8px' }}
             />
           </div>
 
