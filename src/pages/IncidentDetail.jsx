@@ -791,6 +791,7 @@ export default function IncidentDetail() {
                     <SelectItem value="planning">Planificación</SelectItem>
                     <SelectItem value="logistics">Logística</SelectItem>
                     <SelectItem value="finance">Finanzas</SelectItem>
+                    <SelectItem value="action">Acción</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
