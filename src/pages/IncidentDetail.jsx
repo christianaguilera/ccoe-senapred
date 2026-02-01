@@ -64,6 +64,7 @@ import FormSCI215A from '../components/reports/FormSCI215A';
 import FormSCI221 from '../components/reports/FormSCI221';
 import FormSCI222 from '../components/reports/FormSCI222';
 import FormSCIIFF from '../components/reports/FormSCIIFF';
+import FormInformeAlfa from '../components/reports/FormInformeAlfa';
 import GeneralIncidentReport from '../components/reports/GeneralIncidentReport';
 import OperationsBoard from '../components/operations/OperationsBoard';
 import SituationRoomAlert from '../components/alerts/SituationRoomAlert';
@@ -125,6 +126,7 @@ export default function IncidentDetail() {
   const [showSCI221, setShowSCI221] = useState(false);
   const [showSCI222, setShowSCI222] = useState(false);
   const [showSCIIFF, setShowSCIIFF] = useState(false);
+  const [showInformeAlfa, setShowInformeAlfa] = useState(false);
   const [showGeneralReport, setShowGeneralReport] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
   const [showOperationsBoard, setShowOperationsBoard] = useState(false);
@@ -142,7 +144,7 @@ export default function IncidentDetail() {
   // Check if any modal/dialog is open
   const isAnyModalOpen = showEditForm || showStaffForm || showLogForm || showSCI201 ||
   showSCI202 || showSCI203 || showSCI204 || showSCI205 || showSCI206 ||
-  showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showSCIIFF || showGeneralReport || showInstitutions || showOperationsBoard;
+  showSCI207 || showSCI211 || showSCI214 || showSCI215A || showSCI221 || showSCI222 || showSCIIFF || showInformeAlfa || showGeneralReport || showInstitutions || showOperationsBoard;
 
   const queryClient = useQueryClient();
 
@@ -594,6 +596,12 @@ export default function IncidentDetail() {
 
           <div className="space-y-2 mt-4">
             <Button
+              className="w-full bg-orange-600 hover:bg-orange-700"
+              onClick={() => setShowInformeAlfa(true)}>
+              <FileText className="w-4 h-4 mr-2" />
+              Informe Alfa SENAPRED
+            </Button>
+            <Button
               className="w-full bg-blue-600 hover:bg-blue-700"
               onClick={() => setShowSCI201(true)}>
               <FileText className="w-4 h-4 mr-2" />
@@ -932,6 +940,12 @@ export default function IncidentDetail() {
       <FormSCIIFF
         open={showSCIIFF}
         onClose={() => setShowSCIIFF(false)}
+        incident={incident} />
+
+      {/* Informe Alfa */}
+      <FormInformeAlfa
+        open={showInformeAlfa}
+        onClose={() => setShowInformeAlfa(false)}
         incident={incident} />
 
       {/* Reporte General */}
