@@ -10,7 +10,27 @@ export default function SNAMPanel() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [height, setHeight] = useState(500);
+  const [pressTimer, setPressTimer] = useState(null);
+  const [isPressing, setIsPressing] = useState(false);
   const snamUrl = "https://www.snamchile.cl/";
+
+  const handlePressStart = () => {
+    setIsPressing(true);
+    const timer = setTimeout(() => {
+      setHeight(prev => Math.min(prev + 200, 1200));
+      setIsPressing(false);
+    }, 3000);
+    setPressTimer(timer);
+  };
+
+  const handlePressEnd = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
+    }
+    setIsPressing(false);
+  };
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -70,14 +90,36 @@ export default function SNAMPanel() {
 
       {!isCollapsed && (
         <>
-          <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: 'auto', aspectRatio: '16/9', width: '100%' }}>
-            <iframe 
-              key={refreshKey}
-              src={snamUrl}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              title="SNAM Chile"
-              allowFullScreen
-            />
+          <div className="relative">
+            <div 
+              className="rounded-lg overflow-hidden border border-slate-200" 
+              style={{ height: `${height}px`, width: '100%' }}
+            >
+              <iframe 
+                key={refreshKey}
+                src={snamUrl}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+                title="SNAM Chile"
+                allowFullScreen
+              />
+            </div>
+            <div 
+              onMouseDown={handlePressStart}
+              onMouseUp={handlePressEnd}
+              onMouseLeave={handlePressEnd}
+              onTouchStart={handlePressStart}
+              onTouchEnd={handlePressEnd}
+              className={cn(
+                "absolute bottom-0 right-0 w-12 h-12 cursor-pointer rounded-tl-lg transition-all",
+                isPressing 
+                  ? "bg-emerald-500/50 animate-pulse" 
+                  : "bg-emerald-500/20 hover:bg-emerald-500/30"
+              )}
+            >
+              <div className="absolute bottom-1 right-1 text-xs text-emerald-600 font-bold">
+                ⬇
+              </div>
+            </div>
           </div>
 
           <div className={cn(
