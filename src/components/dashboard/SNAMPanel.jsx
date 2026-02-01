@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, ExternalLink, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Activity, ExternalLink, RefreshCw, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ export default function SNAMPanel() {
   const [height, setHeight] = useState(500);
   const [pressTimer, setPressTimer] = useState(null);
   const [isPressing, setIsPressing] = useState(false);
+  const [showIframe, setShowIframe] = useState(true);
   const snamUrl = "https://www.snamchile.cl/";
 
   const handlePressStart = () => {
@@ -91,18 +92,47 @@ export default function SNAMPanel() {
       {!isCollapsed && (
         <>
           <div className="relative">
-            <div 
-              className="rounded-lg overflow-hidden border border-slate-200" 
-              style={{ height: `${height}px`, width: '100%' }}
-            >
-              <iframe 
-                key={refreshKey}
-                src={snamUrl}
-                style={{ width: '100%', height: '100%', border: 'none' }}
-                title="SNAM Chile"
-                allowFullScreen
-              />
-            </div>
+            {showIframe ? (
+              <>
+                <div 
+                  className="rounded-lg overflow-hidden border border-slate-200" 
+                  style={{ height: `${height}px`, width: '100%' }}
+                >
+                  <iframe 
+                    key={refreshKey}
+                    src={snamUrl}
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    title="SNAM Chile"
+                    allowFullScreen
+                  />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowIframe(false)}
+                  className="absolute top-2 right-2 h-8 w-8 bg-red-500/80 hover:bg-red-600 text-white"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <div 
+                className={cn(
+                  "rounded-lg border flex items-center justify-center cursor-pointer",
+                  isDarkMode ? "bg-zinc-800 border-zinc-700" : "bg-slate-100 border-slate-300"
+                )}
+                style={{ height: `${height}px`, width: '100%' }}
+                onClick={() => setShowIframe(true)}
+              >
+                <div className="text-center">
+                  <Activity className="w-12 h-12 mx-auto mb-2 text-emerald-500" />
+                  <p className={cn(
+                    "text-sm font-medium",
+                    isDarkMode ? "text-slate-300" : "text-slate-600"
+                  )}>Click para mostrar SNAM</p>
+                </div>
+              </div>
+            )}
             <div 
               onMouseDown={handlePressStart}
               onMouseUp={handlePressEnd}
