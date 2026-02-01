@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Cloud, ExternalLink, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
+import { Cloud, ExternalLink, Navigation, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function WindyPanel() {
@@ -9,6 +9,7 @@ export default function WindyPanel() {
   const [locating, setLocating] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showIframe, setShowIframe] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,14 +69,37 @@ export default function WindyPanel() {
       {!isCollapsed && (
         <>
           <div className="relative">
-            <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '400px', width: '100%' }}>
-              <iframe 
-                key={refreshKey}
-                src={`https://embed.windy.com/embed2.html?lat=${userLocation.lat}&lon=${userLocation.lng}&detailLat=${userLocation.lat}&detailLon=${userLocation.lng}&width=650&height=450&zoom=8&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1`}
-                style={{ width: '100%', height: '100%', border: 'none' }}
-                title="Windy Weather Map"
-              />
-            </div>
+            {showIframe ? (
+              <>
+                <div className="rounded-lg overflow-hidden border border-slate-200" style={{ height: '400px', width: '100%' }}>
+                  <iframe 
+                    key={refreshKey}
+                    src={`https://embed.windy.com/embed2.html?lat=${userLocation.lat}&lon=${userLocation.lng}&detailLat=${userLocation.lat}&detailLon=${userLocation.lng}&width=650&height=450&zoom=8&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1`}
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    title="Windy Weather Map"
+                  />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowIframe(false)}
+                  className="absolute top-2 right-12 h-8 w-8 bg-red-500/80 hover:bg-red-600 text-white z-[1001]"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <div 
+                className="rounded-lg border bg-slate-100 border-slate-300 flex items-center justify-center cursor-pointer"
+                style={{ height: '400px', width: '100%' }}
+                onClick={() => setShowIframe(true)}
+              >
+                <div className="text-center">
+                  <Cloud className="w-12 h-12 mx-auto mb-2 text-purple-500" />
+                  <p className="text-sm font-medium text-slate-600">Click para mostrar Windy</p>
+                </div>
+              </div>
+            )}
             <Button
               onClick={handleGeolocation}
               disabled={locating}

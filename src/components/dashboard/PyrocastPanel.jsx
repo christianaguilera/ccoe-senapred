@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import { Flame, ExternalLink, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from "@/lib/utils";
 
 export default function PyrocastPanel() {
   const { isDarkMode } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showIframe, setShowIframe] = useState(true);
   const pyrocastUrl = "https://experience.arcgis.com/experience/6fd06a884b7e43de800927c153a90e7c/page/PYROCAST?views=Monitoreo";
 
   return (
@@ -39,13 +40,44 @@ export default function PyrocastPanel() {
           "p-0 border-2 shadow-xl overflow-hidden",
           isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"
         )}>
-          <div className="rounded-lg overflow-hidden" style={{ height: '600px', width: '100%' }}>
-            <iframe 
-              src={pyrocastUrl}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              title="Pyrocast Monitoreo"
-              allowFullScreen
-            />
+          <div className="relative">
+            {showIframe ? (
+              <>
+                <div className="rounded-lg overflow-hidden" style={{ height: '600px', width: '100%' }}>
+                  <iframe 
+                    src={pyrocastUrl}
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    title="Pyrocast Monitoreo"
+                    allowFullScreen
+                  />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowIframe(false)}
+                  className="absolute top-2 right-2 h-8 w-8 bg-red-500/80 hover:bg-red-600 text-white z-10"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <div 
+                className={cn(
+                  "rounded-lg border flex items-center justify-center cursor-pointer",
+                  isDarkMode ? "bg-zinc-800 border-zinc-700" : "bg-slate-100 border-slate-300"
+                )}
+                style={{ height: '600px', width: '100%' }}
+                onClick={() => setShowIframe(true)}
+              >
+                <div className="text-center">
+                  <Flame className="w-12 h-12 mx-auto mb-2 text-orange-500" />
+                  <p className={cn(
+                    "text-sm font-medium",
+                    isDarkMode ? "text-slate-300" : "text-slate-600"
+                  )}>Click para mostrar PYROCAST</p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className={cn(
